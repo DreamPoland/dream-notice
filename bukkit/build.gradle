@@ -1,0 +1,14 @@
+dependencies {
+    implementation project(":core")
+
+    compileOnly 'org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT'
+
+    implementation 'com.github.cryptomorin:XSeries:9.1.0'
+    implementation 'eu.okaeri:okaeri-placeholders-bukkit:4.0.3'
+    implementation 'com.iridium:IridiumColorAPI:1.0.6-dc'
+
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+}

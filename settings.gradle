@@ -1,0 +1,5 @@
+rootProject.name = 'dream-notice'
+
+include 'core'
+include 'bukkit'
+include 'bukkit-okaeri-serdes'
