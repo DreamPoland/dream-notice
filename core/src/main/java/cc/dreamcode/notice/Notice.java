@@ -1,6 +1,5 @@
 package cc.dreamcode.notice;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,6 @@ import java.util.Map;
 
 @Data
 @RequiredArgsConstructor
-@AllArgsConstructor
 public abstract class Notice<C> {
 
     private final NoticeType type;
