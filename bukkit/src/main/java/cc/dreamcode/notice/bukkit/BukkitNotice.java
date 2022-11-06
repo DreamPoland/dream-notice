@@ -75,7 +75,7 @@ public class BukkitNotice extends Notice<CommandSender> {
                 String[] split = message.split(Notice.lineSeparator());
                 Arrays.stream(split).forEach(text -> {
                     final Component component = miniMessage.deserialize(text);
-                    audienceProvider.console().sendMessage(component);
+                    audienceProvider.player(player.getUniqueId()).sendMessage(component);
                 });
                 break;
             }
