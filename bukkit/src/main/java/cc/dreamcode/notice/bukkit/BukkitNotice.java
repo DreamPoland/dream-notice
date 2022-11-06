@@ -4,6 +4,7 @@ import cc.dreamcode.notice.Notice;
 import cc.dreamcode.notice.NoticeException;
 import cc.dreamcode.notice.NoticeType;
 import cc.dreamcode.notice.bukkit.legacy.Legacy;
+import cc.dreamcode.notice.bukkit.legacy.LegacyColorProcessor;
 import com.cryptomorin.xseries.messages.ActionBar;
 import com.cryptomorin.xseries.messages.Titles;
 import eu.okaeri.placeholders.context.PlaceholderContext;
@@ -38,8 +39,10 @@ public class BukkitNotice extends Notice<CommandSender> {
 
     @Override
     public void send(@NonNull CommandSender sender) {
-        final Component component = MiniMessage.miniMessage().deserialize(this.getText());
-        this.sendFormatted(sender, Legacy.AMPERSAND_SERIALIZER.serialize(component));
+        final MiniMessage miniMessage = BukkitNoticeProvider.getInstance().getMiniMessage();
+        final Component component = miniMessage.deserialize(this.getText());
+
+        this.sendFormatted(sender, Legacy.serialize(component));
     }
 
     @Override
@@ -49,14 +52,14 @@ public class BukkitNotice extends Notice<CommandSender> {
 
     @Override
     public void send(@NonNull CommandSender sender, @NonNull Map<String, Object> mapReplacer) {
-        final Component component = MiniMessage.miniMessage().deserialize(this.getText());
-        final String colored = Legacy.AMPERSAND_SERIALIZER.serialize(component);
-        final CompiledMessage compiledMessage = CompiledMessage.of(colored);
+        final CompiledMessage compiledMessage = CompiledMessage.of(this.getText());
         final PlaceholderContext placeholderContext = PlaceholderContext.of(compiledMessage);
-
-        this.sendFormatted(sender, placeholderContext
+        final MiniMessage miniMessage = BukkitNoticeProvider.getInstance().getMiniMessage();
+        final Component component = miniMessage.deserialize(placeholderContext
                 .with(mapReplacer)
                 .apply());
+
+        this.sendFormatted(sender, Legacy.serialize(component));
     }
 
     @Override
