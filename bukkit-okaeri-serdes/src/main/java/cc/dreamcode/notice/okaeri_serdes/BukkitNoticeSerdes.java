@@ -19,22 +19,10 @@ public class BukkitNoticeSerdes implements ObjectSerializer<BukkitNotice> {
     public void serialize(@NonNull BukkitNotice object, @NonNull SerializationData data, @NonNull GenericsDeclaration generics) {
         data.add("type", object.getType());
         data.add("text", object.getText());
-
-        if (object.getDuration() != 70) {
-            data.add("duration", object.getDuration());
-        }
     }
 
     @Override
     public BukkitNotice deserialize(@NonNull DeserializationData data, @NonNull GenericsDeclaration generics) {
-        if (data.containsKey("duration")) {
-            return new BukkitNotice(
-                    data.get("type", NoticeType.class),
-                    data.get("text", String.class),
-                    data.get("duration", Integer.class)
-            );
-        }
-
         return new BukkitNotice(
                 data.get("type", NoticeType.class),
                 data.get("text", String.class)

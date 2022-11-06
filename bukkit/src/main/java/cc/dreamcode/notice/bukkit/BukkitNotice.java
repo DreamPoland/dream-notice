@@ -3,15 +3,13 @@ package cc.dreamcode.notice.bukkit;
 import cc.dreamcode.notice.Notice;
 import cc.dreamcode.notice.NoticeException;
 import cc.dreamcode.notice.NoticeType;
-import cc.dreamcode.notice.bukkit.legacy.Legacy;
-import cc.dreamcode.notice.bukkit.legacy.LegacyColorProcessor;
-import com.cryptomorin.xseries.messages.ActionBar;
-import com.cryptomorin.xseries.messages.Titles;
 import eu.okaeri.placeholders.context.PlaceholderContext;
 import eu.okaeri.placeholders.message.CompiledMessage;
 import lombok.NonNull;
+import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.title.Title;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -20,10 +18,6 @@ import java.util.Collection;
 import java.util.Map;
 
 public class BukkitNotice extends Notice<CommandSender> {
-
-    public BukkitNotice(@NonNull NoticeType type, @NonNull String text, int duration) {
-        super(type, text, duration);
-    }
 
     public BukkitNotice(@NonNull NoticeType type, @NonNull String text) {
         super(type, text);
@@ -39,10 +33,7 @@ public class BukkitNotice extends Notice<CommandSender> {
 
     @Override
     public void send(@NonNull CommandSender sender) {
-        final MiniMessage miniMessage = BukkitNoticeProvider.getInstance().getMiniMessage();
-        final Component component = miniMessage.deserialize(this.getText());
-
-        this.sendFormatted(sender, Legacy.serialize(component));
+        this.sendFormatted(sender, this.getText());
     }
 
     @Override
@@ -54,12 +45,10 @@ public class BukkitNotice extends Notice<CommandSender> {
     public void send(@NonNull CommandSender sender, @NonNull Map<String, Object> mapReplacer) {
         final CompiledMessage compiledMessage = CompiledMessage.of(this.getText());
         final PlaceholderContext placeholderContext = PlaceholderContext.of(compiledMessage);
-        final MiniMessage miniMessage = BukkitNoticeProvider.getInstance().getMiniMessage();
-        final Component component = miniMessage.deserialize(placeholderContext
+
+        this.sendFormatted(sender, placeholderContext
                 .with(mapReplacer)
                 .apply());
-
-        this.sendFormatted(sender, Legacy.serialize(component));
     }
 
     @Override
@@ -67,38 +56,61 @@ public class BukkitNotice extends Notice<CommandSender> {
         senders.forEach(sender -> this.send(sender, mapReplacer));
     }
 
-    private void sendFormatted(@NonNull CommandSender sender, @NonNull String text) {
+    private void sendFormatted(@NonNull CommandSender sender, @NonNull String message) {
+        final MiniMessage miniMessage = BukkitNoticeProvider.getInstance().getMiniMessage();
+        final AudienceProvider audienceProvider = BukkitNoticeProvider.getInstance().getAudienceProvider();
+
         if (!(sender instanceof Player)) {
-            String[] split = text.split("%NEWLINE%");
-            Arrays.stream(split).forEach(sender::sendMessage);
+            String[] split = message.split(Notice.lineSeparator());
+            Arrays.stream(split).forEach(text -> {
+                final Component component = miniMessage.deserialize(text);
+                audienceProvider.console().sendMessage(component);
+            });
             return;
         }
 
         final Player player = (Player) sender;
         switch (this.getType()) {
             case CHAT: {
-                String[] split = text.split("%NEWLINE%");
-                Arrays.stream(split).forEach(sender::sendMessage);
+                String[] split = message.split(Notice.lineSeparator());
+                Arrays.stream(split).forEach(text -> {
+                    final Component component = miniMessage.deserialize(text);
+                    audienceProvider.console().sendMessage(component);
+                });
                 break;
             }
             case ACTION_BAR: {
-                ActionBar.sendActionBar(player, text.replace(Notice.lineSeparator(), ""));
+                final Component component = miniMessage.deserialize(message);
+                audienceProvider.player(player.getUniqueId()).sendActionBar(component);
                 break;
             }
             case TITLE: {
-                Titles.sendTitle(player, text.replace(Notice.lineSeparator(), ""), " ");
+                final Component component = miniMessage.deserialize(message);
+                final Component emptyComponent = miniMessage.deserialize(" ");
+
+                Title title = Title.title(component, emptyComponent);
+                audienceProvider.player(player.getUniqueId()).showTitle(title);
                 break;
             }
             case SUBTITLE: {
-                Titles.sendTitle(player, " ", text.replace(Notice.lineSeparator(), ""));
+                final Component component = miniMessage.deserialize(message);
+                final Component emptyComponent = miniMessage.deserialize(" ");
+
+                Title title = Title.title(emptyComponent, component);
+                audienceProvider.player(player.getUniqueId()).showTitle(title);
                 break;
             }
             case TITLE_SUBTITLE: {
-                String[] split = text.split(Notice.lineSeparator());
+                String[] split = message.split(Notice.lineSeparator());
                 if (split.length == 0) {
                     throw new NoticeException("Notice with TITLE_SUBTITLE need have " + Notice.lineSeparator() + " to include title with subtitle.");
                 }
-                Titles.sendTitle(player, split[0], split[1]);
+
+                final Component component = miniMessage.deserialize(split[0]);
+                final Component subComponent = miniMessage.deserialize(split[1]);
+
+                Title title = Title.title(component, subComponent);
+                audienceProvider.player(player.getUniqueId()).showTitle(title);
                 break;
             }
             default:

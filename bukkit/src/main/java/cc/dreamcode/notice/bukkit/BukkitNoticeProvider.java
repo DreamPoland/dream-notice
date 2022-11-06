@@ -14,6 +14,7 @@ public class BukkitNoticeProvider {
 
     @Getter private final Plugin plugin;
     @Getter private final MiniMessage miniMessage;
+    @Getter private final AudienceProvider audienceProvider;
 
     public BukkitNoticeProvider(@NonNull Plugin plugin) {
         instance = this;
@@ -22,6 +23,7 @@ public class BukkitNoticeProvider {
         this.miniMessage = MiniMessage.builder()
                 .postProcessor(new LegacyColorProcessor())
                 .build();
+        this.audienceProvider = BukkitAudiences.create(this.plugin);
     }
 
     public static BukkitNoticeProvider create(@NonNull Plugin plugin) {

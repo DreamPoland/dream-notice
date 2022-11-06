@@ -16,7 +16,6 @@ public abstract class Notice<C> {
 
     private final NoticeType type;
     private final String text;
-    private int duration = 70;
 
     public Notice(@NonNull NoticeType type, @NonNull String... texts) {
         this.type = type;
