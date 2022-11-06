@@ -3,12 +3,14 @@ package cc.dreamcode.notice.bukkit;
 import cc.dreamcode.notice.Notice;
 import cc.dreamcode.notice.NoticeException;
 import cc.dreamcode.notice.NoticeType;
+import cc.dreamcode.notice.bukkit.legacy.Legacy;
 import com.cryptomorin.xseries.messages.ActionBar;
 import com.cryptomorin.xseries.messages.Titles;
-import com.iridium.iridiumcolorapi.IridiumColorAPI;
 import eu.okaeri.placeholders.context.PlaceholderContext;
 import eu.okaeri.placeholders.message.CompiledMessage;
 import lombok.NonNull;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -36,8 +38,8 @@ public class BukkitNotice extends Notice<CommandSender> {
 
     @Override
     public void send(@NonNull CommandSender sender) {
-        final String colored = IridiumColorAPI.process(this.getText());
-        this.sendFormatted(sender, colored);
+        final Component component = MiniMessage.miniMessage().deserialize(this.getText());
+        this.sendFormatted(sender, Legacy.AMPERSAND_SERIALIZER.serialize(component));
     }
 
     @Override
@@ -47,7 +49,8 @@ public class BukkitNotice extends Notice<CommandSender> {
 
     @Override
     public void send(@NonNull CommandSender sender, @NonNull Map<String, Object> mapReplacer) {
-        final String colored = IridiumColorAPI.process(this.getText());
+        final Component component = MiniMessage.miniMessage().deserialize(this.getText());
+        final String colored = Legacy.AMPERSAND_SERIALIZER.serialize(component);
         final CompiledMessage compiledMessage = CompiledMessage.of(colored);
         final PlaceholderContext placeholderContext = PlaceholderContext.of(compiledMessage);
 
