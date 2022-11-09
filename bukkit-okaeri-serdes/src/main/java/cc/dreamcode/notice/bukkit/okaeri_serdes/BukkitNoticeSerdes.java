@@ -1,4 +1,4 @@
-package cc.dreamcode.notice.okaeri_serdes;
+package cc.dreamcode.notice.bukkit.okaeri_serdes;
 
 import cc.dreamcode.notice.NoticeType;
 import cc.dreamcode.notice.bukkit.BukkitNotice;

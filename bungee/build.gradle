@@ -1,11 +1,11 @@
 dependencies {
     implementation project(":core")
 
-    compileOnly 'org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT'
+    compileOnly 'net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT'
 
-    implementation 'eu.okaeri:okaeri-placeholders-bukkit:4.0.3'
+    implementation 'eu.okaeri:okaeri-placeholders-bungee:4.0.3'
     implementation "net.kyori:adventure-text-minimessage:4.11.0"
-    implementation "net.kyori:adventure-platform-bukkit:4.1.2"
+    implementation "net.kyori:adventure-platform-bungeecord:4.1.2"
 
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'

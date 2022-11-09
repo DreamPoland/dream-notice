@@ -2,4 +2,6 @@ rootProject.name = 'dream-notice'
 
 include 'core'
 include 'bukkit'
+include 'bungee'
 include 'bukkit-okaeri-serdes'
+include 'bungee-okaeri-serdes'
