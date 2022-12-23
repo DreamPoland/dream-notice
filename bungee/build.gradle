@@ -5,7 +5,7 @@ dependencies {
 
     implementation 'eu.okaeri:okaeri-placeholders-bungee:4.0.3'
     implementation "net.kyori:adventure-text-minimessage:4.11.0"
-    implementation "net.kyori:adventure-platform-bungeecord:4.1.2"
+    implementation "net.kyori:adventure-platform-bungeecord:4.2.0"
 
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
