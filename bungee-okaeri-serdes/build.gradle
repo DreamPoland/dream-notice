@@ -4,7 +4,7 @@ dependencies {
 
     compileOnly 'net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT'
 
-    implementation "eu.okaeri:okaeri-configs-core:4.0.8"
+    implementation "eu.okaeri:okaeri-configs-core:4.0.9"
 
     // -- lombok --
     compileOnly 'org.projectlombok:lombok:1.18.24'
