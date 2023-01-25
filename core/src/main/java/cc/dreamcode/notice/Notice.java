@@ -28,6 +28,11 @@ public abstract class Notice<C> {
     public abstract void send(@NonNull Collection<C> cCollection);
     public abstract void send(@NonNull C c, @NonNull Map<String, Object> mapReplacer);
     public abstract void send(@NonNull Collection<C> cCollection, @NonNull Map<String, Object> mapReplacer);
+    public abstract void sendAll();
+    public abstract void sendAll(@NonNull Map<String, Object> mapReplacer);
+
+    public abstract void sendAllWithPermission(@NonNull String permission);
+    public abstract void sendAllWithPermission(@NonNull String permission, @NonNull Map<String, Object> mapReplacer);
 
     public static String lineSeparator() {
         return "%NEWLINE%";

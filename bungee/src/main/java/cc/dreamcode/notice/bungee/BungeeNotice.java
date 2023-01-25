@@ -11,6 +11,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.Arrays;
@@ -54,6 +55,32 @@ public class BungeeNotice extends Notice<CommandSender> {
     @Override
     public void send(@NonNull Collection<CommandSender> senders, @NonNull Map<String, Object> mapReplacer) {
         senders.forEach(sender -> this.send(sender, mapReplacer));
+    }
+
+    @Override
+    public void sendAll() {
+        ProxyServer.getInstance().getPlayers().forEach(this::send);
+    }
+
+    @Override
+    public void sendAll(@NonNull Map<String, Object> mapReplacer) {
+        ProxyServer.getInstance().getPlayers().forEach(player -> this.send(player, mapReplacer));
+    }
+
+    @Override
+    public void sendAllWithPermission(@NonNull String permission) {
+        ProxyServer.getInstance().getPlayers()
+                .stream()
+                .filter(player -> player.hasPermission(permission))
+                .forEach(this::send);
+    }
+
+    @Override
+    public void sendAllWithPermission(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
+        ProxyServer.getInstance().getPlayers()
+                .stream()
+                .filter(player -> player.hasPermission(permission))
+                .forEach(player -> this.send(player, mapReplacer));
     }
 
     private void sendFormatted(@NonNull CommandSender sender, @NonNull String message) {

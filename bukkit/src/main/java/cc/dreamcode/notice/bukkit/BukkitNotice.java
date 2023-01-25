@@ -10,6 +10,7 @@ import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -54,6 +55,32 @@ public class BukkitNotice extends Notice<CommandSender> {
     @Override
     public void send(@NonNull Collection<CommandSender> senders, @NonNull Map<String, Object> mapReplacer) {
         senders.forEach(sender -> this.send(sender, mapReplacer));
+    }
+
+    @Override
+    public void sendAll() {
+        Bukkit.getOnlinePlayers().forEach(this::send);
+    }
+
+    @Override
+    public void sendAll(@NonNull Map<String, Object> mapReplacer) {
+        Bukkit.getOnlinePlayers().forEach(player -> this.send(player, mapReplacer));
+    }
+
+    @Override
+    public void sendAllWithPermission(@NonNull String permission) {
+        Bukkit.getOnlinePlayers()
+                .stream()
+                .filter(player -> player.hasPermission(permission))
+                .forEach(this::send);
+    }
+
+    @Override
+    public void sendAllWithPermission(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
+        Bukkit.getOnlinePlayers()
+                .stream()
+                .filter(player -> player.hasPermission(permission))
+                .forEach(player -> this.send(player, mapReplacer));
     }
 
     private void sendFormatted(@NonNull CommandSender sender, @NonNull String message) {
