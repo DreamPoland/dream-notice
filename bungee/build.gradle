@@ -3,7 +3,7 @@ dependencies {
 
     compileOnly 'net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT'
 
-    implementation 'eu.okaeri:okaeri-placeholders-bungee:4.0.4'
+    implementation 'eu.okaeri:okaeri-placeholders-bungee:4.0.5'
     implementation "net.kyori:adventure-text-minimessage:4.12.0"
     implementation "net.kyori:adventure-platform-bungeecord:4.2.0"
 
