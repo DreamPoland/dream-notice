@@ -98,6 +98,9 @@ public class BukkitNotice extends Notice<CommandSender> {
 
         final Player player = (Player) sender;
         switch (this.getType()) {
+            case DO_NOT_SEND: {
+                break;
+            }
             case CHAT: {
                 String[] split = message.split(Notice.lineSeparator());
                 Arrays.stream(split).forEach(text -> {

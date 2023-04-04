@@ -1,5 +1,5 @@
 package cc.dreamcode.notice;
 
 public enum NoticeType {
-    CHAT, ACTION_BAR, SUBTITLE, TITLE, TITLE_SUBTITLE
+    DO_NOT_SEND, CHAT, ACTION_BAR, SUBTITLE, TITLE, TITLE_SUBTITLE
 }

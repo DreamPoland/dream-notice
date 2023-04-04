@@ -98,6 +98,9 @@ public class BungeeNotice extends Notice<CommandSender> {
 
         final ProxiedPlayer player = (ProxiedPlayer) sender;
         switch (this.getType()) {
+            case DO_NOT_SEND: {
+                break;
+            }
             case CHAT: {
                 String[] split = message.split(Notice.lineSeparator());
                 Arrays.stream(split).forEach(text -> {
