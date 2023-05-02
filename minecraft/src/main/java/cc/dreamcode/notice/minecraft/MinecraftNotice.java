@@ -1,4 +1,4 @@
-package cc.dreamcode.notice;
+package cc.dreamcode.notice.minecraft;
 
 import lombok.Data;
 import lombok.NonNull;
@@ -10,12 +10,12 @@ import java.util.Map;
 
 @Data
 @RequiredArgsConstructor
-public abstract class Notice<C> {
+public abstract class MinecraftNotice<C> {
 
-    private final NoticeType type;
+    private final MinecraftNoticeType type;
     private final String text;
 
-    public Notice(@NonNull NoticeType type, @NonNull String... texts) {
+    public MinecraftNotice(@NonNull MinecraftNoticeType type, @NonNull String... texts) {
         this.type = type;
 
         final StringBuilder stringBuilder = new StringBuilder();

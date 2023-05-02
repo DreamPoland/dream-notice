@@ -1,9 +1,13 @@
 rootProject.name = 'dream-notice'
 
 include ':minecraft'
+include ':discord'
 
 include ':bukkit'
 include ':bukkit-serdes'
 
 include ':bungee'
 include ':bungee-serdes'
+
+include ':javacord'
+include ':javacord-serdes'
