@@ -1,12 +1,24 @@
-dependencies {
-    implementation project(":core")
+repositories {
+    maven { url "https://repo.codemc.io/repository/nms" }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
 
+dependencies {
+    implementation project(":minecraft")
+
+    // -- spigot api -- (core)
     compileOnly 'org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT'
 
+    // -- placeholders --
     implementation 'eu.okaeri:okaeri-placeholders-bukkit:4.0.7'
-    implementation "net.kyori:adventure-text-minimessage:4.13.0"
-    implementation 'net.kyori:adventure-platform-bukkit:4.3.0'
 
+    // -- dream-utilities --
+    implementation "cc.dreamcode:utilities-bukkit:1.2.12"
+
+    // -- x-series --
+    implementation 'com.github.cryptomorin:XSeries:9.3.1'
+
+    // -- lombok --
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
     testCompileOnly 'org.projectlombok:lombok:1.18.26'

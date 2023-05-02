@@ -1,11 +1,4 @@
 dependencies {
-    implementation project(":core")
-    implementation project(":bungee")
-
-    compileOnly 'net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT'
-
-    implementation "eu.okaeri:okaeri-configs-core:4.0.9"
-
     // -- lombok --
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'

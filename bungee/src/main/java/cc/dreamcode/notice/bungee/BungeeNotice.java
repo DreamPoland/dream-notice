@@ -3,15 +3,15 @@ package cc.dreamcode.notice.bungee;
 import cc.dreamcode.notice.Notice;
 import cc.dreamcode.notice.NoticeException;
 import cc.dreamcode.notice.NoticeType;
+import cc.dreamcode.utilities.bungee.ChatUtil;
 import eu.okaeri.placeholders.context.PlaceholderContext;
 import eu.okaeri.placeholders.message.CompiledMessage;
 import lombok.NonNull;
-import net.kyori.adventure.platform.AudienceProvider;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.title.Title;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.Title;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.Arrays;
@@ -84,15 +84,10 @@ public class BungeeNotice extends Notice<CommandSender> {
     }
 
     private void sendFormatted(@NonNull CommandSender sender, @NonNull String message) {
-        final MiniMessage miniMessage = BungeeNoticeProvider.getInstance().getMiniMessage();
-        final AudienceProvider audienceProvider = BungeeNoticeProvider.getInstance().getAudienceProvider();
-
         if (!(sender instanceof ProxiedPlayer)) {
             String[] split = message.split(Notice.lineSeparator());
-            Arrays.stream(split).forEach(text -> {
-                final Component component = miniMessage.deserialize(text);
-                audienceProvider.console().sendMessage(component);
-            });
+            Arrays.stream(split).forEach(text ->
+                    sender.sendMessage(new TextComponent(ChatUtil.fixColor(text))));
             return;
         }
 
@@ -103,31 +98,26 @@ public class BungeeNotice extends Notice<CommandSender> {
             }
             case CHAT: {
                 String[] split = message.split(Notice.lineSeparator());
-                Arrays.stream(split).forEach(text -> {
-                    final Component component = miniMessage.deserialize(text);
-                    audienceProvider.player(player.getUniqueId()).sendMessage(component);
-                });
+                Arrays.stream(split).forEach(text ->
+                        player.sendMessage(new TextComponent(ChatUtil.fixColor(text))));
                 break;
             }
             case ACTION_BAR: {
-                final Component component = miniMessage.deserialize(message);
-                audienceProvider.player(player.getUniqueId()).sendActionBar(component);
+                player.sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatUtil.fixColor(message.replace(Notice.lineSeparator(), ""))));
                 break;
             }
             case TITLE: {
-                final Component component = miniMessage.deserialize(message);
-                final Component emptyComponent = miniMessage.deserialize(" ");
+                Title title = ProxyServer.getInstance().createTitle();
+                title.title(new TextComponent(ChatUtil.fixColor(message.replace(Notice.lineSeparator(), ""))));
 
-                Title title = Title.title(component, emptyComponent);
-                audienceProvider.player(player.getUniqueId()).showTitle(title);
+                player.sendTitle(title);
                 break;
             }
             case SUBTITLE: {
-                final Component component = miniMessage.deserialize(message);
-                final Component emptyComponent = miniMessage.deserialize(" ");
+                Title title = ProxyServer.getInstance().createTitle();
+                title.subTitle(new TextComponent(ChatUtil.fixColor(message.replace(Notice.lineSeparator(), ""))));
 
-                Title title = Title.title(emptyComponent, component);
-                audienceProvider.player(player.getUniqueId()).showTitle(title);
+                player.sendTitle(title);
                 break;
             }
             case TITLE_SUBTITLE: {
@@ -136,11 +126,14 @@ public class BungeeNotice extends Notice<CommandSender> {
                     throw new NoticeException("Notice with TITLE_SUBTITLE need have " + Notice.lineSeparator() + " to include title with subtitle.");
                 }
 
-                final Component component = miniMessage.deserialize(split[0]);
-                final Component subComponent = miniMessage.deserialize(split[1]);
+                final String title = ChatUtil.fixColor(split[0]);
+                final String subTitle = ChatUtil.fixColor(split[1]);
 
-                Title title = Title.title(component, subComponent);
-                audienceProvider.player(player.getUniqueId()).showTitle(title);
+                Title titleBuilder = ProxyServer.getInstance().createTitle();
+                titleBuilder.title(new TextComponent(title));
+                titleBuilder.subTitle(new TextComponent(subTitle));
+
+                player.sendTitle(titleBuilder);
                 break;
             }
             default:
