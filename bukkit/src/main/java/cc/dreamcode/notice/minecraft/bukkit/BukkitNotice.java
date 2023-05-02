@@ -1,35 +1,34 @@
-package cc.dreamcode.notice.minecraft.bungee;
+package cc.dreamcode.notice.minecraft.bukkit;
 
 import cc.dreamcode.notice.minecraft.MinecraftNotice;
 import cc.dreamcode.notice.minecraft.MinecraftNoticeException;
 import cc.dreamcode.notice.minecraft.MinecraftNoticeType;
-import cc.dreamcode.utilities.bungee.ChatUtil;
+import cc.dreamcode.utilities.bukkit.ChatUtil;
+import com.cryptomorin.xseries.messages.ActionBar;
+import com.cryptomorin.xseries.messages.Titles;
 import eu.okaeri.placeholders.context.PlaceholderContext;
 import eu.okaeri.placeholders.message.CompiledMessage;
 import lombok.NonNull;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.Title;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-public class BungeeMinecraftNotice extends MinecraftNotice<CommandSender> {
+public class BukkitNotice extends MinecraftNotice<CommandSender> {
 
-    public BungeeMinecraftNotice(@NonNull MinecraftNoticeType type, @NonNull String text) {
+    public BukkitNotice(@NonNull MinecraftNoticeType type, @NonNull String text) {
         super(type, text);
     }
 
-    public BungeeMinecraftNotice(@NonNull MinecraftNoticeType type, @NonNull String... texts) {
+    public BukkitNotice(@NonNull MinecraftNoticeType type, @NonNull String... texts) {
         super(type, texts);
     }
 
-    public static BungeeMinecraftNotice of(@NonNull MinecraftNoticeType type, @NonNull String... texts) {
-        return new BungeeMinecraftNotice(type, texts);
+    public static BukkitNotice of(@NonNull MinecraftNoticeType type, @NonNull String... texts) {
+        return new BukkitNotice(type, texts);
     }
 
     @Override
@@ -59,17 +58,17 @@ public class BungeeMinecraftNotice extends MinecraftNotice<CommandSender> {
 
     @Override
     public void sendAll() {
-        ProxyServer.getInstance().getPlayers().forEach(this::send);
+        Bukkit.getOnlinePlayers().forEach(this::send);
     }
 
     @Override
     public void sendAll(@NonNull Map<String, Object> mapReplacer) {
-        ProxyServer.getInstance().getPlayers().forEach(player -> this.send(player, mapReplacer));
+        Bukkit.getOnlinePlayers().forEach(player -> this.send(player, mapReplacer));
     }
 
     @Override
     public void sendAllWithPermission(@NonNull String permission) {
-        ProxyServer.getInstance().getPlayers()
+        Bukkit.getOnlinePlayers()
                 .stream()
                 .filter(player -> player.hasPermission(permission))
                 .forEach(this::send);
@@ -77,21 +76,21 @@ public class BungeeMinecraftNotice extends MinecraftNotice<CommandSender> {
 
     @Override
     public void sendAllWithPermission(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
-        ProxyServer.getInstance().getPlayers()
+        Bukkit.getOnlinePlayers()
                 .stream()
                 .filter(player -> player.hasPermission(permission))
                 .forEach(player -> this.send(player, mapReplacer));
     }
 
     private void sendFormatted(@NonNull CommandSender sender, @NonNull String message) {
-        if (!(sender instanceof ProxiedPlayer)) {
+        if (!(sender instanceof Player)) {
             String[] split = message.split(MinecraftNotice.lineSeparator());
             Arrays.stream(split).forEach(text ->
-                    sender.sendMessage(new TextComponent(ChatUtil.fixColor(text))));
+                    sender.sendMessage(ChatUtil.fixColor(text)));
             return;
         }
 
-        final ProxiedPlayer player = (ProxiedPlayer) sender;
+        final Player player = (Player) sender;
         switch (this.getType()) {
             case DO_NOT_SEND: {
                 break;
@@ -99,25 +98,19 @@ public class BungeeMinecraftNotice extends MinecraftNotice<CommandSender> {
             case CHAT: {
                 String[] split = message.split(MinecraftNotice.lineSeparator());
                 Arrays.stream(split).forEach(text ->
-                        player.sendMessage(new TextComponent(ChatUtil.fixColor(text))));
+                        player.sendMessage(ChatUtil.fixColor(text)));
                 break;
             }
             case ACTION_BAR: {
-                player.sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), ""))));
+                ActionBar.sendActionBar(player, ChatUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), "")));
                 break;
             }
             case TITLE: {
-                Title title = ProxyServer.getInstance().createTitle();
-                title.title(new TextComponent(ChatUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), ""))));
-
-                player.sendTitle(title);
+                Titles.sendTitle(player, ChatUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), "")), "");
                 break;
             }
             case SUBTITLE: {
-                Title title = ProxyServer.getInstance().createTitle();
-                title.subTitle(new TextComponent(ChatUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), ""))));
-
-                player.sendTitle(title);
+                Titles.sendTitle(player, "", ChatUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), "")));
                 break;
             }
             case TITLE_SUBTITLE: {
@@ -129,11 +122,7 @@ public class BungeeMinecraftNotice extends MinecraftNotice<CommandSender> {
                 final String title = ChatUtil.fixColor(split[0]);
                 final String subTitle = ChatUtil.fixColor(split[1]);
 
-                Title titleBuilder = ProxyServer.getInstance().createTitle();
-                titleBuilder.title(new TextComponent(title));
-                titleBuilder.subTitle(new TextComponent(subTitle));
-
-                player.sendTitle(titleBuilder);
+                Titles.sendTitle(player, title, subTitle);
                 break;
             }
             default:

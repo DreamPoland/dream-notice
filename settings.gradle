@@ -8,6 +8,3 @@ include ':bukkit-serdes'
 
 include ':bungee'
 include ':bungee-serdes'
-
-include ':javacord'
-include ':javacord-serdes'
