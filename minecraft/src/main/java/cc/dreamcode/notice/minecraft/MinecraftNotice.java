@@ -2,14 +2,12 @@ package cc.dreamcode.notice.minecraft;
 
 import lombok.Data;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
 @Data
-@RequiredArgsConstructor
 public abstract class MinecraftNotice<C> {
 
     private final MinecraftNoticeType type;
