@@ -13,7 +13,7 @@ dependencies {
     implementation 'eu.okaeri:okaeri-placeholders-bungee:4.0.7'
 
     // -- dream-utilities --
-    implementation "cc.dreamcode:utilities-bungee:1.2.14"
+    implementation "cc.dreamcode:utilities-bungee:1.2.15"
 
     // -- lombok --
     compileOnly 'org.projectlombok:lombok:1.18.28'
