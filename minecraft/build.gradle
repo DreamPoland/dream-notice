@@ -1,4 +1,7 @@
 dependencies {
+    // -- dream-utilities --
+    implementation "cc.dreamcode:utilities:1.2.15"
+
     // -- lombok --
     compileOnly 'org.projectlombok:lombok:1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'

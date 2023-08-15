@@ -1,13 +1,15 @@
 package cc.dreamcode.notice.minecraft;
 
+import cc.dreamcode.utilities.StringUtil;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
 @Data
+@RequiredArgsConstructor
 public abstract class MinecraftNotice<C> {
 
     private final MinecraftNoticeType type;
@@ -15,11 +17,7 @@ public abstract class MinecraftNotice<C> {
 
     public MinecraftNotice(@NonNull MinecraftNoticeType type, @NonNull String... texts) {
         this.type = type;
-
-        final StringBuilder stringBuilder = new StringBuilder();
-        Arrays.stream(texts).forEach(text ->
-                stringBuilder.append(text).append(lineSeparator()));
-        this.text = stringBuilder.toString();
+        this.text = StringUtil.join(texts, lineSeparator());
     }
 
     public abstract void send(@NonNull C c);
