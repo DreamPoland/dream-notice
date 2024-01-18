@@ -3,9 +3,8 @@ package cc.dreamcode.notice.minecraft.bungee;
 import cc.dreamcode.notice.minecraft.MinecraftNotice;
 import cc.dreamcode.notice.minecraft.MinecraftNoticeException;
 import cc.dreamcode.notice.minecraft.MinecraftNoticeType;
-import cc.dreamcode.utilities.bungee.ChatUtil;
-import eu.okaeri.placeholders.context.PlaceholderContext;
-import eu.okaeri.placeholders.message.CompiledMessage;
+import cc.dreamcode.utilities.StringUtil;
+import cc.dreamcode.utilities.bungee.StringColorUtil;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.CommandSender;
@@ -44,12 +43,7 @@ public class BungeeNotice extends MinecraftNotice<CommandSender> {
 
     @Override
     public void send(@NonNull CommandSender sender, @NonNull Map<String, Object> mapReplacer) {
-        final CompiledMessage compiledMessage = CompiledMessage.of(this.getText());
-        final PlaceholderContext placeholderContext = PlaceholderContext.of(compiledMessage);
-
-        this.sendFormatted(sender, placeholderContext
-                .with(mapReplacer)
-                .apply());
+        this.sendFormatted(sender, StringUtil.replace(this.getText(), mapReplacer));
     }
 
     @Override
@@ -87,7 +81,7 @@ public class BungeeNotice extends MinecraftNotice<CommandSender> {
         if (!(sender instanceof ProxiedPlayer)) {
             String[] split = message.split(MinecraftNotice.lineSeparator());
             Arrays.stream(split).forEach(text ->
-                    sender.sendMessage(new TextComponent(ChatUtil.fixColor(text))));
+                    sender.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
             return;
         }
 
@@ -99,23 +93,23 @@ public class BungeeNotice extends MinecraftNotice<CommandSender> {
             case CHAT: {
                 String[] split = message.split(MinecraftNotice.lineSeparator());
                 Arrays.stream(split).forEach(text ->
-                        player.sendMessage(new TextComponent(ChatUtil.fixColor(text))));
+                        player.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
                 break;
             }
             case ACTION_BAR: {
-                player.sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), ""))));
+                player.sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(StringColorUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), ""))));
                 break;
             }
             case TITLE: {
                 Title title = ProxyServer.getInstance().createTitle();
-                title.title(new TextComponent(ChatUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), ""))));
+                title.title(new TextComponent(StringColorUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), ""))));
 
                 player.sendTitle(title);
                 break;
             }
             case SUBTITLE: {
                 Title title = ProxyServer.getInstance().createTitle();
-                title.subTitle(new TextComponent(ChatUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), ""))));
+                title.subTitle(new TextComponent(StringColorUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), ""))));
 
                 player.sendTitle(title);
                 break;
@@ -126,8 +120,8 @@ public class BungeeNotice extends MinecraftNotice<CommandSender> {
                     throw new MinecraftNoticeException("Notice with TITLE_SUBTITLE need have " + MinecraftNotice.lineSeparator() + " to include title with subtitle.");
                 }
 
-                final String title = ChatUtil.fixColor(split[0]);
-                final String subTitle = ChatUtil.fixColor(split[1]);
+                final String title = StringColorUtil.fixColor(split[0]);
+                final String subTitle = StringColorUtil.fixColor(split[1]);
 
                 Title titleBuilder = ProxyServer.getInstance().createTitle();
                 titleBuilder.title(new TextComponent(title));

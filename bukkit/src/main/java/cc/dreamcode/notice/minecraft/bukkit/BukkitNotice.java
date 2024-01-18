@@ -3,11 +3,10 @@ package cc.dreamcode.notice.minecraft.bukkit;
 import cc.dreamcode.notice.minecraft.MinecraftNotice;
 import cc.dreamcode.notice.minecraft.MinecraftNoticeException;
 import cc.dreamcode.notice.minecraft.MinecraftNoticeType;
-import cc.dreamcode.utilities.bukkit.ChatUtil;
+import cc.dreamcode.utilities.StringUtil;
+import cc.dreamcode.utilities.bukkit.StringColorUtil;
 import com.cryptomorin.xseries.messages.ActionBar;
 import com.cryptomorin.xseries.messages.Titles;
-import eu.okaeri.placeholders.context.PlaceholderContext;
-import eu.okaeri.placeholders.message.CompiledMessage;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -43,12 +42,7 @@ public class BukkitNotice extends MinecraftNotice<CommandSender> {
 
     @Override
     public void send(@NonNull CommandSender sender, @NonNull Map<String, Object> mapReplacer) {
-        final CompiledMessage compiledMessage = CompiledMessage.of(this.getText());
-        final PlaceholderContext placeholderContext = PlaceholderContext.of(compiledMessage);
-
-        this.sendFormatted(sender, placeholderContext
-                .with(mapReplacer)
-                .apply());
+        this.sendFormatted(sender, StringUtil.replace(this.getText(), mapReplacer));
     }
 
     @Override
@@ -86,7 +80,7 @@ public class BukkitNotice extends MinecraftNotice<CommandSender> {
         if (!(sender instanceof Player)) {
             String[] split = message.split(MinecraftNotice.lineSeparator());
             Arrays.stream(split).forEach(text ->
-                    sender.sendMessage(ChatUtil.fixColor(text)));
+                    sender.sendMessage(StringColorUtil.fixColor(text)));
             return;
         }
 
@@ -98,19 +92,19 @@ public class BukkitNotice extends MinecraftNotice<CommandSender> {
             case CHAT: {
                 String[] split = message.split(MinecraftNotice.lineSeparator());
                 Arrays.stream(split).forEach(text ->
-                        player.sendMessage(ChatUtil.fixColor(text)));
+                        player.sendMessage(StringColorUtil.fixColor(text)));
                 break;
             }
             case ACTION_BAR: {
-                ActionBar.sendActionBar(player, ChatUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), "")));
+                ActionBar.sendActionBar(player, StringColorUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), "")));
                 break;
             }
             case TITLE: {
-                Titles.sendTitle(player, ChatUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), "")), "");
+                Titles.sendTitle(player, StringColorUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), "")), "");
                 break;
             }
             case SUBTITLE: {
-                Titles.sendTitle(player, "", ChatUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), "")));
+                Titles.sendTitle(player, "", StringColorUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), "")));
                 break;
             }
             case TITLE_SUBTITLE: {
@@ -119,8 +113,8 @@ public class BukkitNotice extends MinecraftNotice<CommandSender> {
                     throw new MinecraftNoticeException("Notice with TITLE_SUBTITLE need have " + MinecraftNotice.lineSeparator() + " to include title with subtitle.");
                 }
 
-                final String title = ChatUtil.fixColor(split[0]);
-                final String subTitle = ChatUtil.fixColor(split[1]);
+                final String title = StringColorUtil.fixColor(split[0]);
+                final String subTitle = StringColorUtil.fixColor(split[1]);
 
                 Titles.sendTitle(player, title, subTitle);
                 break;
