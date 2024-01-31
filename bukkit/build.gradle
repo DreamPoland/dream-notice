@@ -13,8 +13,8 @@ dependencies {
     implementation 'eu.okaeri:okaeri-placeholders-core:4.0.7'
 
     // -- dream-utilities --
-    implementation "cc.dreamcode:utilities:1.2.22"
-    implementation "cc.dreamcode:utilities-bukkit:1.2.22"
+    implementation "cc.dreamcode:utilities:1.2.23"
+    implementation "cc.dreamcode:utilities-bukkit:1.2.23"
 
     // -- x-series --
     implementation 'com.github.cryptomorin:XSeries:9.8.1'
