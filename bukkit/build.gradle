@@ -17,7 +17,7 @@ dependencies {
     implementation "cc.dreamcode:utilities-bukkit:1.2.23"
 
     // -- x-series --
-    implementation 'com.github.cryptomorin:XSeries:9.8.1'
+    implementation 'com.github.cryptomorin:XSeries:9.9.0'
 
     // -- lombok --
     compileOnly 'org.projectlombok:lombok:1.18.30'
