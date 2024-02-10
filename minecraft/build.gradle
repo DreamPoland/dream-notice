@@ -1,6 +1,6 @@
 dependencies {
     // -- dream-utilities --
-    implementation "cc.dreamcode:utilities:1.2.23"
+    implementation "cc.dreamcode:utilities:1.2.24"
 
     // -- lombok --
     compileOnly 'org.projectlombok:lombok:1.18.30'
