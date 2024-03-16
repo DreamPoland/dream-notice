@@ -24,11 +24,11 @@ maven { url "https://repo.dreamcode.cc/releases" }
 <dependency>
   <groupId>cc.dreamcode.notice</groupId>
   <artifactId>{platform}</artifactId>
-  <version>1.4-beta.1</version>
+  <version>1.4-beta.2</version>
 </dependency>
 ```
 ```groovy
-implementation "cc.dreamcode.notice:{platform}:1.4-beta.1"
+implementation "cc.dreamcode.notice:{platform}:1.4-beta.2"
 ```
 
 For project content, open project modules and see the contents of the classes. (todo)
