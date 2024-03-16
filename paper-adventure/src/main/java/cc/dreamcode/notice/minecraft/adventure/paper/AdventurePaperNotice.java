@@ -18,6 +18,10 @@ import java.util.Map;
 public class AdventurePaperNotice extends AdventureNotice<AdventurePaperNotice> implements AdventurePaperSender {
     public AdventurePaperNotice(@NonNull MinecraftNoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
+
+        if (!AdventurePaperVerifier.verifyVersion()) {
+            throw new RuntimeException("AdventurePaper need Paper software (or his fork) and Mini-Message implementation. (1.17.1+)");
+        }
     }
 
     public static AdventurePaperNotice of(@NonNull MinecraftNoticeType noticeType, @NonNull String... noticeText) {
