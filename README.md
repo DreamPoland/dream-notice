@@ -1,24 +1,22 @@
-# Dream-Notice
-Bukkit/Bungee notice library for easy sending messsage.
 
+# Dream-Notice
+
+Simple notice library with placeholders and minimessages.
+
+
+## Platforms
+
+- Bukkit/Spigot/Paper - [bukkit](https://github.com/DreamPoland/dream-notice/tree/master/bukkit) or [bukkit-adventure](https://github.com/DreamPoland/dream-notice/tree/master/bukkit)
+- Bungee/Waterfall - [bungee](https://github.com/DreamPoland/dream-notice/tree/master/bukkit) or [bungee-adventure](https://github.com/DreamPoland/dream-notice/tree/master/bukkit)
+## Maven/Gradle
+
+### Maven
 ```xml
 <repository>
   <id>dreamcode-repository-releases</id>
   <url>https://repo.dreamcode.cc/releases</url>
 </repository>
 ```
-
-```groovy
-maven { url "https://repo.dreamcode.cc/releases" }
-```
-
-### Supported platforms:
-- [Minecraft](https://github.com/DreamPoland/dream-notice/tree/master/minecraft)
-^ [Bukkit](https://github.com/DreamPoland/dream-notice/tree/master/bukkit)
-^ [Bungee](https://github.com/DreamPoland/dream-notice/tree/master/bungee)
-- [Adventure](https://github.com/DreamPoland/dream-notice/tree/master/minecraft-adventure)
-^ [Bukkit](https://github.com/DreamPoland/dream-notice/tree/master/bukkit-adventure)
-^ [Bungee](https://github.com/DreamPoland/dream-notice/tree/master/bungee-adventure)
 
 ```xml
 <dependency>
@@ -27,8 +25,23 @@ maven { url "https://repo.dreamcode.cc/releases" }
   <version>1.4-beta.2</version>
 </dependency>
 ```
+
+### Gradle
+```groovy
+maven { url "https://repo.dreamcode.cc/releases" }
+```
+
 ```groovy
 implementation "cc.dreamcode.notice:{platform}:1.4-beta.2"
 ```
 
-For project content, open project modules and see the contents of the classes. (todo)
+## Example
+
+```java
+AdventureBukkitNotice.of(MinecraftNoticeType.CHAT, "&7Simple test {argument}.")
+        .with("argument", "player1")
+        .hoverEvent(HoverEvent.showText(AdventureLegacy.component("Text.")))
+        .clickEvent(ClickEvent.openUrl("https://dreamcode.cc"))
+        .send(player);
+```
+
