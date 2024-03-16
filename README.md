@@ -16,7 +16,9 @@ maven { url "https://repo.dreamcode.cc/releases" }
 - [Minecraft](https://github.com/DreamPoland/dream-notice/tree/master/minecraft)
 ^ [Bukkit](https://github.com/DreamPoland/dream-notice/tree/master/bukkit)
 ^ [Bungee](https://github.com/DreamPoland/dream-notice/tree/master/bungee)
-- [Discord](https://github.com/DreamPoland/dream-notice/tree/master/discord)
+- [Adventure](https://github.com/DreamPoland/dream-notice/tree/master/minecraft-adventure)
+^ [Bukkit](https://github.com/DreamPoland/dream-notice/tree/master/bukkit-adventure)
+^ [Bungee](https://github.com/DreamPoland/dream-notice/tree/master/bungee-adventure)
 
 ```xml
 <dependency>
