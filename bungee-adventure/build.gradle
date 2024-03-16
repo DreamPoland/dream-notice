@@ -15,9 +15,9 @@ dependencies {
     implementation "cc.dreamcode:utilities:1.2.25"
 
     // -- kyori-adventure --
-    implementation "net.kyori:adventure-text-minimessage:4.13.0"
-    implementation 'net.kyori:adventure-platform-bungeecord:4.3.0'
-    implementation "net.kyori:adventure-text-serializer-legacy:4.13.0"
+    implementation "net.kyori:adventure-text-minimessage:4.16.0"
+    implementation 'net.kyori:adventure-platform-bungeecord:4.3.2'
+    implementation "net.kyori:adventure-text-serializer-legacy:4.16.0"
 
     // -- lombok --
     compileOnly 'org.projectlombok:lombok:1.18.30'
