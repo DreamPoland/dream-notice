@@ -24,7 +24,7 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
         R respond = super.with(from, to);
 
         if (this.component != null) {
-            this.component = AdventureLegacy.component(this.getRender());
+            this.component = AdventureLegacy.deserialize(this.getRender());
         }
 
         return respond;
@@ -35,7 +35,7 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
         R respond = super.with(replaceMap);
 
         if (this.component != null) {
-            this.component = AdventureLegacy.component(this.getRender());
+            this.component = AdventureLegacy.deserialize(this.getRender());
         }
 
         return respond;
@@ -56,7 +56,7 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
     public Component toComponent() {
 
         if (this.component == null) {
-            this.component = AdventureLegacy.component(this.getRender());
+            this.component = AdventureLegacy.deserialize(this.getRender());
         }
 
         return this.component;

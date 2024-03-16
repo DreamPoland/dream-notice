@@ -41,7 +41,7 @@ implementation "cc.dreamcode.notice:{platform}:1.4-beta.6"
 ```java
 AdventureBukkitNotice.of(MinecraftNoticeType.CHAT, "&7Simple test {argument}.")
         .with("argument", "player1")
-        .hoverEvent(HoverEvent.showText(AdventureLegacy.component("Text.")))
+        .hoverEvent(HoverEvent.showText(AdventureLegacy.deserialize("Text.")))
         .clickEvent(ClickEvent.openUrl("https://dreamcode.cc"))
         .send(player);
 ```

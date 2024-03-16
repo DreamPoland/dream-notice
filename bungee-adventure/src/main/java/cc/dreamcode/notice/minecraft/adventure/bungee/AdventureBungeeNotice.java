@@ -95,7 +95,7 @@ public class AdventureBungeeNotice extends AdventureNotice<AdventureBungeeNotice
             }
             case TITLE: {
                 final Component component = this.toComponent();
-                final Component emptyComponent = AdventureLegacy.component(" ");
+                final Component emptyComponent = AdventureLegacy.deserialize(" ");
 
                 Title titleBuilder = Title.title(
                         component,
@@ -111,7 +111,7 @@ public class AdventureBungeeNotice extends AdventureNotice<AdventureBungeeNotice
                 break;
             }
             case SUBTITLE: {
-                final Component component = AdventureLegacy.component(" ");
+                final Component component = AdventureLegacy.deserialize(" ");
                 final Component emptyComponent = this.toComponent();
 
                 Title titleBuilder = Title.title(
@@ -134,8 +134,8 @@ public class AdventureBungeeNotice extends AdventureNotice<AdventureBungeeNotice
                     throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + MinecraftNotice.lineSeparator() + ") to separate two messages.");
                 }
 
-                final Component title = AdventureLegacy.component(split[0]);
-                final Component subTitle = AdventureLegacy.component(split[1]);
+                final Component title = AdventureLegacy.deserialize(split[0]);
+                final Component subTitle = AdventureLegacy.deserialize(split[1]);
 
                 Title titleBuilder = Title.title(
                         title,
