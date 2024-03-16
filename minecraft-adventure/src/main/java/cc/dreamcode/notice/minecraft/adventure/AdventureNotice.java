@@ -55,7 +55,7 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
 
     public Component toComponent() {
 
-        if (this.component.hoverEvent() == null) {
+        if (this.component == null) {
             this.component = AdventureLegacy.component(this.getRender());
         }
 
