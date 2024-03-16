@@ -9,7 +9,7 @@ import eu.okaeri.configs.serdes.ObjectSerializer;
 import eu.okaeri.configs.serdes.SerializationData;
 import lombok.NonNull;
 
-public class PaperNoticeSerializer implements ObjectSerializer<AdventurePaperNotice> {
+public class AdventurePaperNoticeSerializer implements ObjectSerializer<AdventurePaperNotice> {
     @Override
     public boolean supports(@NonNull Class<? super AdventurePaperNotice> type) {
         return MinecraftNotice.class.isAssignableFrom(type);
