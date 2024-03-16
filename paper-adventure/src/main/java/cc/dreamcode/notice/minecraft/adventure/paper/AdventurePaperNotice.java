@@ -1,35 +1,32 @@
-package cc.dreamcode.notice.minecraft.adventure.bungee;
+package cc.dreamcode.notice.minecraft.adventure.paper;
 
 import cc.dreamcode.notice.minecraft.MinecraftNotice;
 import cc.dreamcode.notice.minecraft.MinecraftNoticeType;
 import cc.dreamcode.notice.minecraft.adventure.AdventureLegacy;
 import cc.dreamcode.notice.minecraft.adventure.AdventureNotice;
 import lombok.NonNull;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
 
-public class AdventureBukkitNotice extends AdventureNotice<AdventureBukkitNotice> implements AdventureBukkitSender {
-    public AdventureBukkitNotice(@NonNull MinecraftNoticeType noticeType, @NonNull String... noticeText) {
+public class AdventurePaperNotice extends AdventureNotice<AdventurePaperNotice> implements AdventurePaperSender {
+    public AdventurePaperNotice(@NonNull MinecraftNoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
     }
 
-    public static AdventureBukkitNotice of(@NonNull MinecraftNoticeType noticeType, @NonNull String... noticeText) {
-        return new AdventureBukkitNotice(noticeType, noticeText);
+    public static AdventurePaperNotice of(@NonNull MinecraftNoticeType noticeType, @NonNull String... noticeText) {
+        return new AdventurePaperNotice(noticeType, noticeText);
     }
 
     @Override
     public void send(@NonNull CommandSender target) {
-        final BungeeAudiences bungeeAudiences = AdventureNoticeProvider.getInstance().getBungeeAudiences();
-        this.sendFormatted(target, bungeeAudiences.sender(target));
+        this.sendFormatted(target);
     }
 
     @Override
@@ -49,17 +46,17 @@ public class AdventureBukkitNotice extends AdventureNotice<AdventureBukkitNotice
 
     @Override
     public void sendAll() {
-        ProxyServer.getInstance().getPlayers().forEach(this::send);
+        Bukkit.getOnlinePlayers().forEach(this::send);
     }
 
     @Override
     public void sendAll(@NonNull Map<String, Object> mapReplacer) {
-        ProxyServer.getInstance().getPlayers().forEach(target -> this.with(mapReplacer).send(target));
+        Bukkit.getOnlinePlayers().forEach(target -> this.with(mapReplacer).send(target));
     }
 
     @Override
     public void sendPermitted(@NonNull String permission) {
-        ProxyServer.getInstance().getPlayers()
+        Bukkit.getOnlinePlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
                 .forEach(this::send);
@@ -67,15 +64,14 @@ public class AdventureBukkitNotice extends AdventureNotice<AdventureBukkitNotice
 
     @Override
     public void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
-        ProxyServer.getInstance().getPlayers()
+        Bukkit.getOnlinePlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
                 .forEach(target -> this.with(mapReplacer).send(target));
     }
 
-    private void sendFormatted(@NonNull CommandSender sender, @NonNull Audience target) {
-
-        if (!(sender instanceof ProxiedPlayer)) {
+    private void sendFormatted(@NonNull CommandSender target) {
+        if (!(target instanceof Player)) {
             target.sendMessage(this.toComponent());
             return;
         }

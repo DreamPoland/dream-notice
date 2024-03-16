@@ -6,7 +6,7 @@ import cc.dreamcode.notice.minecraft.adventure.AdventureLegacy;
 import cc.dreamcode.notice.minecraft.adventure.AdventureNotice;
 import lombok.NonNull;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.AudienceProvider;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
@@ -28,15 +28,8 @@ public class AdventureBukkitNotice extends AdventureNotice<AdventureBukkitNotice
 
     @Override
     public void send(@NonNull CommandSender target) {
-        final AudienceProvider audienceProvider = AdventureNoticeProvider.getInstance().getAudienceProvider();
-
-        if (!(target instanceof Player)) {
-            this.sendFormatted(audienceProvider.console());
-            return;
-        }
-
-        final Player player = (Player) target;
-        this.sendFormatted(audienceProvider.player(player.getUniqueId()));
+        final BukkitAudiences bukkitAudiences = AdventureNoticeProvider.getInstance().getBukkitAudiences();
+        this.sendFormatted(target, bukkitAudiences.sender(target));
     }
 
     @Override
@@ -80,8 +73,12 @@ public class AdventureBukkitNotice extends AdventureNotice<AdventureBukkitNotice
                 .forEach(target -> this.with(mapReplacer).send(target));
     }
 
-    private void sendFormatted(@NonNull Audience target) {
-        target.sendMessage(this.toComponent());
+    private void sendFormatted(@NonNull CommandSender sender, @NonNull Audience target) {
+
+        if (!(sender instanceof Player)) {
+            target.sendMessage(this.toComponent());
+            return;
+        }
 
         final MinecraftNoticeType minecraftNoticeType = (MinecraftNoticeType) this.getNoticeType();
         switch (minecraftNoticeType) {
