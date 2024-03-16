@@ -1,8 +1,15 @@
-dependencies {
-    implementation project(":core")
+repositories {
+    maven { url "https://repo.codemc.io/repository/nms" }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
 
-    // -- dream-utilities --
-    implementation "cc.dreamcode:utilities:1.2.25"
+dependencies {
+
+    implementation project(":core")
+    implementation project(":minecraft")
+
+    // -- okaeri-configs --
+    compileOnly "eu.okaeri:okaeri-configs-core:5.0.1"
 
     // -- lombok --
     compileOnly 'org.projectlombok:lombok:1.18.30'

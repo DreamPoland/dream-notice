@@ -1,10 +1,14 @@
 rootProject.name = 'dream-notice'
 
-include ':minecraft'
-include ':discord'
+include ':core'
 
+// -- minecraft core --
+include ":minecraft"
+include ":minecraft-adventure"
+include ":minecraft-serdes"
+
+// -- platforms --
 include ':bukkit'
-include ':bukkit-serdes'
-
+include ':bukkit-adventure'
 include ':bungee'
-include ':bungee-serdes'
+include ':bungee-adventure'

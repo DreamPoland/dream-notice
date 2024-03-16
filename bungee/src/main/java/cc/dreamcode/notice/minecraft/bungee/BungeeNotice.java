@@ -1,9 +1,7 @@
 package cc.dreamcode.notice.minecraft.bungee;
 
 import cc.dreamcode.notice.minecraft.MinecraftNotice;
-import cc.dreamcode.notice.minecraft.MinecraftNoticeException;
 import cc.dreamcode.notice.minecraft.MinecraftNoticeType;
-import cc.dreamcode.utilities.StringUtil;
 import cc.dreamcode.utilities.bungee.StringColorUtil;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatMessageType;
@@ -17,38 +15,33 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-public class BungeeNotice extends MinecraftNotice<CommandSender> {
-
-    public BungeeNotice(@NonNull MinecraftNoticeType type, @NonNull String text) {
-        super(type, text);
+public class BungeeNotice extends MinecraftNotice<BungeeNotice> implements BungeeSender {
+    public BungeeNotice(@NonNull MinecraftNoticeType noticeType, @NonNull String... noticeText) {
+        super(noticeType, noticeText);
     }
 
-    public BungeeNotice(@NonNull MinecraftNoticeType type, @NonNull String... texts) {
-        super(type, texts);
-    }
-
-    public static BungeeNotice of(@NonNull MinecraftNoticeType type, @NonNull String... texts) {
-        return new BungeeNotice(type, texts);
+    public static BungeeNotice of(@NonNull MinecraftNoticeType noticeType, @NonNull String... noticeText) {
+        return new BungeeNotice(noticeType, noticeText);
     }
 
     @Override
-    public void send(@NonNull CommandSender sender) {
-        this.sendFormatted(sender, this.getText());
+    public void send(@NonNull CommandSender target) {
+        this.sendFormatted(target);
     }
 
     @Override
-    public void send(@NonNull Collection<CommandSender> senders) {
-        senders.forEach(this::send);
+    public void send(@NonNull CommandSender target, @NonNull Map<String, Object> mapReplacer) {
+        this.with(mapReplacer).send(target);
     }
 
     @Override
-    public void send(@NonNull CommandSender sender, @NonNull Map<String, Object> mapReplacer) {
-        this.sendFormatted(sender, StringUtil.replace(this.getText(), mapReplacer));
+    public void send(@NonNull Collection<CommandSender> targets) {
+        targets.forEach(this::send);
     }
 
     @Override
-    public void send(@NonNull Collection<CommandSender> senders, @NonNull Map<String, Object> mapReplacer) {
-        senders.forEach(sender -> this.send(sender, mapReplacer));
+    public void send(@NonNull Collection<CommandSender> targets, @NonNull Map<String, Object> mapReplacer) {
+        targets.forEach(target -> this.with(mapReplacer).send(target));
     }
 
     @Override
@@ -58,66 +51,74 @@ public class BungeeNotice extends MinecraftNotice<CommandSender> {
 
     @Override
     public void sendAll(@NonNull Map<String, Object> mapReplacer) {
-        ProxyServer.getInstance().getPlayers().forEach(player -> this.send(player, mapReplacer));
+        ProxyServer.getInstance().getPlayers().forEach(target -> this.with(mapReplacer).send(target));
     }
 
     @Override
-    public void sendAllWithPermission(@NonNull String permission) {
+    public void sendPermitted(@NonNull String permission) {
         ProxyServer.getInstance().getPlayers()
                 .stream()
-                .filter(player -> player.hasPermission(permission))
+                .filter(target -> target.hasPermission(permission))
                 .forEach(this::send);
     }
 
     @Override
-    public void sendAllWithPermission(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
+    public void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
         ProxyServer.getInstance().getPlayers()
                 .stream()
-                .filter(player -> player.hasPermission(permission))
-                .forEach(player -> this.send(player, mapReplacer));
+                .filter(target -> target.hasPermission(permission))
+                .forEach(target -> this.with(mapReplacer).send(target));
     }
 
-    private void sendFormatted(@NonNull CommandSender sender, @NonNull String message) {
-        if (!(sender instanceof ProxiedPlayer)) {
-            String[] split = message.split(MinecraftNotice.lineSeparator());
+    private void sendFormatted(@NonNull CommandSender target) {
+        if (!(target instanceof ProxiedPlayer)) {
+            String[] split = this.getRender().split(MinecraftNotice.lineSeparator());
             Arrays.stream(split).forEach(text ->
-                    sender.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
+                    target.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
             return;
         }
 
-        final ProxiedPlayer player = (ProxiedPlayer) sender;
-        switch (this.getType()) {
+        final ProxiedPlayer player = (ProxiedPlayer) target;
+        final MinecraftNoticeType minecraftNoticeType = (MinecraftNoticeType) this.getNoticeType();
+        switch (minecraftNoticeType) {
             case DO_NOT_SEND: {
                 break;
             }
             case CHAT: {
-                String[] split = message.split(MinecraftNotice.lineSeparator());
+                String[] split = this.getRender().split(MinecraftNotice.lineSeparator());
                 Arrays.stream(split).forEach(text ->
                         player.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
                 break;
             }
             case ACTION_BAR: {
-                player.sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(StringColorUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), ""))));
+                player.sendMessage(ChatMessageType.ACTION_BAR,
+                        new TextComponent(StringColorUtil.fixColor(this.getRender().replace(MinecraftNotice.lineSeparator(), ""))));
                 break;
             }
             case TITLE: {
-                Title title = ProxyServer.getInstance().createTitle();
-                title.title(new TextComponent(StringColorUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), ""))));
+                Title titleBuilder = ProxyServer.getInstance().createTitle();
+                titleBuilder.title(new TextComponent(StringColorUtil.fixColor(this.getRender().replace(MinecraftNotice.lineSeparator(), ""))));
+                titleBuilder.fadeIn(this.getTitleFadeIn());
+                titleBuilder.stay(this.getTitleStay());
+                titleBuilder.fadeOut(this.getTitleFadeOut());
 
-                player.sendTitle(title);
+                player.sendTitle(titleBuilder);
                 break;
             }
             case SUBTITLE: {
-                Title title = ProxyServer.getInstance().createTitle();
-                title.subTitle(new TextComponent(StringColorUtil.fixColor(message.replace(MinecraftNotice.lineSeparator(), ""))));
+                Title titleBuilder = ProxyServer.getInstance().createTitle();
+                titleBuilder.subTitle(new TextComponent(StringColorUtil.fixColor(this.getRender().replace(MinecraftNotice.lineSeparator(), ""))));
+                titleBuilder.fadeIn(this.getTitleFadeIn());
+                titleBuilder.stay(this.getTitleStay());
+                titleBuilder.fadeOut(this.getTitleFadeOut());
 
-                player.sendTitle(title);
+                player.sendTitle(titleBuilder);
                 break;
             }
             case TITLE_SUBTITLE: {
-                String[] split = message.split(MinecraftNotice.lineSeparator());
+                String[] split = this.getRender().split(MinecraftNotice.lineSeparator());
                 if (split.length == 0) {
-                    throw new MinecraftNoticeException("Notice with TITLE_SUBTITLE need have " + MinecraftNotice.lineSeparator() + " to include title with subtitle.");
+                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + MinecraftNotice.lineSeparator() + ") to separate two messages.");
                 }
 
                 final String title = StringColorUtil.fixColor(split[0]);
@@ -126,12 +127,15 @@ public class BungeeNotice extends MinecraftNotice<CommandSender> {
                 Title titleBuilder = ProxyServer.getInstance().createTitle();
                 titleBuilder.title(new TextComponent(title));
                 titleBuilder.subTitle(new TextComponent(subTitle));
+                titleBuilder.fadeIn(this.getTitleFadeIn());
+                titleBuilder.stay(this.getTitleStay());
+                titleBuilder.fadeOut(this.getTitleFadeOut());
 
                 player.sendTitle(titleBuilder);
                 break;
             }
             default:
-                throw new MinecraftNoticeException("Notice type cannot define. (" + this.getType() + ")");
+                throw new RuntimeException("Cannot resolve notice-type. (" + this.getNoticeType() + ")");
         }
     }
 }

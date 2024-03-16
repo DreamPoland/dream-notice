@@ -1,45 +1,41 @@
 package cc.dreamcode.notice.minecraft;
 
-import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import cc.dreamcode.notice.DreamNotice;
+import cc.dreamcode.utilities.StringUtil;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
+public class MinecraftNotice<R extends DreamNotice<R>> extends DreamNotice<R> {
 
-@Data
-@RequiredArgsConstructor
-public abstract class MinecraftNotice<C> {
+    private final MinecraftNoticeType noticeType;
+    private final String noticeText;
 
-    private final MinecraftNoticeType type;
-    private final String text;
+    @Setter @Getter private int titleFadeIn = 10;
+    @Setter @Getter private int titleStay = 20;
+    @Setter @Getter private int titleFadeOut = 10;
 
-    public MinecraftNotice(@NonNull MinecraftNoticeType type, @NonNull String... texts) {
-        this.type = type;
+    public MinecraftNotice(MinecraftNoticeType noticeType, String... noticeText) {
+        this.noticeType = noticeType;
 
-        if (texts.length == 1) {
-            this.text = texts[0];
+        if (noticeText.length == 1) {
+            this.noticeText = noticeText[0];
             return;
         }
 
-        this.text = Arrays.stream(texts)
-                .collect(Collectors.joining(lineSeparator()));
+        this.noticeText = StringUtil.join(noticeText, MinecraftNotice.lineSeparator());
     }
 
-    public abstract void send(@NonNull C c);
-    public abstract void send(@NonNull Collection<C> cCollection);
-    public abstract void send(@NonNull C c, @NonNull Map<String, Object> mapReplacer);
-    public abstract void send(@NonNull Collection<C> cCollection, @NonNull Map<String, Object> mapReplacer);
-    public abstract void sendAll();
-    public abstract void sendAll(@NonNull Map<String, Object> mapReplacer);
+    @Override
+    public String getRaw() {
+        return this.noticeText;
+    }
 
-    public abstract void sendAllWithPermission(@NonNull String permission);
-    public abstract void sendAllWithPermission(@NonNull String permission, @NonNull Map<String, Object> mapReplacer);
+    @Override
+    public Enum<?> getNoticeType() {
+        return this.noticeType;
+    }
 
     public static String lineSeparator() {
-        return "%NEWLINE%";
+        return "\n";
     }
-
 }
