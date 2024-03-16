@@ -6,9 +6,15 @@ Simple notice library with placeholders and minimessages.
 
 ## Platforms
 
-- Bukkit/Spigot/Paper - [bukkit](https://github.com/DreamPoland/dream-notice/tree/master/bukkit) or [bukkit-adventure](https://github.com/DreamPoland/dream-notice/tree/master/bukkit)
+- Bukkit/Spigot/Paper (need relocation) - [bukkit](https://github.com/DreamPoland/dream-notice/tree/master/bukkit) or [bukkit-adventure](https://github.com/DreamPoland/dream-notice/tree/master/bukkit)
 - Paper (native-support 1.18.2+) - [paper-adventure](https://github.com/DreamPoland/dream-notice/tree/master/paper-adventure)
-- Bungee/Waterfall - [bungee](https://github.com/DreamPoland/dream-notice/tree/master/bukkit) or [bungee-adventure](https://github.com/DreamPoland/dream-notice/tree/master/bukkit)
+- Bungee/Waterfall (need relocation) - [bungee](https://github.com/DreamPoland/dream-notice/tree/master/bukkit) or [bungee-adventure](https://github.com/DreamPoland/dream-notice/tree/master/bukkit)
+
+### Warning
+Bukkit-Adventure and Bungee-Adventure require these methods: (on-enable)
+
+`AdventureBukkitNoticeProvider.create(this)` or `AdventureBungeeNoticeProvider.create(this)`
+
 ## Maven/Gradle
 
 ### Maven
