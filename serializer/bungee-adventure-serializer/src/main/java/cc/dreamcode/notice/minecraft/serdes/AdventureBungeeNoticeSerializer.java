@@ -2,20 +2,21 @@ package cc.dreamcode.notice.minecraft.serdes;
 
 import cc.dreamcode.notice.minecraft.MinecraftNotice;
 import cc.dreamcode.notice.minecraft.MinecraftNoticeType;
+import cc.dreamcode.notice.minecraft.adventure.bungee.AdventureBungeeNotice;
 import eu.okaeri.configs.schema.GenericsDeclaration;
 import eu.okaeri.configs.serdes.DeserializationData;
 import eu.okaeri.configs.serdes.ObjectSerializer;
 import eu.okaeri.configs.serdes.SerializationData;
 import lombok.NonNull;
 
-public class MinecraftNoticeSerializer implements ObjectSerializer<MinecraftNotice<?>> {
+public class AdventureBungeeNoticeSerializer implements ObjectSerializer<AdventureBungeeNotice> {
     @Override
-    public boolean supports(@NonNull Class<? super MinecraftNotice<?>> type) {
+    public boolean supports(@NonNull Class<? super AdventureBungeeNotice> type) {
         return MinecraftNotice.class.isAssignableFrom(type);
     }
 
     @Override
-    public void serialize(@NonNull MinecraftNotice<?> object, @NonNull SerializationData data, @NonNull GenericsDeclaration generics) {
+    public void serialize(@NonNull AdventureBungeeNotice object, @NonNull SerializationData data, @NonNull GenericsDeclaration generics) {
         data.add("type", object.getNoticeType(), MinecraftNoticeType.class);
         data.add("text", object.getRaw(), String.class);
 
@@ -33,9 +34,9 @@ public class MinecraftNoticeSerializer implements ObjectSerializer<MinecraftNoti
     }
 
     @Override
-    public MinecraftNotice<?> deserialize(@NonNull DeserializationData data, @NonNull GenericsDeclaration generics) {
+    public AdventureBungeeNotice deserialize(@NonNull DeserializationData data, @NonNull GenericsDeclaration generics) {
 
-        MinecraftNotice<?> minecraftNotice = new MinecraftNotice<>(
+        AdventureBungeeNotice minecraftNotice = new AdventureBungeeNotice(
                 data.get("type", MinecraftNoticeType.class),
                 data.get("text", String.class)
         );

@@ -28,7 +28,7 @@ public class AdventureBukkitNotice extends AdventureNotice<AdventureBukkitNotice
 
     @Override
     public void send(@NonNull CommandSender target) {
-        final BukkitAudiences bukkitAudiences = AdventureNoticeProvider.getInstance().getBukkitAudiences();
+        final BukkitAudiences bukkitAudiences = AdventureBukkitNoticeProvider.getInstance().getBukkitAudiences();
         this.sendFormatted(target, bukkitAudiences.sender(target));
     }
 

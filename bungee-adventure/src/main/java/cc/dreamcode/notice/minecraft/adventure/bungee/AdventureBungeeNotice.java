@@ -17,18 +17,18 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
 
-public class AdventureBukkitNotice extends AdventureNotice<AdventureBukkitNotice> implements AdventureBukkitSender {
-    public AdventureBukkitNotice(@NonNull MinecraftNoticeType noticeType, @NonNull String... noticeText) {
+public class AdventureBungeeNotice extends AdventureNotice<AdventureBungeeNotice> implements AdventureBungeeSender {
+    public AdventureBungeeNotice(@NonNull MinecraftNoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
     }
 
-    public static AdventureBukkitNotice of(@NonNull MinecraftNoticeType noticeType, @NonNull String... noticeText) {
-        return new AdventureBukkitNotice(noticeType, noticeText);
+    public static AdventureBungeeNotice of(@NonNull MinecraftNoticeType noticeType, @NonNull String... noticeText) {
+        return new AdventureBungeeNotice(noticeType, noticeText);
     }
 
     @Override
     public void send(@NonNull CommandSender target) {
-        final BungeeAudiences bungeeAudiences = AdventureNoticeProvider.getInstance().getBungeeAudiences();
+        final BungeeAudiences bungeeAudiences = AdventureBungeeNoticeProvider.getInstance().getBungeeAudiences();
         this.sendFormatted(target, bungeeAudiences.sender(target));
     }
 
