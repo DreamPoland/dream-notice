@@ -43,13 +43,13 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
 
     @SuppressWarnings("unchecked")
     public R hoverEvent(@NonNull HoverEventSource<?> source) {
-        this.component = this.component.hoverEvent(source);
+        this.component = this.toComponent().hoverEvent(source);
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     public R clickEvent(@NonNull ClickEvent event) {
-        this.component = this.component.clickEvent(event);
+        this.component = this.toComponent().clickEvent(event);
         return (R) this;
     }
 
