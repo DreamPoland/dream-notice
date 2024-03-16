@@ -20,7 +20,7 @@ public class AdventurePaperNotice extends AdventureNotice<AdventurePaperNotice> 
         super(noticeType, noticeText);
 
         if (!AdventurePaperVerifier.verifyVersion()) {
-            throw new RuntimeException("AdventurePaper need Paper software (or his fork) and Mini-Message implementation. (1.17.1+)");
+            throw new RuntimeException("AdventurePaper need Paper software (or his fork). (1.16.5+)");
         }
     }
 

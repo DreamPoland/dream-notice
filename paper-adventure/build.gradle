@@ -9,11 +9,12 @@ dependencies {
     implementation project(":minecraft-adventure")
 
     // -- paper api -- (core)
-    // 1.16.5 because 1.17 requires java 11 to work <joy>
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
 
     // -- kyori-adventure --
-    compileOnly "net.kyori:adventure-text-minimessage:4.13.0"
+    implementation("net.kyori:adventure-text-minimessage:4.13.0") {
+        exclude group: 'net.kyori', module: 'adventure-api'
+    }
 
     // -- dream-utilities --
     implementation "cc.dreamcode:utilities:1.2.25"
