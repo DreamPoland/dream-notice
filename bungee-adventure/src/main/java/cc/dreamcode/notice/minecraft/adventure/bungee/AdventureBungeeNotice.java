@@ -76,7 +76,7 @@ public class AdventureBungeeNotice extends AdventureNotice<AdventureBungeeNotice
     private void sendFormatted(@NonNull CommandSender sender, @NonNull Audience target) {
 
         if (!(sender instanceof ProxiedPlayer)) {
-            target.sendMessage(this.toComponent());
+            this.toComponents().forEach(target::sendMessage);
             return;
         }
 
@@ -86,15 +86,15 @@ public class AdventureBungeeNotice extends AdventureNotice<AdventureBungeeNotice
                 break;
             }
             case CHAT: {
-                target.sendMessage(this.toComponent());
+                this.toComponents().forEach(target::sendMessage);
                 break;
             }
             case ACTION_BAR: {
-                target.sendActionBar(this.toComponent());
+                target.sendActionBar(this.toJoiningComponent());
                 break;
             }
             case TITLE: {
-                final Component component = this.toComponent();
+                final Component component = this.toJoiningComponent();
                 final Component emptyComponent = AdventureLegacy.deserialize(" ");
 
                 Title titleBuilder = Title.title(
@@ -112,7 +112,7 @@ public class AdventureBungeeNotice extends AdventureNotice<AdventureBungeeNotice
             }
             case SUBTITLE: {
                 final Component component = AdventureLegacy.deserialize(" ");
-                final Component emptyComponent = this.toComponent();
+                final Component emptyComponent = this.toJoiningComponent();
 
                 Title titleBuilder = Title.title(
                         component,

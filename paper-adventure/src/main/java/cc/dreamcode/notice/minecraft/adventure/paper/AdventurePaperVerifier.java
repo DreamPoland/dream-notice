@@ -1,22 +1,15 @@
 package cc.dreamcode.notice.minecraft.adventure.paper;
 
+import cc.dreamcode.utilities.ClassUtil;
+import cc.dreamcode.utilities.bukkit.VersionUtil;
+
 public class AdventurePaperVerifier {
     public static boolean verifyVersion() {
 
-        if (!hasClass("net.kyori.adventure.text.minimessage.ParsingException")) {
+        if (!ClassUtil.hasClass("net.kyori.adventure.text.minimessage.ParsingException")) {
             return false;
         }
 
-        return hasClass("com.destroystokyo.paper.PaperConfig") ||
-                hasClass("io.papermc.paper.configuration.Configuration");
-    }
-
-    private static boolean hasClass(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        return VersionUtil.isPaper();
     }
 }

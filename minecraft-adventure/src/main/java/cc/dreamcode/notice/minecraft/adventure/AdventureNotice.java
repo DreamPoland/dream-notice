@@ -8,23 +8,30 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEventSource;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R> {
 
-    private Component component = null;
+    private Component joiningComponent = null;
+    private List<Component> component = null;
 
     public AdventureNotice(MinecraftNoticeType noticeType, String... noticeText) {
         super(noticeType, noticeText);
     }
 
     @Override
-    public R with(@NonNull String from, @NonNull String to) {
+    public R with(@NonNull String from, @NonNull Object to) {
 
         R respond = super.with(from, to);
 
+        if (this.joiningComponent != null) {
+            this.joiningComponent = AdventureLegacy.joiningDeserialize(this.getRender());
+        }
+
         if (this.component != null) {
-            this.component = AdventureLegacy.deserialize(this.getRender());
+            this.component = AdventureLegacy.splitDeserialize(this.getRender());
         }
 
         return respond;
@@ -34,8 +41,12 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
     public R with(@NonNull Map<String, Object> replaceMap) {
         R respond = super.with(replaceMap);
 
+        if (this.joiningComponent != null) {
+            this.joiningComponent = AdventureLegacy.joiningDeserialize(this.getRender());
+        }
+
         if (this.component != null) {
-            this.component = AdventureLegacy.deserialize(this.getRender());
+            this.component = AdventureLegacy.splitDeserialize(this.getRender());
         }
 
         return respond;
@@ -43,22 +54,43 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
 
     @SuppressWarnings("unchecked")
     public R hoverEvent(@NonNull HoverEventSource<?> source) {
-        this.component = this.toComponent().hoverEvent(source);
+        this.joiningComponent = this.toJoiningComponent().hoverEvent(source);
+
+        this.component = this.toComponents()
+                .stream()
+                .map(scan -> scan.hoverEvent(source))
+                .collect(Collectors.toList());
+
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     public R clickEvent(@NonNull ClickEvent event) {
-        this.component = this.toComponent().clickEvent(event);
+        this.joiningComponent = this.toJoiningComponent().clickEvent(event);
+
+        this.component = this.toComponents()
+                .stream()
+                .map(scan -> scan.clickEvent(event))
+                .collect(Collectors.toList());
+
         return (R) this;
     }
 
-    public Component toComponent() {
+    public List<Component> toComponents() {
 
         if (this.component == null) {
-            this.component = AdventureLegacy.deserialize(this.getRender());
+            this.component = AdventureLegacy.splitDeserialize(this.getRender());
         }
 
         return this.component;
+    }
+
+    public Component toJoiningComponent() {
+
+        if (this.joiningComponent == null) {
+            this.joiningComponent = AdventureLegacy.joiningDeserialize(this.getRender());
+        }
+
+        return this.joiningComponent;
     }
 }

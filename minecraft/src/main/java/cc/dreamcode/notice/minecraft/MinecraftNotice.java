@@ -36,6 +36,6 @@ public class MinecraftNotice<R extends DreamNotice<R>> extends DreamNotice<R> {
     }
 
     public static String lineSeparator() {
-        return "\n";
+        return "%NEWLINE%";
     }
 }

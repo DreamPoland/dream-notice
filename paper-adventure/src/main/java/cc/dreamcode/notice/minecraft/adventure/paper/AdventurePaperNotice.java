@@ -75,8 +75,9 @@ public class AdventurePaperNotice extends AdventureNotice<AdventurePaperNotice> 
     }
 
     private void sendFormatted(@NonNull CommandSender target) {
+
         if (!(target instanceof Player)) {
-            target.sendMessage(this.toComponent());
+            this.toComponents().forEach(target::sendMessage);
             return;
         }
 
@@ -86,15 +87,15 @@ public class AdventurePaperNotice extends AdventureNotice<AdventurePaperNotice> 
                 break;
             }
             case CHAT: {
-                target.sendMessage(this.toComponent());
+                this.toComponents().forEach(target::sendMessage);
                 break;
             }
             case ACTION_BAR: {
-                target.sendActionBar(this.toComponent());
+                target.sendActionBar(this.toJoiningComponent());
                 break;
             }
             case TITLE: {
-                final Component component = this.toComponent();
+                final Component component = this.toJoiningComponent();
                 final Component emptyComponent = AdventureLegacy.deserialize(" ");
 
                 Title titleBuilder = Title.title(
@@ -112,7 +113,7 @@ public class AdventurePaperNotice extends AdventureNotice<AdventurePaperNotice> 
             }
             case SUBTITLE: {
                 final Component component = AdventureLegacy.deserialize(" ");
-                final Component emptyComponent = this.toComponent();
+                final Component emptyComponent = this.toJoiningComponent();
 
                 Title titleBuilder = Title.title(
                         component,

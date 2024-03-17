@@ -23,7 +23,7 @@ public abstract class DreamNotice<R extends DreamNotice<?>> {
     }
 
     @SuppressWarnings("unchecked")
-    public R with(@NonNull String from, @NonNull String to) {
+    public R with(@NonNull String from, @NonNull Object to) {
 
         this.render = StringUtil.replace(this.getRender(), from, to);
         return (R) this;
