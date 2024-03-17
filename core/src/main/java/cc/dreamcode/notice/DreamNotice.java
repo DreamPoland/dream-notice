@@ -36,7 +36,10 @@ public abstract class DreamNotice<R extends DreamNotice<?>> {
         return (R) this;
     }
 
-    public void clearRender() {
+    @SuppressWarnings("unchecked")
+    public R clearRender() {
+
         this.render = null;
+        return (R) this;
     }
 }

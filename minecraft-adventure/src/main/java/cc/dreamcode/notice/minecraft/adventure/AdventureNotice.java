@@ -103,10 +103,11 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
     }
 
     @Override
-    public void clearRender() {
-        super.clearRender();
+    public R clearRender() {
+        R respond = super.clearRender();
 
         this.component = null;
         this.joiningComponent = null;
+        return respond;
     }
 }
