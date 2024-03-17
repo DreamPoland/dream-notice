@@ -101,4 +101,12 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
                 .addAll(this.toSplitComponents())
                 .build();
     }
+
+    @Override
+    public void clearRender() {
+        super.clearRender();
+
+        this.component = null;
+        this.joiningComponent = null;
+    }
 }

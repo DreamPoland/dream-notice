@@ -35,4 +35,8 @@ public abstract class DreamNotice<R extends DreamNotice<?>> {
         this.render = StringUtil.replace(this.getRender(), replaceMap);
         return (R) this;
     }
+
+    public void clearRender() {
+        this.render = null;
+    }
 }

@@ -75,6 +75,8 @@ public class BungeeNotice extends MinecraftNotice<BungeeNotice> implements Bunge
             String[] split = this.getRender().split(MinecraftNotice.lineSeparator());
             Arrays.stream(split).forEach(text ->
                     target.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
+
+            this.clearRender();
             return;
         }
 
@@ -82,17 +84,22 @@ public class BungeeNotice extends MinecraftNotice<BungeeNotice> implements Bunge
         final MinecraftNoticeType minecraftNoticeType = (MinecraftNoticeType) this.getNoticeType();
         switch (minecraftNoticeType) {
             case DO_NOT_SEND: {
+                this.clearRender();
                 break;
             }
             case CHAT: {
                 String[] split = this.getRender().split(MinecraftNotice.lineSeparator());
                 Arrays.stream(split).forEach(text ->
                         player.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
+
+                this.clearRender();
                 break;
             }
             case ACTION_BAR: {
                 player.sendMessage(ChatMessageType.ACTION_BAR,
                         new TextComponent(StringColorUtil.fixColor(this.getRender().replace(MinecraftNotice.lineSeparator(), ""))));
+
+                this.clearRender();
                 break;
             }
             case TITLE: {
@@ -103,6 +110,8 @@ public class BungeeNotice extends MinecraftNotice<BungeeNotice> implements Bunge
                 titleBuilder.fadeOut(this.getTitleFadeOut());
 
                 player.sendTitle(titleBuilder);
+
+                this.clearRender();
                 break;
             }
             case SUBTITLE: {
@@ -113,6 +122,8 @@ public class BungeeNotice extends MinecraftNotice<BungeeNotice> implements Bunge
                 titleBuilder.fadeOut(this.getTitleFadeOut());
 
                 player.sendTitle(titleBuilder);
+
+                this.clearRender();
                 break;
             }
             case TITLE_SUBTITLE: {
@@ -132,10 +143,15 @@ public class BungeeNotice extends MinecraftNotice<BungeeNotice> implements Bunge
                 titleBuilder.fadeOut(this.getTitleFadeOut());
 
                 player.sendTitle(titleBuilder);
+
+                this.clearRender();
                 break;
             }
-            default:
+            default: {
+                this.clearRender();
+
                 throw new RuntimeException("Cannot resolve notice-type. (" + this.getNoticeType() + ")");
+            }
         }
     }
 }

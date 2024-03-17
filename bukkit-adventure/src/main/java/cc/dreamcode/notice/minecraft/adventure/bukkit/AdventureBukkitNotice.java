@@ -77,20 +77,27 @@ public class AdventureBukkitNotice extends AdventureNotice<AdventureBukkitNotice
 
         if (!(sender instanceof Player)) {
             this.toSplitComponents().forEach(target::sendMessage);
+
+            this.clearRender();
             return;
         }
 
         final MinecraftNoticeType minecraftNoticeType = (MinecraftNoticeType) this.getNoticeType();
         switch (minecraftNoticeType) {
             case DO_NOT_SEND: {
+                this.clearRender();
                 break;
             }
             case CHAT: {
                 this.toSplitComponents().forEach(target::sendMessage);
+
+                this.clearRender();
                 break;
             }
             case ACTION_BAR: {
                 target.sendActionBar(this.toJoiningComponent());
+
+                this.clearRender();
                 break;
             }
             case TITLE: {
@@ -108,6 +115,8 @@ public class AdventureBukkitNotice extends AdventureNotice<AdventureBukkitNotice
                 );
 
                 target.showTitle(titleBuilder);
+
+                this.clearRender();
                 break;
             }
             case SUBTITLE: {
@@ -125,6 +134,8 @@ public class AdventureBukkitNotice extends AdventureNotice<AdventureBukkitNotice
                 );
 
                 target.showTitle(titleBuilder);
+
+                this.clearRender();
                 break;
             }
             case TITLE_SUBTITLE: {
@@ -148,10 +159,15 @@ public class AdventureBukkitNotice extends AdventureNotice<AdventureBukkitNotice
                 );
 
                 target.showTitle(titleBuilder);
+
+                this.clearRender();
                 break;
             }
-            default:
+            default: {
+                this.clearRender();
+
                 throw new RuntimeException("Cannot resolve notice-type. (" + this.getNoticeType() + ")");
+            }
         }
     }
 }
