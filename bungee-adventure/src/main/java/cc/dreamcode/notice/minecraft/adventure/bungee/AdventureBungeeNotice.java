@@ -76,7 +76,7 @@ public class AdventureBungeeNotice extends AdventureNotice<AdventureBungeeNotice
     private void sendFormatted(@NonNull CommandSender sender, @NonNull Audience target) {
 
         if (!(sender instanceof ProxiedPlayer)) {
-            this.toComponents().forEach(target::sendMessage);
+            this.toSplitComponents().forEach(target::sendMessage);
             return;
         }
 
@@ -86,7 +86,7 @@ public class AdventureBungeeNotice extends AdventureNotice<AdventureBungeeNotice
                 break;
             }
             case CHAT: {
-                this.toComponents().forEach(target::sendMessage);
+                this.toSplitComponents().forEach(target::sendMessage);
                 break;
             }
             case ACTION_BAR: {

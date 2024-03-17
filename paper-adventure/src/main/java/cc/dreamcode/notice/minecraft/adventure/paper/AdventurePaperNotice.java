@@ -77,7 +77,7 @@ public class AdventurePaperNotice extends AdventureNotice<AdventurePaperNotice> 
     private void sendFormatted(@NonNull CommandSender target) {
 
         if (!(target instanceof Player)) {
-            this.toComponents().forEach(target::sendMessage);
+            this.toSplitComponents().forEach(target::sendMessage);
             return;
         }
 
@@ -87,7 +87,7 @@ public class AdventurePaperNotice extends AdventureNotice<AdventurePaperNotice> 
                 break;
             }
             case CHAT: {
-                this.toComponents().forEach(target::sendMessage);
+                this.toSplitComponents().forEach(target::sendMessage);
                 break;
             }
             case ACTION_BAR: {

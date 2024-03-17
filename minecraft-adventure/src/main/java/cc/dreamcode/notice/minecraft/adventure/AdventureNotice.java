@@ -3,6 +3,7 @@ package cc.dreamcode.notice.minecraft.adventure;
 import cc.dreamcode.notice.DreamNotice;
 import cc.dreamcode.notice.minecraft.MinecraftNotice;
 import cc.dreamcode.notice.minecraft.MinecraftNoticeType;
+import cc.dreamcode.utilities.builder.ListBuilder;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -56,7 +57,7 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
     public R hoverEvent(@NonNull HoverEventSource<?> source) {
         this.joiningComponent = this.toJoiningComponent().hoverEvent(source);
 
-        this.component = this.toComponents()
+        this.component = this.toSplitComponents()
                 .stream()
                 .map(scan -> scan.hoverEvent(source))
                 .collect(Collectors.toList());
@@ -68,7 +69,7 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
     public R clickEvent(@NonNull ClickEvent event) {
         this.joiningComponent = this.toJoiningComponent().clickEvent(event);
 
-        this.component = this.toComponents()
+        this.component = this.toSplitComponents()
                 .stream()
                 .map(scan -> scan.clickEvent(event))
                 .collect(Collectors.toList());
@@ -76,7 +77,7 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
         return (R) this;
     }
 
-    public List<Component> toComponents() {
+    public List<Component> toSplitComponents() {
 
         if (this.component == null) {
             this.component = AdventureLegacy.splitDeserialize(this.getRender());
@@ -92,5 +93,12 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
         }
 
         return this.joiningComponent;
+    }
+
+    public List<Component> toComponents() {
+        return new ListBuilder<Component>()
+                .add(this.toJoiningComponent())
+                .addAll(this.toSplitComponents())
+                .build();
     }
 }
