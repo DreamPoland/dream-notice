@@ -1,17 +1,14 @@
 package cc.dreamcode.notice;
 
 import cc.dreamcode.utilities.StringUtil;
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 
 import java.util.Locale;
 import java.util.Map;
 
 public abstract class DreamNotice<R extends DreamNotice<?>> {
 
-    @Getter @Setter private Locale locale = Locale.forLanguageTag("pl");
-
+    private Locale locale = Locale.forLanguageTag("pl");
     private String render = null;
 
     public abstract String getRaw();
@@ -25,6 +22,12 @@ public abstract class DreamNotice<R extends DreamNotice<?>> {
         }
 
         return this.render;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R setLocale(@NonNull Locale locale) {
+        this.locale = locale;
+        return (R) this;
     }
 
     @SuppressWarnings("unchecked")
