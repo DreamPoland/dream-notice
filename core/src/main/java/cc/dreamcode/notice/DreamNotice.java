@@ -1,27 +1,32 @@
 package cc.dreamcode.notice;
 
 import cc.dreamcode.utilities.StringUtil;
+import eu.okaeri.placeholders.context.PlaceholderContext;
+import eu.okaeri.placeholders.message.CompiledMessage;
 import lombok.NonNull;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 public abstract class DreamNotice<R extends DreamNotice<?>> {
 
     private Locale locale = Locale.forLanguageTag("pl");
-    private String render = null;
+
+    private PlaceholderContext placeholderContext = null;
 
     public abstract String getRaw();
 
     public abstract Enum<?> getNoticeType();
 
+    public Optional<PlaceholderContext> getPlaceholderContext() {
+        return Optional.ofNullable(this.placeholderContext);
+    }
+
     public String getRender() {
-
-        if (this.render == null) {
-            return this.getRaw();
-        }
-
-        return this.render;
+        return this.getPlaceholderContext()
+                .map(PlaceholderContext::apply)
+                .orElse(this.getRaw());
     }
 
     @SuppressWarnings("unchecked")
@@ -33,21 +38,31 @@ public abstract class DreamNotice<R extends DreamNotice<?>> {
     @SuppressWarnings("unchecked")
     public R with(@NonNull String from, @NonNull Object to) {
 
-        this.render = StringUtil.replace(this.locale, this.getRender(), from, to);
+        if (this.placeholderContext == null) {
+            final CompiledMessage compiledMessage = CompiledMessage.of(this.locale, this.getRaw());
+            this.placeholderContext = StringUtil.getPlaceholders().contextOf(compiledMessage);
+        }
+
+        this.placeholderContext.with(from, to);
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     public R with(@NonNull Map<String, Object> replaceMap) {
 
-        this.render = StringUtil.replace(this.locale, this.getRender(), replaceMap);
+        if (this.placeholderContext == null) {
+            final CompiledMessage compiledMessage = CompiledMessage.of(this.locale, this.getRaw());
+            this.placeholderContext = StringUtil.getPlaceholders().contextOf(compiledMessage);
+        }
+
+        this.placeholderContext.with(replaceMap);
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     public R clearRender() {
 
-        this.render = null;
+        this.placeholderContext = null;
         return (R) this;
     }
 }

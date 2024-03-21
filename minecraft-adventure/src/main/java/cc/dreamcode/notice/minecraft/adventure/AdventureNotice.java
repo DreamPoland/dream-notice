@@ -4,53 +4,27 @@ import cc.dreamcode.notice.DreamNotice;
 import cc.dreamcode.notice.minecraft.MinecraftNotice;
 import cc.dreamcode.notice.minecraft.MinecraftNoticeType;
 import cc.dreamcode.utilities.builder.ListBuilder;
+import eu.okaeri.placeholders.context.PlaceholderContext;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEventSource;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R> {
+
+    private static final Pattern FIELD_PATTERN = Pattern.compile("\\{(?<content>[^}]+)}");
 
     private Component joiningComponent = null;
     private List<Component> component = null;
 
     public AdventureNotice(MinecraftNoticeType noticeType, String... noticeText) {
         super(noticeType, noticeText);
-    }
-
-    @Override
-    public R with(@NonNull String from, @NonNull Object to) {
-
-        R respond = super.with(from, to);
-
-        if (this.joiningComponent != null) {
-            this.joiningComponent = AdventureLegacy.joiningDeserialize(this.getRender());
-        }
-
-        if (this.component != null) {
-            this.component = AdventureLegacy.splitDeserialize(this.getRender());
-        }
-
-        return respond;
-    }
-
-    @Override
-    public R with(@NonNull Map<String, Object> replaceMap) {
-        R respond = super.with(replaceMap);
-
-        if (this.joiningComponent != null) {
-            this.joiningComponent = AdventureLegacy.joiningDeserialize(this.getRender());
-        }
-
-        if (this.component != null) {
-            this.component = AdventureLegacy.splitDeserialize(this.getRender());
-        }
-
-        return respond;
     }
 
     @SuppressWarnings("unchecked")
@@ -77,10 +51,34 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
         return (R) this;
     }
 
+    public TextReplacementConfig getPlaceholderConfig() {
+
+        if (!this.getPlaceholderContext().isPresent()) {
+            return null;
+        }
+
+        PlaceholderContext placeholderContext = this.getPlaceholderContext().get();
+        Map<String, String> renderedFields = placeholderContext.renderFields()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().getRaw(),
+                        Map.Entry::getValue
+                ));
+
+        return TextReplacementConfig.builder()
+                .match(FIELD_PATTERN)
+                .replacement((result, input) -> {
+                    String fieldValue = renderedFields.get(result.group(1));
+                    return AdventureLegacy.component(fieldValue);
+                })
+                .build();
+    }
+
     public List<Component> toSplitComponents() {
 
         if (this.component == null) {
-            this.component = AdventureLegacy.splitDeserialize(this.getRender());
+            this.component = AdventureLegacy.splitDeserialize(this.getRaw(), this.getPlaceholderConfig());
         }
 
         return this.component;
@@ -89,7 +87,7 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
     public Component toJoiningComponent() {
 
         if (this.joiningComponent == null) {
-            this.joiningComponent = AdventureLegacy.joiningDeserialize(this.getRender());
+            this.joiningComponent = AdventureLegacy.joiningDeserialize(this.getRaw(), this.getPlaceholderConfig());
         }
 
         return this.joiningComponent;

@@ -5,6 +5,7 @@ import cc.dreamcode.utilities.StringUtil;
 import cc.dreamcode.utilities.builder.ListBuilder;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
@@ -28,22 +29,41 @@ public final class AdventureLegacy {
     }
 
     public static List<Component> splitDeserialize(@NonNull String rawText) {
+        return splitDeserialize(rawText, null);
+    }
+
+    public static List<Component> splitDeserialize(@NonNull String rawText, TextReplacementConfig textReplacementConfig) {
 
         final ListBuilder<Component> listBuilder = new ListBuilder<>();
 
         String[] split = rawText.split(MinecraftNotice.lineSeparator());
-        Arrays.stream(split).forEach(text -> listBuilder.add(AdventureLegacy.deserialize(text)));
+        Arrays.stream(split).forEach(text -> listBuilder.add(AdventureLegacy.deserialize(text, textReplacementConfig)));
 
         return listBuilder.build();
     }
 
     public static Component joiningDeserialize(@NonNull String rawText) {
+        return joiningDeserialize(rawText, null);
+    }
+
+    public static Component joiningDeserialize(@NonNull String rawText, TextReplacementConfig textReplacementConfig) {
 
         final String joiningText = StringUtil.join(rawText.split(MinecraftNotice.lineSeparator()), " ");
-        return AdventureLegacy.deserialize(joiningText);
+        return AdventureLegacy.deserialize(joiningText, textReplacementConfig);
     }
 
     public static Component deserialize(@NonNull String text) {
-        return MINI_MESSAGE.deserialize(text);
+        return deserialize(text, null);
+    }
+
+    public static Component deserialize(@NonNull String text, TextReplacementConfig textReplacementConfig) {
+
+        Component component = MINI_MESSAGE.deserialize(text);
+
+        if (textReplacementConfig != null) {
+            component = component.replaceText(textReplacementConfig);
+        }
+
+        return component;
     }
 }
