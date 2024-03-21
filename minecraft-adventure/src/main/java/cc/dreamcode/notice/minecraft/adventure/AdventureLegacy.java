@@ -37,7 +37,7 @@ public final class AdventureLegacy {
         final ListBuilder<Component> listBuilder = new ListBuilder<>();
 
         String[] split = rawText.split(MinecraftNotice.lineSeparator());
-        Arrays.stream(split).forEach(text -> listBuilder.add(AdventureLegacy.deserialize(text, textReplacementConfig)));
+        Arrays.stream(split).forEach(text -> listBuilder.add(deserialize(text, textReplacementConfig)));
 
         return listBuilder.build();
     }
@@ -49,7 +49,7 @@ public final class AdventureLegacy {
     public static Component joiningDeserialize(@NonNull String rawText, TextReplacementConfig textReplacementConfig) {
 
         final String joiningText = StringUtil.join(rawText.split(MinecraftNotice.lineSeparator()), " ");
-        return AdventureLegacy.deserialize(joiningText, textReplacementConfig);
+        return deserialize(joiningText, textReplacementConfig);
     }
 
     public static Component deserialize(@NonNull String text) {
