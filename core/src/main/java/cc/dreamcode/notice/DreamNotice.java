@@ -12,7 +12,6 @@ import java.util.Optional;
 public abstract class DreamNotice<R extends DreamNotice<?>> {
 
     private Locale locale = Locale.forLanguageTag("pl");
-
     private PlaceholderContext placeholderContext = null;
 
     public abstract String getRaw();
