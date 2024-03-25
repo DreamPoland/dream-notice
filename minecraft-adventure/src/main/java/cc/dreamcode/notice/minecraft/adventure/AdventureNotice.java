@@ -4,6 +4,7 @@ import cc.dreamcode.notice.DreamNotice;
 import cc.dreamcode.notice.minecraft.MinecraftNotice;
 import cc.dreamcode.notice.minecraft.MinecraftNoticeType;
 import cc.dreamcode.utilities.builder.ListBuilder;
+import cc.dreamcode.utilities.bungee.StringColorUtil;
 import eu.okaeri.placeholders.context.PlaceholderContext;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
@@ -69,7 +70,7 @@ public class AdventureNotice<R extends DreamNotice<R>> extends MinecraftNotice<R
         return TextReplacementConfig.builder()
                 .match(FIELD_PATTERN)
                 .replacement((result, input) -> {
-                    String fieldValue = renderedFields.get(result.group(1));
+                    String fieldValue = StringColorUtil.fixColor(renderedFields.get(result.group(1)));
                     return AdventureLegacy.component(fieldValue);
                 })
                 .build();
