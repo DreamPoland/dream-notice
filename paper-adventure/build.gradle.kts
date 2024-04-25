@@ -15,6 +15,6 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:4.16.0")
 
     // -- dream-utilities --
-    implementation("cc.dreamcode:utilities:1.3.0")
-    implementation("cc.dreamcode:utilities-bukkit:1.3.0")
+    implementation("cc.dreamcode:utilities:1.3.2")
+    implementation("cc.dreamcode:utilities-bukkit:1.3.2")
 }
