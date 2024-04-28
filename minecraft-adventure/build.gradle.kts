@@ -7,8 +7,8 @@ dependencies {
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.16.0")
 
     // -- dream-utilities --
-    implementation("cc.dreamcode:utilities:1.3.2")
-    implementation("cc.dreamcode:utilities-bungee:1.3.2")
+    implementation("cc.dreamcode:utilities:1.3.3")
+    implementation("cc.dreamcode:utilities-bungee:1.3.3")
 
     // -- okaeri-placeholders --
     implementation("eu.okaeri:okaeri-placeholders-core:5.0.1")
