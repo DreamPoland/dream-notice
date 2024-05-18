@@ -17,5 +17,5 @@ dependencies {
     // -- kyori-adventure --
     implementation("net.kyori:adventure-text-minimessage:4.16.0")
     implementation("net.kyori:adventure-platform-bungeecord:4.3.2")
-    implementation("net.kyori:adventure-text-serializer-legacy:4.16.0")
+    implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")
 }
