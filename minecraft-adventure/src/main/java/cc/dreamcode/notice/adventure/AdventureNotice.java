@@ -17,14 +17,14 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class AdventureNoticeImpl<R extends Notice<R>> extends NoticeImpl<R> {
+public class AdventureNotice<R extends Notice<R>> extends NoticeImpl<R> {
 
     private static final Pattern FIELD_PATTERN = Pattern.compile("\\{(?<content>[^}]+)}");
 
     private Component joiningComponent = null;
     private List<Component> component = null;
 
-    public AdventureNoticeImpl(NoticeType noticeType, String... noticeText) {
+    public AdventureNotice(NoticeType noticeType, String... noticeText) {
         super(noticeType, noticeText);
     }
 

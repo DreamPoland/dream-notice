@@ -15,13 +15,13 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
 
-public class BukkitNoticeImpl extends AdventureNoticeImpl<BukkitNoticeImpl> implements BukkitSender {
-    public BukkitNoticeImpl(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+public class BukkitNotice extends AdventureNotice<BukkitNotice> implements BukkitSender {
+    public BukkitNotice(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
     }
 
-    public static BukkitNoticeImpl of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
-        return new BukkitNoticeImpl(noticeType, noticeText);
+    public static BukkitNotice of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+        return new BukkitNotice(noticeType, noticeText);
     }
 
     @Override

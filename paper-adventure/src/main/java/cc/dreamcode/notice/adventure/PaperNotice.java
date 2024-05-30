@@ -3,31 +3,32 @@ package cc.dreamcode.notice.adventure;
 import cc.dreamcode.notice.minecraft.NoticeImpl;
 import cc.dreamcode.notice.minecraft.NoticeType;
 import lombok.NonNull;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
 
-public class BungeeNoticeImpl extends AdventureNoticeImpl<BungeeNoticeImpl> implements BungeeSender {
-    public BungeeNoticeImpl(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+public class PaperNotice extends AdventureNotice<PaperNotice> implements PaperSender {
+    public PaperNotice(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
+
+        if (!PaperVerifier.verifyVersion()) {
+            throw new RuntimeException("AdventurePaper need Paper software (or his fork) and Mini-Message implementation. (1.18.2+)");
+        }
     }
 
-    public static BungeeNoticeImpl of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
-        return new BungeeNoticeImpl(noticeType, noticeText);
+    public static PaperNotice of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+        return new PaperNotice(noticeType, noticeText);
     }
 
     @Override
     public void send(@NonNull CommandSender target) {
-        final BungeeAudiences bungeeAudiences = BungeeNoticeProvider.getInstance().getBungeeAudiences();
-        this.sendFormatted(target, bungeeAudiences.sender(target));
+        this.sendFormatted(target);
     }
 
     @Override
@@ -47,17 +48,17 @@ public class BungeeNoticeImpl extends AdventureNoticeImpl<BungeeNoticeImpl> impl
 
     @Override
     public void sendAll() {
-        ProxyServer.getInstance().getPlayers().forEach(this::send);
+        Bukkit.getOnlinePlayers().forEach(this::send);
     }
 
     @Override
     public void sendAll(@NonNull Map<String, Object> mapReplacer) {
-        ProxyServer.getInstance().getPlayers().forEach(target -> this.with(mapReplacer).send(target));
+        Bukkit.getOnlinePlayers().forEach(target -> this.with(mapReplacer).send(target));
     }
 
     @Override
     public void sendPermitted(@NonNull String permission) {
-        ProxyServer.getInstance().getPlayers()
+        Bukkit.getOnlinePlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
                 .forEach(this::send);
@@ -65,15 +66,15 @@ public class BungeeNoticeImpl extends AdventureNoticeImpl<BungeeNoticeImpl> impl
 
     @Override
     public void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
-        ProxyServer.getInstance().getPlayers()
+        Bukkit.getOnlinePlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
                 .forEach(target -> this.with(mapReplacer).send(target));
     }
 
-    private void sendFormatted(@NonNull CommandSender sender, @NonNull Audience target) {
+    private void sendFormatted(@NonNull CommandSender target) {
 
-        if (!(sender instanceof ProxiedPlayer)) {
+        if (!(target instanceof Player)) {
             this.toSplitComponents().forEach(target::sendMessage);
 
             this.clearRender();

@@ -1,24 +1,25 @@
 package cc.dreamcode.notice.minecraft;
 
-import cc.dreamcode.utilities.bukkit.StringColorUtil;
-import com.cryptomorin.xseries.messages.ActionBar;
-import com.cryptomorin.xseries.messages.Titles;
+import cc.dreamcode.utilities.bungee.StringColorUtil;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.Title;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-public class BukkitNoticeImpl extends NoticeImpl<BukkitNoticeImpl> implements BukkitSender {
-    public BukkitNoticeImpl(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+public class BungeeNotice extends NoticeImpl<BungeeNotice> implements BungeeSender {
+    public BungeeNotice(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
     }
 
-    public static BukkitNoticeImpl of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
-        return new BukkitNoticeImpl(noticeType, noticeText);
+    public static BungeeNotice of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+        return new BungeeNotice(noticeType, noticeText);
     }
 
     @Override
@@ -43,17 +44,17 @@ public class BukkitNoticeImpl extends NoticeImpl<BukkitNoticeImpl> implements Bu
 
     @Override
     public void sendAll() {
-        Bukkit.getOnlinePlayers().forEach(this::send);
+        ProxyServer.getInstance().getPlayers().forEach(this::send);
     }
 
     @Override
     public void sendAll(@NonNull Map<String, Object> mapReplacer) {
-        Bukkit.getOnlinePlayers().forEach(target -> this.with(mapReplacer).send(target));
+        ProxyServer.getInstance().getPlayers().forEach(target -> this.with(mapReplacer).send(target));
     }
 
     @Override
     public void sendPermitted(@NonNull String permission) {
-        Bukkit.getOnlinePlayers()
+        ProxyServer.getInstance().getPlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
                 .forEach(this::send);
@@ -61,23 +62,23 @@ public class BukkitNoticeImpl extends NoticeImpl<BukkitNoticeImpl> implements Bu
 
     @Override
     public void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
-        Bukkit.getOnlinePlayers()
+        ProxyServer.getInstance().getPlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
                 .forEach(target -> this.with(mapReplacer).send(target));
     }
 
     private void sendFormatted(@NonNull CommandSender target) {
-        if (!(target instanceof Player)) {
+        if (!(target instanceof ProxiedPlayer)) {
             String[] split = this.getRender().split(NoticeImpl.lineSeparator());
             Arrays.stream(split).forEach(text ->
-                    target.sendMessage(StringColorUtil.fixColor(text)));
+                    target.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
 
             this.clearRender();
             return;
         }
 
-        final Player player = (Player) target;
+        final ProxiedPlayer player = (ProxiedPlayer) target;
         final NoticeType noticeType = (NoticeType) this.getNoticeType();
         switch (noticeType) {
             case DO_NOT_SEND: {
@@ -87,42 +88,38 @@ public class BukkitNoticeImpl extends NoticeImpl<BukkitNoticeImpl> implements Bu
             case CHAT: {
                 String[] split = this.getRender().split(NoticeImpl.lineSeparator());
                 Arrays.stream(split).forEach(text ->
-                        player.sendMessage(StringColorUtil.fixColor(text)));
+                        player.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
 
                 this.clearRender();
                 break;
             }
             case ACTION_BAR: {
-                ActionBar.sendActionBar(
-                        player,
-                        StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))
-                );
+                player.sendMessage(ChatMessageType.ACTION_BAR,
+                        new TextComponent(StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))));
 
                 this.clearRender();
                 break;
             }
             case TITLE: {
-                Titles.sendTitle(
-                        player,
-                        this.getTitleFadeIn(),
-                        this.getTitleStay(),
-                        this.getTitleFadeOut(),
-                        StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), "")),
-                        ""
-                );
+                Title titleBuilder = ProxyServer.getInstance().createTitle();
+                titleBuilder.title(new TextComponent(StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))));
+                titleBuilder.fadeIn(this.getTitleFadeIn());
+                titleBuilder.stay(this.getTitleStay());
+                titleBuilder.fadeOut(this.getTitleFadeOut());
+
+                player.sendTitle(titleBuilder);
 
                 this.clearRender();
                 break;
             }
             case SUBTITLE: {
-                Titles.sendTitle(
-                        player,
-                        this.getTitleFadeIn(),
-                        this.getTitleStay(),
-                        this.getTitleFadeOut(),
-                        "",
-                        StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))
-                );
+                Title titleBuilder = ProxyServer.getInstance().createTitle();
+                titleBuilder.subTitle(new TextComponent(StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))));
+                titleBuilder.fadeIn(this.getTitleFadeIn());
+                titleBuilder.stay(this.getTitleStay());
+                titleBuilder.fadeOut(this.getTitleFadeOut());
+
+                player.sendTitle(titleBuilder);
 
                 this.clearRender();
                 break;
@@ -136,7 +133,14 @@ public class BukkitNoticeImpl extends NoticeImpl<BukkitNoticeImpl> implements Bu
                 final String title = StringColorUtil.fixColor(split[0]);
                 final String subTitle = StringColorUtil.fixColor(split[1]);
 
-                Titles.sendTitle(player, this.getTitleFadeIn(), this.getTitleStay(), this.getTitleFadeOut(), title, subTitle);
+                Title titleBuilder = ProxyServer.getInstance().createTitle();
+                titleBuilder.title(new TextComponent(title));
+                titleBuilder.subTitle(new TextComponent(subTitle));
+                titleBuilder.fadeIn(this.getTitleFadeIn());
+                titleBuilder.stay(this.getTitleStay());
+                titleBuilder.fadeOut(this.getTitleFadeOut());
+
+                player.sendTitle(titleBuilder);
 
                 this.clearRender();
                 break;
