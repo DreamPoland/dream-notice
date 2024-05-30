@@ -1,8 +1,7 @@
-package cc.dreamcode.notice.minecraft.serdes;
+package cc.dreamcode.notice.adventure.serializer;
 
-import cc.dreamcode.notice.minecraft.Notice;
 import cc.dreamcode.notice.minecraft.NoticeType;
-import cc.dreamcode.notice.minecraft.BukkitNotice;
+import cc.dreamcode.notice.adventure.BukkitNotice;
 import eu.okaeri.configs.schema.GenericsDeclaration;
 import eu.okaeri.configs.serdes.DeserializationData;
 import eu.okaeri.configs.serdes.ObjectSerializer;
@@ -12,7 +11,7 @@ import lombok.NonNull;
 public class BukkitNoticeSerializer implements ObjectSerializer<BukkitNotice> {
     @Override
     public boolean supports(@NonNull Class<? super BukkitNotice> type) {
-        return Notice.class.isAssignableFrom(type);
+        return BukkitNotice.class.isAssignableFrom(type);
     }
 
     @Override
