@@ -1,7 +1,7 @@
 
 # Dream-Notice
 
-Simple notice library with placeholders and minimessages.
+Simple notice library with placeholders and mini-messages support.
 
 
 ## Platforms
@@ -13,7 +13,7 @@ Simple notice library with placeholders and minimessages.
 ### Warning
 Bukkit-Adventure and Bungee-Adventure require these methods: (on-enable)
 
-`AdventureBukkitNoticeProvider.create(this)` or `AdventureBungeeNoticeProvider.create(this)`
+`BukkitNoticeProvider.create(this)` or `BungeeNoticeProvider.create(this)`
 
 ## Maven/Gradle
 
@@ -29,7 +29,7 @@ Bukkit-Adventure and Bungee-Adventure require these methods: (on-enable)
 <dependency>
   <groupId>cc.dreamcode.notice</groupId>
   <artifactId>{platform}</artifactId>
-  <version>1.4.12</version>
+  <version>1.5.0</version>
 </dependency>
 ```
 
@@ -39,13 +39,13 @@ maven { url "https://repo.dreamcode.cc/releases" }
 ```
 
 ```groovy
-implementation "cc.dreamcode.notice:{platform}:1.4.12"
+implementation "cc.dreamcode.notice:{platform}:1.5.0"
 ```
 
 ## Example
 
 ```java
-AdventureBukkitNotice.of(MinecraftNoticeType.CHAT, "&7Simple test {argument}.")
+BukkitNotice.of(NoticeType.CHAT, "&7Simple test {argument}.")
         .with("argument", "player1")
         .hoverEvent(HoverEvent.showText(AdventureLegacy.deserialize("Text.")))
         .clickEvent(ClickEvent.openUrl("https://dreamcode.cc"))
