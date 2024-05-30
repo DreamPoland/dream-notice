@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-public abstract class DreamNotice<R extends DreamNotice<?>> {
+public abstract class Notice<R extends Notice<?>> {
 
     private Locale locale = Locale.forLanguageTag("pl");
     private PlaceholderContext placeholderContext = null;

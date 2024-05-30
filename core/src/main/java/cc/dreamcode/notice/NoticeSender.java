@@ -5,7 +5,7 @@ import lombok.NonNull;
 import java.util.Collection;
 import java.util.Map;
 
-public interface DreamSender<T> {
+public interface NoticeSender<T> {
 
     void send(@NonNull T target);
 

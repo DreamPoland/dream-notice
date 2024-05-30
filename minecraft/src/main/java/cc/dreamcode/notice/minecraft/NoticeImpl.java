@@ -1,11 +1,11 @@
 package cc.dreamcode.notice.minecraft;
 
-import cc.dreamcode.notice.DreamNotice;
+import cc.dreamcode.notice.Notice;
 import cc.dreamcode.utilities.StringUtil;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Notice<R extends DreamNotice<R>> extends DreamNotice<R> {
+public class NoticeImpl<R extends Notice<R>> extends Notice<R> {
 
     private final NoticeType noticeType;
     private final String noticeText;
@@ -14,7 +14,7 @@ public class Notice<R extends DreamNotice<R>> extends DreamNotice<R> {
     @Setter @Getter private int titleStay = 20;
     @Setter @Getter private int titleFadeOut = 10;
 
-    public Notice(NoticeType noticeType, String... noticeText) {
+    public NoticeImpl(NoticeType noticeType, String... noticeText) {
         this.noticeType = noticeType;
 
         if (noticeText.length == 1) {
@@ -22,7 +22,7 @@ public class Notice<R extends DreamNotice<R>> extends DreamNotice<R> {
             return;
         }
 
-        this.noticeText = StringUtil.join(noticeText, Notice.lineSeparator());
+        this.noticeText = StringUtil.join(noticeText, NoticeImpl.lineSeparator());
     }
 
     @Override

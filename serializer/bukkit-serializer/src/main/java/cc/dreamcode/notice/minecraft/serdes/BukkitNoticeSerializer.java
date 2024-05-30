@@ -1,22 +1,22 @@
 package cc.dreamcode.notice.minecraft.serdes;
 
-import cc.dreamcode.notice.minecraft.Notice;
+import cc.dreamcode.notice.minecraft.NoticeImpl;
 import cc.dreamcode.notice.minecraft.NoticeType;
-import cc.dreamcode.notice.minecraft.BukkitNotice;
+import cc.dreamcode.notice.minecraft.BukkitNoticeImpl;
 import eu.okaeri.configs.schema.GenericsDeclaration;
 import eu.okaeri.configs.serdes.DeserializationData;
 import eu.okaeri.configs.serdes.ObjectSerializer;
 import eu.okaeri.configs.serdes.SerializationData;
 import lombok.NonNull;
 
-public class BukkitNoticeSerializer implements ObjectSerializer<BukkitNotice> {
+public class BukkitNoticeSerializer implements ObjectSerializer<BukkitNoticeImpl> {
     @Override
-    public boolean supports(@NonNull Class<? super BukkitNotice> type) {
-        return Notice.class.isAssignableFrom(type);
+    public boolean supports(@NonNull Class<? super BukkitNoticeImpl> type) {
+        return NoticeImpl.class.isAssignableFrom(type);
     }
 
     @Override
-    public void serialize(@NonNull BukkitNotice object, @NonNull SerializationData data, @NonNull GenericsDeclaration generics) {
+    public void serialize(@NonNull BukkitNoticeImpl object, @NonNull SerializationData data, @NonNull GenericsDeclaration generics) {
         data.add("type", object.getNoticeType(), NoticeType.class);
         data.add("text", object.getRaw(), String.class);
 
@@ -34,9 +34,9 @@ public class BukkitNoticeSerializer implements ObjectSerializer<BukkitNotice> {
     }
 
     @Override
-    public BukkitNotice deserialize(@NonNull DeserializationData data, @NonNull GenericsDeclaration generics) {
+    public BukkitNoticeImpl deserialize(@NonNull DeserializationData data, @NonNull GenericsDeclaration generics) {
 
-        BukkitNotice minecraftNotice = new BukkitNotice(
+        BukkitNoticeImpl minecraftNotice = new BukkitNoticeImpl(
                 data.get("type", NoticeType.class),
                 data.get("text", String.class)
         );

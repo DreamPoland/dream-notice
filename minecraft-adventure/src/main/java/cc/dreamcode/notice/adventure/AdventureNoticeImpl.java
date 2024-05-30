@@ -1,7 +1,7 @@
 package cc.dreamcode.notice.adventure;
 
-import cc.dreamcode.notice.DreamNotice;
-import cc.dreamcode.notice.minecraft.Notice;
+import cc.dreamcode.notice.Notice;
+import cc.dreamcode.notice.minecraft.NoticeImpl;
 import cc.dreamcode.notice.minecraft.NoticeType;
 import cc.dreamcode.utilities.builder.ListBuilder;
 import cc.dreamcode.utilities.bungee.StringColorUtil;
@@ -17,14 +17,14 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class AdventureNotice<R extends DreamNotice<R>> extends Notice<R> {
+public class AdventureNoticeImpl<R extends Notice<R>> extends NoticeImpl<R> {
 
     private static final Pattern FIELD_PATTERN = Pattern.compile("\\{(?<content>[^}]+)}");
 
     private Component joiningComponent = null;
     private List<Component> component = null;
 
-    public AdventureNotice(NoticeType noticeType, String... noticeText) {
+    public AdventureNoticeImpl(NoticeType noticeType, String... noticeText) {
         super(noticeType, noticeText);
     }
 

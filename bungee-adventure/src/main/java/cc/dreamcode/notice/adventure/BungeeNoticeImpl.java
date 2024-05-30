@@ -1,34 +1,33 @@
 package cc.dreamcode.notice.adventure;
 
-import cc.dreamcode.notice.minecraft.Notice;
+import cc.dreamcode.notice.minecraft.NoticeImpl;
 import cc.dreamcode.notice.minecraft.NoticeType;
 import lombok.NonNull;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
 
-public class PaperNotice extends AdventureNotice<PaperNotice> implements PaperSender {
-    public PaperNotice(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+public class BungeeNoticeImpl extends AdventureNoticeImpl<BungeeNoticeImpl> implements BungeeSender {
+    public BungeeNoticeImpl(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
-
-        if (!PaperVerifier.verifyVersion()) {
-            throw new RuntimeException("AdventurePaper need Paper software (or his fork) and Mini-Message implementation. (1.18.2+)");
-        }
     }
 
-    public static PaperNotice of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
-        return new PaperNotice(noticeType, noticeText);
+    public static BungeeNoticeImpl of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+        return new BungeeNoticeImpl(noticeType, noticeText);
     }
 
     @Override
     public void send(@NonNull CommandSender target) {
-        this.sendFormatted(target);
+        final BungeeAudiences bungeeAudiences = BungeeNoticeProvider.getInstance().getBungeeAudiences();
+        this.sendFormatted(target, bungeeAudiences.sender(target));
     }
 
     @Override
@@ -48,17 +47,17 @@ public class PaperNotice extends AdventureNotice<PaperNotice> implements PaperSe
 
     @Override
     public void sendAll() {
-        Bukkit.getOnlinePlayers().forEach(this::send);
+        ProxyServer.getInstance().getPlayers().forEach(this::send);
     }
 
     @Override
     public void sendAll(@NonNull Map<String, Object> mapReplacer) {
-        Bukkit.getOnlinePlayers().forEach(target -> this.with(mapReplacer).send(target));
+        ProxyServer.getInstance().getPlayers().forEach(target -> this.with(mapReplacer).send(target));
     }
 
     @Override
     public void sendPermitted(@NonNull String permission) {
-        Bukkit.getOnlinePlayers()
+        ProxyServer.getInstance().getPlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
                 .forEach(this::send);
@@ -66,15 +65,15 @@ public class PaperNotice extends AdventureNotice<PaperNotice> implements PaperSe
 
     @Override
     public void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
-        Bukkit.getOnlinePlayers()
+        ProxyServer.getInstance().getPlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
                 .forEach(target -> this.with(mapReplacer).send(target));
     }
 
-    private void sendFormatted(@NonNull CommandSender target) {
+    private void sendFormatted(@NonNull CommandSender sender, @NonNull Audience target) {
 
-        if (!(target instanceof Player)) {
+        if (!(sender instanceof ProxiedPlayer)) {
             this.toSplitComponents().forEach(target::sendMessage);
 
             this.clearRender();
@@ -139,9 +138,9 @@ public class PaperNotice extends AdventureNotice<PaperNotice> implements PaperSe
             }
             case TITLE_SUBTITLE: {
 
-                String[] split = this.getRender().split(Notice.lineSeparator());
+                String[] split = this.getRender().split(NoticeImpl.lineSeparator());
                 if (split.length == 0) {
-                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + Notice.lineSeparator() + ") to separate two messages.");
+                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + NoticeImpl.lineSeparator() + ") to separate two messages.");
                 }
 
                 final Component title = AdventureLegacy.deserialize(split[0]);

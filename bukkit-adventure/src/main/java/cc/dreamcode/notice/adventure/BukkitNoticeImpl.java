@@ -1,6 +1,6 @@
 package cc.dreamcode.notice.adventure;
 
-import cc.dreamcode.notice.minecraft.Notice;
+import cc.dreamcode.notice.minecraft.NoticeImpl;
 import cc.dreamcode.notice.minecraft.NoticeType;
 import lombok.NonNull;
 import net.kyori.adventure.audience.Audience;
@@ -15,13 +15,13 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
 
-public class BukkitNotice extends AdventureNotice<BukkitNotice> implements BukkitSender {
-    public BukkitNotice(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+public class BukkitNoticeImpl extends AdventureNoticeImpl<BukkitNoticeImpl> implements BukkitSender {
+    public BukkitNoticeImpl(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
     }
 
-    public static BukkitNotice of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
-        return new BukkitNotice(noticeType, noticeText);
+    public static BukkitNoticeImpl of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+        return new BukkitNoticeImpl(noticeType, noticeText);
     }
 
     @Override
@@ -138,9 +138,9 @@ public class BukkitNotice extends AdventureNotice<BukkitNotice> implements Bukki
             }
             case TITLE_SUBTITLE: {
 
-                String[] split = this.getRender().split(Notice.lineSeparator());
+                String[] split = this.getRender().split(NoticeImpl.lineSeparator());
                 if (split.length == 0) {
-                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + Notice.lineSeparator() + ") to separate two messages.");
+                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + NoticeImpl.lineSeparator() + ") to separate two messages.");
                 }
 
                 final Component title = AdventureLegacy.deserialize(split[0]);

@@ -1,6 +1,6 @@
 package cc.dreamcode.notice.adventure;
 
-import cc.dreamcode.notice.minecraft.Notice;
+import cc.dreamcode.notice.minecraft.NoticeImpl;
 import cc.dreamcode.utilities.StringUtil;
 import cc.dreamcode.utilities.builder.ListBuilder;
 import lombok.NonNull;
@@ -36,7 +36,7 @@ public final class AdventureLegacy {
 
         final ListBuilder<Component> listBuilder = new ListBuilder<>();
 
-        String[] split = rawText.split(Notice.lineSeparator());
+        String[] split = rawText.split(NoticeImpl.lineSeparator());
         Arrays.stream(split).forEach(text -> listBuilder.add(deserialize(text, textReplacementConfig)));
 
         return listBuilder.build();
@@ -48,7 +48,7 @@ public final class AdventureLegacy {
 
     public static Component joiningDeserialize(@NonNull String rawText, TextReplacementConfig textReplacementConfig) {
 
-        final String joiningText = StringUtil.join(rawText.split(Notice.lineSeparator()), " ");
+        final String joiningText = StringUtil.join(rawText.split(NoticeImpl.lineSeparator()), " ");
         return deserialize(joiningText, textReplacementConfig);
     }
 

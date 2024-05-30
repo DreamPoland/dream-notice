@@ -12,13 +12,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
-    public BukkitNotice(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+public class BukkitNoticeImpl extends NoticeImpl<BukkitNoticeImpl> implements BukkitSender {
+    public BukkitNoticeImpl(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
     }
 
-    public static BukkitNotice of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
-        return new BukkitNotice(noticeType, noticeText);
+    public static BukkitNoticeImpl of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+        return new BukkitNoticeImpl(noticeType, noticeText);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
 
     private void sendFormatted(@NonNull CommandSender target) {
         if (!(target instanceof Player)) {
-            String[] split = this.getRender().split(Notice.lineSeparator());
+            String[] split = this.getRender().split(NoticeImpl.lineSeparator());
             Arrays.stream(split).forEach(text ->
                     target.sendMessage(StringColorUtil.fixColor(text)));
 
@@ -85,7 +85,7 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
                 break;
             }
             case CHAT: {
-                String[] split = this.getRender().split(Notice.lineSeparator());
+                String[] split = this.getRender().split(NoticeImpl.lineSeparator());
                 Arrays.stream(split).forEach(text ->
                         player.sendMessage(StringColorUtil.fixColor(text)));
 
@@ -95,7 +95,7 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
             case ACTION_BAR: {
                 ActionBar.sendActionBar(
                         player,
-                        StringColorUtil.fixColor(this.getRender().replace(Notice.lineSeparator(), ""))
+                        StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))
                 );
 
                 this.clearRender();
@@ -107,7 +107,7 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
                         this.getTitleFadeIn(),
                         this.getTitleStay(),
                         this.getTitleFadeOut(),
-                        StringColorUtil.fixColor(this.getRender().replace(Notice.lineSeparator(), "")),
+                        StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), "")),
                         ""
                 );
 
@@ -121,16 +121,16 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
                         this.getTitleStay(),
                         this.getTitleFadeOut(),
                         "",
-                        StringColorUtil.fixColor(this.getRender().replace(Notice.lineSeparator(), ""))
+                        StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))
                 );
 
                 this.clearRender();
                 break;
             }
             case TITLE_SUBTITLE: {
-                String[] split = this.getRender().split(Notice.lineSeparator());
+                String[] split = this.getRender().split(NoticeImpl.lineSeparator());
                 if (split.length == 0) {
-                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + Notice.lineSeparator() + ") to separate two messages.");
+                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + NoticeImpl.lineSeparator() + ") to separate two messages.");
                 }
 
                 final String title = StringColorUtil.fixColor(split[0]);

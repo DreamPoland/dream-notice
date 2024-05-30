@@ -13,13 +13,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
-    public BungeeNotice(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+public class BungeeNoticeImpl extends NoticeImpl<BungeeNoticeImpl> implements BungeeSender {
+    public BungeeNoticeImpl(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
     }
 
-    public static BungeeNotice of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
-        return new BungeeNotice(noticeType, noticeText);
+    public static BungeeNoticeImpl of(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
+        return new BungeeNoticeImpl(noticeType, noticeText);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
 
     private void sendFormatted(@NonNull CommandSender target) {
         if (!(target instanceof ProxiedPlayer)) {
-            String[] split = this.getRender().split(Notice.lineSeparator());
+            String[] split = this.getRender().split(NoticeImpl.lineSeparator());
             Arrays.stream(split).forEach(text ->
                     target.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
 
@@ -86,7 +86,7 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
                 break;
             }
             case CHAT: {
-                String[] split = this.getRender().split(Notice.lineSeparator());
+                String[] split = this.getRender().split(NoticeImpl.lineSeparator());
                 Arrays.stream(split).forEach(text ->
                         player.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
 
@@ -95,14 +95,14 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
             }
             case ACTION_BAR: {
                 player.sendMessage(ChatMessageType.ACTION_BAR,
-                        new TextComponent(StringColorUtil.fixColor(this.getRender().replace(Notice.lineSeparator(), ""))));
+                        new TextComponent(StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))));
 
                 this.clearRender();
                 break;
             }
             case TITLE: {
                 Title titleBuilder = ProxyServer.getInstance().createTitle();
-                titleBuilder.title(new TextComponent(StringColorUtil.fixColor(this.getRender().replace(Notice.lineSeparator(), ""))));
+                titleBuilder.title(new TextComponent(StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))));
                 titleBuilder.fadeIn(this.getTitleFadeIn());
                 titleBuilder.stay(this.getTitleStay());
                 titleBuilder.fadeOut(this.getTitleFadeOut());
@@ -114,7 +114,7 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
             }
             case SUBTITLE: {
                 Title titleBuilder = ProxyServer.getInstance().createTitle();
-                titleBuilder.subTitle(new TextComponent(StringColorUtil.fixColor(this.getRender().replace(Notice.lineSeparator(), ""))));
+                titleBuilder.subTitle(new TextComponent(StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))));
                 titleBuilder.fadeIn(this.getTitleFadeIn());
                 titleBuilder.stay(this.getTitleStay());
                 titleBuilder.fadeOut(this.getTitleFadeOut());
@@ -125,9 +125,9 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
                 break;
             }
             case TITLE_SUBTITLE: {
-                String[] split = this.getRender().split(Notice.lineSeparator());
+                String[] split = this.getRender().split(NoticeImpl.lineSeparator());
                 if (split.length == 0) {
-                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + Notice.lineSeparator() + ") to separate two messages.");
+                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + NoticeImpl.lineSeparator() + ") to separate two messages.");
                 }
 
                 final String title = StringColorUtil.fixColor(split[0]);

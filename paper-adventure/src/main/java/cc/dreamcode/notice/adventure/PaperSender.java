@@ -1,12 +1,12 @@
 package cc.dreamcode.notice.adventure;
 
-import cc.dreamcode.notice.DreamSender;
+import cc.dreamcode.notice.NoticeSender;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 
 import java.util.Map;
 
-public interface PaperSender extends DreamSender<CommandSender> {
+public interface PaperSender extends NoticeSender<CommandSender> {
 
     void sendAll();
 
