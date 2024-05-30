@@ -29,7 +29,7 @@ Bukkit-Adventure and Bungee-Adventure require these methods: (on-enable)
 <dependency>
   <groupId>cc.dreamcode.notice</groupId>
   <artifactId>{platform}</artifactId>
-  <version>1.5.0</version>
+  <version>1.5.1</version>
 </dependency>
 ```
 
@@ -39,13 +39,13 @@ maven { url "https://repo.dreamcode.cc/releases" }
 ```
 
 ```groovy
-implementation "cc.dreamcode.notice:{platform}:1.5.0"
+implementation "cc.dreamcode.notice:{platform}:1.5.1"
 ```
 
 ## Example
 
 ```java
-BukkitNotice.of(NoticeType.CHAT, "&7Simple test {argument}.")
+BukkitNotice.chat("&7Simple test {argument}.")
         .with("argument", "player1")
         .hoverEvent(HoverEvent.showText(AdventureLegacy.deserialize("Text.")))
         .clickEvent(ClickEvent.openUrl("https://dreamcode.cc"))
