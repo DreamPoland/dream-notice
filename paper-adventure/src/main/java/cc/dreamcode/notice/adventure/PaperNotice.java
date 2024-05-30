@@ -26,6 +26,26 @@ public class PaperNotice extends AdventureNotice<PaperNotice> implements PaperSe
         return new PaperNotice(noticeType, noticeText);
     }
 
+    public static PaperNotice chat(@NonNull String... noticeText) {
+        return new PaperNotice(NoticeType.CHAT, noticeText);
+    }
+
+    public static PaperNotice actionBar(@NonNull String... noticeText) {
+        return new PaperNotice(NoticeType.ACTION_BAR, noticeText);
+    }
+
+    public static PaperNotice title(@NonNull String... noticeText) {
+        return new PaperNotice(NoticeType.TITLE, noticeText);
+    }
+
+    public static PaperNotice subtitle(@NonNull String... noticeText) {
+        return new PaperNotice(NoticeType.TITLE, noticeText);
+    }
+
+    public static PaperNotice titleSubtitle(@NonNull String... noticeText) {
+        return new PaperNotice(NoticeType.TITLE_SUBTITLE, noticeText);
+    }
+
     @Override
     public void send(@NonNull CommandSender target) {
         this.sendFormatted(target);

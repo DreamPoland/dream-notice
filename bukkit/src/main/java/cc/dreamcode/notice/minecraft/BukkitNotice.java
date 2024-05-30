@@ -21,6 +21,26 @@ public class BukkitNotice extends NoticeImpl<BukkitNotice> implements BukkitSend
         return new BukkitNotice(noticeType, noticeText);
     }
 
+    public static BukkitNotice chat(@NonNull String... noticeText) {
+        return new BukkitNotice(NoticeType.CHAT, noticeText);
+    }
+
+    public static BukkitNotice actionBar(@NonNull String... noticeText) {
+        return new BukkitNotice(NoticeType.ACTION_BAR, noticeText);
+    }
+
+    public static BukkitNotice title(@NonNull String... noticeText) {
+        return new BukkitNotice(NoticeType.TITLE, noticeText);
+    }
+
+    public static BukkitNotice subtitle(@NonNull String... noticeText) {
+        return new BukkitNotice(NoticeType.TITLE, noticeText);
+    }
+
+    public static BukkitNotice titleSubtitle(@NonNull String... noticeText) {
+        return new BukkitNotice(NoticeType.TITLE_SUBTITLE, noticeText);
+    }
+
     @Override
     public void send(@NonNull CommandSender target) {
         this.sendFormatted(target);

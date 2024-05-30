@@ -24,6 +24,26 @@ public class BungeeNotice extends AdventureNotice<BungeeNotice> implements Bunge
         return new BungeeNotice(noticeType, noticeText);
     }
 
+    public static BungeeNotice chat(@NonNull String... noticeText) {
+        return new BungeeNotice(NoticeType.CHAT, noticeText);
+    }
+
+    public static BungeeNotice actionBar(@NonNull String... noticeText) {
+        return new BungeeNotice(NoticeType.ACTION_BAR, noticeText);
+    }
+
+    public static BungeeNotice title(@NonNull String... noticeText) {
+        return new BungeeNotice(NoticeType.TITLE, noticeText);
+    }
+
+    public static BungeeNotice subtitle(@NonNull String... noticeText) {
+        return new BungeeNotice(NoticeType.TITLE, noticeText);
+    }
+
+    public static BungeeNotice titleSubtitle(@NonNull String... noticeText) {
+        return new BungeeNotice(NoticeType.TITLE_SUBTITLE, noticeText);
+    }
+
     @Override
     public void send(@NonNull CommandSender target) {
         final BungeeAudiences bungeeAudiences = BungeeNoticeProvider.getInstance().getBungeeAudiences();
