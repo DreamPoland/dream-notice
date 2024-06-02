@@ -1,5 +1,5 @@
-
 # Dream-Notice
+[![Build](https://github.com/DreamPoland/dream-notice/actions/workflows/gradle.yml/badge.svg)](https://github.com/DreamPoland/dream-notice/actions/workflows/gradle.yml)
 
 Simple notice library with placeholders and mini-messages support.
 
