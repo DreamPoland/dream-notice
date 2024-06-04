@@ -37,7 +37,7 @@ public class BukkitNotice extends AdventureNotice<BukkitNotice> implements Bukki
     }
 
     public static BukkitNotice subtitle(@NonNull String... noticeText) {
-        return new BukkitNotice(NoticeType.TITLE, noticeText);
+        return new BukkitNotice(NoticeType.SUBTITLE, noticeText);
     }
 
     public static BukkitNotice titleSubtitle(@NonNull String... noticeText) {
