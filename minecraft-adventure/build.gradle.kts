@@ -7,7 +7,7 @@ dependencies {
     implementation(project(":minecraft"))
 
     // -- bungeecord-chat --
-    compileOnly("net.md-5:bungeecord-chat:1.20-R0.1-SNAPSHOT")
+    compileOnly("net.md-5:bungeecord-chat:1.20-R0.2")
 
     // -- kyori-adventure --
     compileOnly("net.kyori:adventure-text-minimessage:4.17.0")
