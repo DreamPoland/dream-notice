@@ -1,7 +1,6 @@
 package cc.dreamcode.notice.adventure;
 
 import cc.dreamcode.utilities.ClassUtil;
-import cc.dreamcode.utilities.bukkit.VersionUtil;
 
 public class PaperVerifier {
     public static boolean verifyVersion() {
@@ -10,6 +9,7 @@ public class PaperVerifier {
             return false;
         }
 
-        return VersionUtil.isPaper();
+        return ClassUtil.hasClass("com.destroystokyo.paper.PaperConfig") ||
+                ClassUtil.hasClass("io.papermc.paper.configuration.Configuration");
     }
 }
