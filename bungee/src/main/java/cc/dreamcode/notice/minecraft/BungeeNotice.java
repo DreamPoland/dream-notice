@@ -45,31 +45,57 @@ public class BungeeNotice extends NoticeImpl<BungeeNotice> implements BungeeSend
     @Override
     public void send(@NonNull CommandSender target) {
         this.sendFormatted(target);
+        this.clearRender();
     }
 
     @Override
     public void send(@NonNull CommandSender target, @NonNull Map<String, Object> mapReplacer) {
-        this.with(mapReplacer).send(target);
+        this.with(mapReplacer).sendFormatted(target);
+        this.clearRender();
     }
 
     @Override
     public void send(@NonNull Collection<CommandSender> targets) {
-        targets.forEach(this::send);
+        targets.forEach(this::sendFormatted);
+        this.clearRender();
     }
 
     @Override
     public void send(@NonNull Collection<CommandSender> targets, @NonNull Map<String, Object> mapReplacer) {
-        targets.forEach(target -> this.with(mapReplacer).send(target));
+        final BungeeNotice notice = this.with(mapReplacer);
+
+        targets.forEach(notice::sendFormatted);
+        notice.clearRender();
     }
 
     @Override
     public void sendAll() {
-        ProxyServer.getInstance().getPlayers().forEach(this::send);
+        ProxyServer.getInstance().getPlayers().forEach(this::sendFormatted);
+        this.clearRender();
     }
 
     @Override
     public void sendAll(@NonNull Map<String, Object> mapReplacer) {
-        ProxyServer.getInstance().getPlayers().forEach(target -> this.with(mapReplacer).send(target));
+        final BungeeNotice notice = this.with(mapReplacer);
+
+        ProxyServer.getInstance().getPlayers().forEach(notice::sendFormatted);
+        notice.clearRender();
+    }
+
+    @Override
+    public void sendBroadcast() {
+        ProxyServer.getInstance().getPlayers().forEach(this::sendFormatted);
+        this.sendFormatted(ProxyServer.getInstance().getConsole());
+        this.clearRender();
+    }
+
+    @Override
+    public void sendBroadcast(@NonNull Map<String, Object> mapReplacer) {
+        final BungeeNotice notice = this.with(mapReplacer);
+
+        ProxyServer.getInstance().getPlayers().forEach(notice::sendFormatted);
+        notice.sendFormatted(ProxyServer.getInstance().getConsole());
+        notice.clearRender();
     }
 
     @Override
@@ -77,15 +103,21 @@ public class BungeeNotice extends NoticeImpl<BungeeNotice> implements BungeeSend
         ProxyServer.getInstance().getPlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
-                .forEach(this::send);
+                .forEach(this::sendFormatted);
+
+        this.clearRender();
     }
 
     @Override
     public void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
+        final BungeeNotice notice = this.with(mapReplacer);
+
         ProxyServer.getInstance().getPlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
-                .forEach(target -> this.with(mapReplacer).send(target));
+                .forEach(notice::sendFormatted);
+
+        notice.clearRender();
     }
 
     private void sendFormatted(@NonNull CommandSender target) {
@@ -93,8 +125,6 @@ public class BungeeNotice extends NoticeImpl<BungeeNotice> implements BungeeSend
             String[] split = this.getRender().split(NoticeImpl.lineSeparator());
             Arrays.stream(split).forEach(text ->
                     target.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
-
-            this.clearRender();
             return;
         }
 
@@ -102,22 +132,17 @@ public class BungeeNotice extends NoticeImpl<BungeeNotice> implements BungeeSend
         final NoticeType noticeType = (NoticeType) this.getNoticeType();
         switch (noticeType) {
             case DO_NOT_SEND: {
-                this.clearRender();
                 break;
             }
             case CHAT: {
                 String[] split = this.getRender().split(NoticeImpl.lineSeparator());
                 Arrays.stream(split).forEach(text ->
                         player.sendMessage(new TextComponent(StringColorUtil.fixColor(text))));
-
-                this.clearRender();
                 break;
             }
             case ACTION_BAR: {
                 player.sendMessage(ChatMessageType.ACTION_BAR,
                         new TextComponent(StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))));
-
-                this.clearRender();
                 break;
             }
             case TITLE: {
@@ -128,8 +153,6 @@ public class BungeeNotice extends NoticeImpl<BungeeNotice> implements BungeeSend
                 titleBuilder.fadeOut(this.getTitleFadeOut());
 
                 player.sendTitle(titleBuilder);
-
-                this.clearRender();
                 break;
             }
             case SUBTITLE: {
@@ -140,8 +163,6 @@ public class BungeeNotice extends NoticeImpl<BungeeNotice> implements BungeeSend
                 titleBuilder.fadeOut(this.getTitleFadeOut());
 
                 player.sendTitle(titleBuilder);
-
-                this.clearRender();
                 break;
             }
             case TITLE_SUBTITLE: {
@@ -161,8 +182,6 @@ public class BungeeNotice extends NoticeImpl<BungeeNotice> implements BungeeSend
                 titleBuilder.fadeOut(this.getTitleFadeOut());
 
                 player.sendTitle(titleBuilder);
-
-                this.clearRender();
                 break;
             }
             default: {

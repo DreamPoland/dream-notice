@@ -46,33 +46,59 @@ public class BungeeNotice extends AdventureNotice<BungeeNotice> implements Bunge
 
     @Override
     public void send(@NonNull CommandSender target) {
-        final BungeeAudiences bungeeAudiences = BungeeNoticeProvider.getInstance().getBungeeAudiences();
-        this.sendFormatted(target, bungeeAudiences.sender(target));
+        this.wrapAndSend(target);
+        this.clearRender();
     }
 
     @Override
     public void send(@NonNull CommandSender target, @NonNull Map<String, Object> mapReplacer) {
-        this.with(mapReplacer).send(target);
+        this.with(mapReplacer).wrapAndSend(target);
+        this.clearRender();
     }
 
     @Override
     public void send(@NonNull Collection<CommandSender> targets) {
-        targets.forEach(this::send);
+        targets.forEach(this::wrapAndSend);
+
+        this.clearRender();
     }
 
     @Override
     public void send(@NonNull Collection<CommandSender> targets, @NonNull Map<String, Object> mapReplacer) {
-        targets.forEach(target -> this.with(mapReplacer).send(target));
+        final BungeeNotice notice = this.with(mapReplacer);
+
+        targets.forEach(notice::wrapAndSend);
+        notice.clearRender();
     }
 
     @Override
     public void sendAll() {
-        ProxyServer.getInstance().getPlayers().forEach(this::send);
+        ProxyServer.getInstance().getPlayers().forEach(this::wrapAndSend);
+        this.clearRender();
     }
 
     @Override
     public void sendAll(@NonNull Map<String, Object> mapReplacer) {
-        ProxyServer.getInstance().getPlayers().forEach(target -> this.with(mapReplacer).send(target));
+        final BungeeNotice notice = this.with(mapReplacer);
+
+        ProxyServer.getInstance().getPlayers().forEach(notice::wrapAndSend);
+        notice.clearRender();
+    }
+
+    @Override
+    public void sendBroadcast() {
+        ProxyServer.getInstance().getPlayers().forEach(this::wrapAndSend);
+        this.wrapAndSend(ProxyServer.getInstance().getConsole());
+        this.clearRender();
+    }
+
+    @Override
+    public void sendBroadcast(@NonNull Map<String, Object> mapReplacer) {
+        final BungeeNotice notice = this.with(mapReplacer);
+
+        ProxyServer.getInstance().getPlayers().forEach(notice::wrapAndSend);
+        notice.wrapAndSend(ProxyServer.getInstance().getConsole());
+        notice.clearRender();
     }
 
     @Override
@@ -80,42 +106,47 @@ public class BungeeNotice extends AdventureNotice<BungeeNotice> implements Bunge
         ProxyServer.getInstance().getPlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
-                .forEach(this::send);
+                .forEach(this::wrapAndSend);
+
+        this.clearRender();
     }
 
     @Override
     public void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
+        final BungeeNotice notice = this.with(mapReplacer);
+
         ProxyServer.getInstance().getPlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
-                .forEach(target -> this.with(mapReplacer).send(target));
+                .forEach(notice::wrapAndSend);
+
+        notice.clearRender();
+    }
+
+
+    private void wrapAndSend(@NonNull CommandSender target) {
+        final BungeeAudiences bungeeAudiences = BungeeNoticeProvider.getInstance().getBungeeAudiences();
+        this.sendFormatted(target, bungeeAudiences.sender(target));
     }
 
     private void sendFormatted(@NonNull CommandSender sender, @NonNull Audience target) {
 
         if (!(sender instanceof ProxiedPlayer)) {
             this.toSplitComponents().forEach(target::sendMessage);
-
-            this.clearRender();
             return;
         }
 
         final NoticeType noticeType = (NoticeType) this.getNoticeType();
         switch (noticeType) {
             case DO_NOT_SEND: {
-                this.clearRender();
                 break;
             }
             case CHAT: {
                 this.toSplitComponents().forEach(target::sendMessage);
-
-                this.clearRender();
                 break;
             }
             case ACTION_BAR: {
                 target.sendActionBar(this.toJoiningComponent());
-
-                this.clearRender();
                 break;
             }
             case TITLE: {
@@ -133,8 +164,6 @@ public class BungeeNotice extends AdventureNotice<BungeeNotice> implements Bunge
                 );
 
                 target.showTitle(titleBuilder);
-
-                this.clearRender();
                 break;
             }
             case SUBTITLE: {
@@ -152,8 +181,6 @@ public class BungeeNotice extends AdventureNotice<BungeeNotice> implements Bunge
                 );
 
                 target.showTitle(titleBuilder);
-
-                this.clearRender();
                 break;
             }
             case TITLE_SUBTITLE: {
@@ -177,8 +204,6 @@ public class BungeeNotice extends AdventureNotice<BungeeNotice> implements Bunge
                 );
 
                 target.showTitle(titleBuilder);
-
-                this.clearRender();
                 break;
             }
             default: {

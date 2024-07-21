@@ -46,33 +46,58 @@ public class BukkitNotice extends AdventureNotice<BukkitNotice> implements Bukki
 
     @Override
     public void send(@NonNull CommandSender target) {
-        final BukkitAudiences bukkitAudiences = BukkitNoticeProvider.getInstance().getBukkitAudiences();
-        this.sendFormatted(target, bukkitAudiences.sender(target));
+        this.wrapAndSend(target);
+        this.clearRender();
     }
 
     @Override
     public void send(@NonNull CommandSender target, @NonNull Map<String, Object> mapReplacer) {
-        this.with(mapReplacer).send(target);
+        this.with(mapReplacer).wrapAndSend(target);
+        this.clearRender();
     }
 
     @Override
     public void send(@NonNull Collection<CommandSender> targets) {
-        targets.forEach(this::send);
+        targets.forEach(this::wrapAndSend);
+        this.clearRender();
     }
 
     @Override
     public void send(@NonNull Collection<CommandSender> targets, @NonNull Map<String, Object> mapReplacer) {
-        targets.forEach(target -> this.with(mapReplacer).send(target));
+        final BukkitNotice notice = this.with(mapReplacer);
+
+        targets.forEach(notice::wrapAndSend);
+        notice.clearRender();
     }
 
     @Override
     public void sendAll() {
-        Bukkit.getOnlinePlayers().forEach(this::send);
+        Bukkit.getOnlinePlayers().forEach(this::wrapAndSend);
+        this.clearRender();
     }
 
     @Override
     public void sendAll(@NonNull Map<String, Object> mapReplacer) {
-        Bukkit.getOnlinePlayers().forEach(target -> this.with(mapReplacer).send(target));
+        final BukkitNotice notice = this.with(mapReplacer);
+
+        Bukkit.getOnlinePlayers().forEach(notice::wrapAndSend);
+        notice.clearRender();
+    }
+
+    @Override
+    public void sendBroadcast() {
+        Bukkit.getOnlinePlayers().forEach(this::wrapAndSend);
+        this.wrapAndSend(Bukkit.getConsoleSender());
+        this.clearRender();
+    }
+
+    @Override
+    public void sendBroadcast(@NonNull Map<String, Object> mapReplacer) {
+        final BukkitNotice notice = this.with(mapReplacer);
+
+        Bukkit.getOnlinePlayers().forEach(notice::wrapAndSend);
+        notice.wrapAndSend(Bukkit.getConsoleSender());
+        notice.clearRender();
     }
 
     @Override
@@ -80,42 +105,46 @@ public class BukkitNotice extends AdventureNotice<BukkitNotice> implements Bukki
         Bukkit.getOnlinePlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
-                .forEach(this::send);
+                .forEach(this::wrapAndSend);
+
+        this.clearRender();
     }
 
     @Override
     public void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
+        final BukkitNotice notice = this.with(mapReplacer);
+
         Bukkit.getOnlinePlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
-                .forEach(target -> this.with(mapReplacer).send(target));
+                .forEach(notice::wrapAndSend);
+
+        notice.clearRender();
+    }
+
+    private void wrapAndSend(@NonNull CommandSender target) {
+        final BukkitAudiences bukkitAudiences = BukkitNoticeProvider.getInstance().getBukkitAudiences();
+        this.sendFormatted(target, bukkitAudiences.sender(target));
     }
 
     private void sendFormatted(@NonNull CommandSender sender, @NonNull Audience target) {
 
         if (!(sender instanceof Player)) {
             this.toSplitComponents().forEach(target::sendMessage);
-
-            this.clearRender();
             return;
         }
 
         final NoticeType noticeType = (NoticeType) this.getNoticeType();
         switch (noticeType) {
             case DO_NOT_SEND: {
-                this.clearRender();
                 break;
             }
             case CHAT: {
                 this.toSplitComponents().forEach(target::sendMessage);
-
-                this.clearRender();
                 break;
             }
             case ACTION_BAR: {
                 target.sendActionBar(this.toJoiningComponent());
-
-                this.clearRender();
                 break;
             }
             case TITLE: {
@@ -133,8 +162,6 @@ public class BukkitNotice extends AdventureNotice<BukkitNotice> implements Bukki
                 );
 
                 target.showTitle(titleBuilder);
-
-                this.clearRender();
                 break;
             }
             case SUBTITLE: {
@@ -152,8 +179,6 @@ public class BukkitNotice extends AdventureNotice<BukkitNotice> implements Bukki
                 );
 
                 target.showTitle(titleBuilder);
-
-                this.clearRender();
                 break;
             }
             case TITLE_SUBTITLE: {
@@ -177,8 +202,6 @@ public class BukkitNotice extends AdventureNotice<BukkitNotice> implements Bukki
                 );
 
                 target.showTitle(titleBuilder);
-
-                this.clearRender();
                 break;
             }
             default: {

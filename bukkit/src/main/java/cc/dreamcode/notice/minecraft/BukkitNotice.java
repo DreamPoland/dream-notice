@@ -44,31 +44,57 @@ public class BukkitNotice extends NoticeImpl<BukkitNotice> implements BukkitSend
     @Override
     public void send(@NonNull CommandSender target) {
         this.sendFormatted(target);
+        this.clearRender();
     }
 
     @Override
     public void send(@NonNull CommandSender target, @NonNull Map<String, Object> mapReplacer) {
-        this.with(mapReplacer).send(target);
+        this.with(mapReplacer).sendFormatted(target);
+        this.clearRender();
     }
 
     @Override
     public void send(@NonNull Collection<CommandSender> targets) {
-        targets.forEach(this::send);
+        targets.forEach(this::sendFormatted);
+        this.clearRender();
     }
 
     @Override
     public void send(@NonNull Collection<CommandSender> targets, @NonNull Map<String, Object> mapReplacer) {
-        targets.forEach(target -> this.with(mapReplacer).send(target));
+        final BukkitNotice notice = this.with(mapReplacer);
+
+        targets.forEach(notice::sendFormatted);
+        notice.clearRender();
     }
 
     @Override
     public void sendAll() {
-        Bukkit.getOnlinePlayers().forEach(this::send);
+        Bukkit.getOnlinePlayers().forEach(this::sendFormatted);
+        this.clearRender();
     }
 
     @Override
     public void sendAll(@NonNull Map<String, Object> mapReplacer) {
-        Bukkit.getOnlinePlayers().forEach(target -> this.with(mapReplacer).send(target));
+        final BukkitNotice notice = this.with(mapReplacer);
+
+        Bukkit.getOnlinePlayers().forEach(notice::sendFormatted);
+        notice.clearRender();
+    }
+
+    @Override
+    public void sendBroadcast() {
+        Bukkit.getOnlinePlayers().forEach(this::sendFormatted);
+        this.sendFormatted(Bukkit.getConsoleSender());
+        this.clearRender();
+    }
+
+    @Override
+    public void sendBroadcast(@NonNull Map<String, Object> mapReplacer) {
+        final BukkitNotice notice = this.with(mapReplacer);
+
+        Bukkit.getOnlinePlayers().forEach(notice::sendFormatted);
+        notice.sendFormatted(Bukkit.getConsoleSender());
+        notice.clearRender();
     }
 
     @Override
@@ -76,15 +102,21 @@ public class BukkitNotice extends NoticeImpl<BukkitNotice> implements BukkitSend
         Bukkit.getOnlinePlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
-                .forEach(this::send);
+                .forEach(this::sendFormatted);
+
+        this.clearRender();
     }
 
     @Override
     public void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer) {
+        final BukkitNotice notice = this.with(mapReplacer);
+
         Bukkit.getOnlinePlayers()
                 .stream()
                 .filter(target -> target.hasPermission(permission))
-                .forEach(target -> this.with(mapReplacer).send(target));
+                .forEach(notice::sendFormatted);
+
+        notice.clearRender();
     }
 
     private void sendFormatted(@NonNull CommandSender target) {
@@ -92,8 +124,6 @@ public class BukkitNotice extends NoticeImpl<BukkitNotice> implements BukkitSend
             String[] split = this.getRender().split(NoticeImpl.lineSeparator());
             Arrays.stream(split).forEach(text ->
                     target.sendMessage(StringColorUtil.fixColor(text)));
-
-            this.clearRender();
             return;
         }
 
@@ -101,15 +131,12 @@ public class BukkitNotice extends NoticeImpl<BukkitNotice> implements BukkitSend
         final NoticeType noticeType = (NoticeType) this.getNoticeType();
         switch (noticeType) {
             case DO_NOT_SEND: {
-                this.clearRender();
                 break;
             }
             case CHAT: {
                 String[] split = this.getRender().split(NoticeImpl.lineSeparator());
                 Arrays.stream(split).forEach(text ->
                         player.sendMessage(StringColorUtil.fixColor(text)));
-
-                this.clearRender();
                 break;
             }
             case ACTION_BAR: {
@@ -117,8 +144,6 @@ public class BukkitNotice extends NoticeImpl<BukkitNotice> implements BukkitSend
                         player,
                         StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))
                 );
-
-                this.clearRender();
                 break;
             }
             case TITLE: {
@@ -130,8 +155,6 @@ public class BukkitNotice extends NoticeImpl<BukkitNotice> implements BukkitSend
                         StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), "")),
                         ""
                 );
-
-                this.clearRender();
                 break;
             }
             case SUBTITLE: {
@@ -143,8 +166,6 @@ public class BukkitNotice extends NoticeImpl<BukkitNotice> implements BukkitSend
                         "",
                         StringColorUtil.fixColor(this.getRender().replace(NoticeImpl.lineSeparator(), ""))
                 );
-
-                this.clearRender();
                 break;
             }
             case TITLE_SUBTITLE: {
@@ -157,8 +178,6 @@ public class BukkitNotice extends NoticeImpl<BukkitNotice> implements BukkitSend
                 final String subTitle = StringColorUtil.fixColor(split[1]);
 
                 Titles.sendTitle(player, this.getTitleFadeIn(), this.getTitleStay(), this.getTitleFadeOut(), title, subTitle);
-
-                this.clearRender();
                 break;
             }
             default: {

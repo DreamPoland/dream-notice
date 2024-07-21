@@ -12,6 +12,10 @@ public interface BungeeSender extends NoticeSender<CommandSender> {
 
     void sendAll(@NonNull Map<String, Object> mapReplacer);
 
+    void sendBroadcast();
+
+    void sendBroadcast(@NonNull Map<String, Object> mapReplacer);
+
     void sendPermitted(@NonNull String permission);
 
     void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer);
