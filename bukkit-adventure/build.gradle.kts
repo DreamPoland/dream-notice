@@ -16,6 +16,6 @@ dependencies {
 
     // -- kyori-adventure --
     implementation("net.kyori:adventure-text-minimessage:4.17.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.3")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.4")
     implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")
 }
