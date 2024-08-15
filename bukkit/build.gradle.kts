@@ -15,5 +15,5 @@ dependencies {
     implementation("cc.dreamcode:utilities-bukkit:1.4.5")
 
     // -- x-series --
-    implementation("com.github.cryptomorin:XSeries:9.10.0")
+    implementation("com.github.cryptomorin:XSeries:11.2.1")
 }
