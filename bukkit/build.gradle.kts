@@ -16,8 +16,4 @@ dependencies {
 
     // -- x-series --
     implementation("com.github.cryptomorin:XSeries:11.3.0")
-
-    // -- kyori-adventure --
-    implementation("net.kyori:adventure-text-minimessage:4.17.0")
-    implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")
 }
