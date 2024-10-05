@@ -29,7 +29,7 @@ Bukkit-Adventure and Bungee-Adventure require these methods: (on-enable)
 <dependency>
   <groupId>cc.dreamcode.notice</groupId>
   <artifactId>{platform}</artifactId>
-  <version>1.5.7</version>
+  <version>1.5.8</version>
 </dependency>
 ```
 
@@ -39,7 +39,7 @@ maven { url "https://repo.dreamcode.cc/releases" }
 ```
 
 ```groovy
-implementation "cc.dreamcode.notice:{platform}:1.5.7"
+implementation "cc.dreamcode.notice:{platform}:1.5.8"
 ```
 
 ## Example
