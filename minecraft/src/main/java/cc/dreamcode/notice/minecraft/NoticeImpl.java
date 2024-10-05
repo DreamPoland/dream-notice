@@ -5,7 +5,7 @@ import cc.dreamcode.utilities.StringUtil;
 import lombok.Getter;
 import lombok.Setter;
 
-public class NoticeImpl<R extends Notice<R>> extends Notice<R> {
+public class NoticeImpl extends Notice {
 
     private final NoticeType noticeType;
     private final String noticeText;

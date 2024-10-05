@@ -1,22 +1,22 @@
-package cc.dreamcode.notice.adventure.serializer;
+package cc.dreamcode.notice.minecraft.serializer;
 
 import cc.dreamcode.notice.minecraft.NoticeImpl;
 import cc.dreamcode.notice.minecraft.NoticeType;
-import cc.dreamcode.notice.adventure.PaperNotice;
+import cc.dreamcode.notice.minecraft.BungeeNotice;
 import eu.okaeri.configs.schema.GenericsDeclaration;
 import eu.okaeri.configs.serdes.DeserializationData;
 import eu.okaeri.configs.serdes.ObjectSerializer;
 import eu.okaeri.configs.serdes.SerializationData;
 import lombok.NonNull;
 
-public class PaperNoticeSerializer implements ObjectSerializer<PaperNotice> {
+public class BungeeNoticeSerializer implements ObjectSerializer<BungeeNotice> {
     @Override
-    public boolean supports(@NonNull Class<? super PaperNotice> type) {
+    public boolean supports(@NonNull Class<? super BungeeNotice> type) {
         return NoticeImpl.class.isAssignableFrom(type);
     }
 
     @Override
-    public void serialize(@NonNull PaperNotice object, @NonNull SerializationData data, @NonNull GenericsDeclaration generics) {
+    public void serialize(@NonNull BungeeNotice object, @NonNull SerializationData data, @NonNull GenericsDeclaration generics) {
         data.add("type", object.getNoticeType(), NoticeType.class);
         data.add("text", object.getRaw(), String.class);
 
@@ -34,9 +34,9 @@ public class PaperNoticeSerializer implements ObjectSerializer<PaperNotice> {
     }
 
     @Override
-    public PaperNotice deserialize(@NonNull DeserializationData data, @NonNull GenericsDeclaration generics) {
+    public BungeeNotice deserialize(@NonNull DeserializationData data, @NonNull GenericsDeclaration generics) {
 
-        PaperNotice minecraftNotice = new PaperNotice(
+        BungeeNotice minecraftNotice = new BungeeNotice(
                 data.get("type", NoticeType.class),
                 data.get("text", String.class)
         );

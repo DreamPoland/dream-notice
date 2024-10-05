@@ -1,67 +1,41 @@
 package cc.dreamcode.notice;
 
-import cc.dreamcode.utilities.StringUtil;
-import eu.okaeri.placeholders.context.PlaceholderContext;
-import eu.okaeri.placeholders.message.CompiledMessage;
 import lombok.NonNull;
+import lombok.Setter;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
-public abstract class Notice<R extends Notice<?>> {
+public abstract class Notice {
 
-    private Locale locale = Locale.forLanguageTag("pl");
-    private PlaceholderContext placeholderContext = null;
+    @Setter private Locale locale = Locale.forLanguageTag("pl");
+
+    private final Map<String, Object> placeholders = new HashMap<>();
 
     public abstract String getRaw();
-
     public abstract Enum<?> getNoticeType();
 
-    public Optional<PlaceholderContext> getPlaceholderContext() {
-        return Optional.ofNullable(this.placeholderContext);
+    public boolean placeholdersExists() {
+        return !this.placeholders.isEmpty();
     }
 
-    public String getRender() {
-        return this.getPlaceholderContext()
-                .map(PlaceholderContext::apply)
-                .orElse(this.getRaw());
+    public Map<String, Object> getPlaceholders() {
+        return Collections.unmodifiableMap(this.placeholders);
     }
 
-    @SuppressWarnings("unchecked")
-    public R setLocale(@NonNull Locale locale) {
-        this.locale = locale;
-        return (R) this;
+    public Notice with(@NonNull String from, @NonNull Object to) {
+        this.placeholders.put(from, to);
+        return this;
     }
 
-    @SuppressWarnings("unchecked")
-    public R with(@NonNull String from, @NonNull Object to) {
-
-        if (this.placeholderContext == null) {
-            final CompiledMessage compiledMessage = CompiledMessage.of(this.locale, this.getRaw());
-            this.placeholderContext = StringUtil.getPlaceholders().contextOf(compiledMessage);
-        }
-
-        this.placeholderContext.with(from, to);
-        return (R) this;
+    public Notice with(@NonNull Map<String, Object> replaceMap) {
+        this.placeholders.putAll(replaceMap);
+        return this;
     }
 
-    @SuppressWarnings("unchecked")
-    public R with(@NonNull Map<String, Object> replaceMap) {
-
-        if (this.placeholderContext == null) {
-            final CompiledMessage compiledMessage = CompiledMessage.of(this.locale, this.getRaw());
-            this.placeholderContext = StringUtil.getPlaceholders().contextOf(compiledMessage);
-        }
-
-        this.placeholderContext.with(replaceMap);
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public R clearRender() {
-
-        this.placeholderContext = null;
-        return (R) this;
+    public void clearRender() {
+        this.placeholders.clear();
     }
 }

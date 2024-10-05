@@ -1,4 +1,4 @@
-package cc.dreamcode.notice.minecraft.serdes;
+package cc.dreamcode.notice.minecraft.serializer;
 
 import cc.dreamcode.notice.minecraft.NoticeImpl;
 import cc.dreamcode.notice.minecraft.NoticeType;
