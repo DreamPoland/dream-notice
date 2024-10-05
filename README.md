@@ -44,11 +44,5 @@ implementation "cc.dreamcode.notice:{platform}:1.5.8"
 
 ## Example
 
-```java
-BukkitNotice.chat("&7Simple test {argument}.")
-        .with("argument", "player1")
-        .hoverEvent(HoverEvent.showText(AdventureLegacy.deserialize("Text.")))
-        .clickEvent(ClickEvent.openUrl("https://dreamcode.cc"))
-        .send(player);
-```
+See dream-template.
 
