@@ -1,6 +1,7 @@
 package cc.dreamcode.notice.bungee.adventure;
 
 import cc.dreamcode.utilities.StringUtil;
+import cc.dreamcode.utilities.bungee.StringColorUtil;
 import eu.okaeri.placeholders.context.PlaceholderContext;
 import eu.okaeri.placeholders.message.CompiledMessage;
 import lombok.NonNull;
@@ -31,7 +32,7 @@ public class AdventureUtil {
 
     private static final TextReplacementConfig COLOR_REPLACEMENTS = TextReplacementConfig.builder()
             .match(ALL_TEXT_PATTERN)
-            .replacement((result, input) -> AMPERSAND_SERIALIZER.deserialize(result.group()))
+            .replacement((result, input) -> Component.text(StringColorUtil.legacyFixColor(result.group())))
             .build();
 
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder()
