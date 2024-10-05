@@ -40,3 +40,5 @@ implementation "cc.dreamcode.notice:{platform}:1.6.1"
 If you need mini-message support, you need to implement dream-utilities versions with the adventure module. Both dream-utilities modules run on the same package.
 
 For example `cc.dreamcode:utilities-bukkit-adventure:newer-version`
+
+Or use module with -adventure suffix, `cc.dreamcode.notice:platform-adventure:1.6.1` for better support. (use only core and adventure module)
