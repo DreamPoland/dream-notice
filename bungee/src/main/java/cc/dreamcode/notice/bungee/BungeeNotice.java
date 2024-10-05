@@ -1,5 +1,7 @@
-package cc.dreamcode.notice.minecraft;
+package cc.dreamcode.notice.bungee;
 
+import cc.dreamcode.notice.Notice;
+import cc.dreamcode.notice.NoticeType;
 import cc.dreamcode.utilities.bungee.StringColorUtil;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatMessageType;
@@ -13,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-public class BungeeNotice extends NoticeImpl implements BungeeSender {
+public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
     public BungeeNotice(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
     }
@@ -120,7 +122,7 @@ public class BungeeNotice extends NoticeImpl implements BungeeSender {
 
     private void sendFormatted(@NonNull CommandSender target) {
         if (!(target instanceof ProxiedPlayer)) {
-            Arrays.stream(this.getRaw().split(NoticeImpl.lineSeparator())).forEach(text ->
+            Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text ->
                     target.sendMessage(new TextComponent(this.placeholdersExists()
                             ? StringColorUtil.fixColor(text, this.getPlaceholders())
                             : StringColorUtil.fixColor(text))));
@@ -128,20 +130,20 @@ public class BungeeNotice extends NoticeImpl implements BungeeSender {
         }
 
         final ProxiedPlayer player = (ProxiedPlayer) target;
-        final NoticeType noticeType = (NoticeType) this.getNoticeType();
+        final NoticeType noticeType = this.getNoticeType();
         switch (noticeType) {
             case DO_NOT_SEND: {
                 break;
             }
             case CHAT: {
-                Arrays.stream(this.getRaw().split(NoticeImpl.lineSeparator())).forEach(text ->
+                Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text ->
                         target.sendMessage(new TextComponent(this.placeholdersExists()
                                 ? StringColorUtil.fixColor(text, this.getPlaceholders())
                                 : StringColorUtil.fixColor(text))));
                 break;
             }
             case ACTION_BAR: {
-                final String text = this.getRaw().replace(NoticeImpl.lineSeparator(), "");
+                final String text = this.getNoticeText().replace(Notice.lineSeparator(), "");
                 player.sendMessage(ChatMessageType.ACTION_BAR,
                         new TextComponent(this.placeholdersExists()
                                 ? StringColorUtil.fixColor(text, this.getPlaceholders())
@@ -149,7 +151,7 @@ public class BungeeNotice extends NoticeImpl implements BungeeSender {
                 break;
             }
             case TITLE: {
-                final String text = this.getRaw().replace(NoticeImpl.lineSeparator(), "");
+                final String text = this.getNoticeText().replace(Notice.lineSeparator(), "");
 
                 Title titleBuilder = ProxyServer.getInstance().createTitle();
                 titleBuilder.title(new TextComponent(this.placeholdersExists()
@@ -163,7 +165,7 @@ public class BungeeNotice extends NoticeImpl implements BungeeSender {
                 break;
             }
             case SUBTITLE: {
-                final String text = this.getRaw().replace(NoticeImpl.lineSeparator(), "");
+                final String text = this.getNoticeText().replace(Notice.lineSeparator(), "");
 
                 Title titleBuilder = ProxyServer.getInstance().createTitle();
                 titleBuilder.subTitle(new TextComponent(this.placeholdersExists()
@@ -177,9 +179,9 @@ public class BungeeNotice extends NoticeImpl implements BungeeSender {
                 break;
             }
             case TITLE_SUBTITLE: {
-                String[] split = this.getRaw().split(NoticeImpl.lineSeparator());
+                String[] split = this.getNoticeText().split(Notice.lineSeparator());
                 if (split.length == 0) {
-                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + NoticeImpl.lineSeparator() + ") to separate two messages.");
+                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + Notice.lineSeparator() + ") to separate two messages.");
                 }
 
                 final String title;

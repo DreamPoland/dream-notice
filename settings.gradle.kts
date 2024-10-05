@@ -1,7 +1,6 @@
 rootProject.name = "dream-notice"
 
 include(":core")
-include(":minecraft")
 
 // -- platforms --
 include(":bukkit")

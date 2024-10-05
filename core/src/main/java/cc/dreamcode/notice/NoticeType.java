@@ -1,4 +1,4 @@
-package cc.dreamcode.notice.minecraft;
+package cc.dreamcode.notice;
 
 import lombok.RequiredArgsConstructor;
 

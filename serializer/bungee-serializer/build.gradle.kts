@@ -1,6 +1,5 @@
 dependencies {
     implementation(project(":core"))
-    implementation(project(":minecraft"))
     implementation(project(":bungee"))
 
     // -- okaeri-configs --

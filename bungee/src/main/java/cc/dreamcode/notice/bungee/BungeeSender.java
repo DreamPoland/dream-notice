@@ -1,12 +1,12 @@
-package cc.dreamcode.notice.minecraft;
+package cc.dreamcode.notice.bungee;
 
 import cc.dreamcode.notice.NoticeSender;
 import lombok.NonNull;
-import org.bukkit.command.CommandSender;
+import net.md_5.bungee.api.CommandSender;
 
 import java.util.Map;
 
-public interface BukkitSender extends NoticeSender<CommandSender> {
+public interface BungeeSender extends NoticeSender<CommandSender> {
 
     void sendAll();
 

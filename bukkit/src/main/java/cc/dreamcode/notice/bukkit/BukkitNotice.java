@@ -1,5 +1,7 @@
-package cc.dreamcode.notice.minecraft;
+package cc.dreamcode.notice.bukkit;
 
+import cc.dreamcode.notice.Notice;
+import cc.dreamcode.notice.NoticeType;
 import cc.dreamcode.utilities.bukkit.StringColorUtil;
 import com.cryptomorin.xseries.messages.ActionBar;
 import com.cryptomorin.xseries.messages.Titles;
@@ -12,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-public class BukkitNotice extends NoticeImpl implements BukkitSender {
+public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
     public BukkitNotice(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
     }
@@ -119,7 +121,7 @@ public class BukkitNotice extends NoticeImpl implements BukkitSender {
 
     private void sendFormatted(@NonNull CommandSender target) {
         if (!(target instanceof Player)) {
-            Arrays.stream(this.getRaw().split(NoticeImpl.lineSeparator())).forEach(text ->
+            Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text ->
                     target.sendMessage(this.placeholdersExists()
                             ? StringColorUtil.fixColor(text, this.getPlaceholders())
                             : StringColorUtil.fixColor(text)));
@@ -127,27 +129,27 @@ public class BukkitNotice extends NoticeImpl implements BukkitSender {
         }
 
         final Player player = (Player) target;
-        final NoticeType noticeType = (NoticeType) this.getNoticeType();
+        final NoticeType noticeType = this.getNoticeType();
         switch (noticeType) {
             case DO_NOT_SEND: {
                 break;
             }
             case CHAT: {
-                Arrays.stream(this.getRaw().split(NoticeImpl.lineSeparator())).forEach(text ->
+                Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text ->
                         target.sendMessage(this.placeholdersExists()
                                 ? StringColorUtil.fixColor(text, this.getPlaceholders())
                                 : StringColorUtil.fixColor(text)));
                 break;
             }
             case ACTION_BAR: {
-                final String text = this.getRaw().replace(NoticeImpl.lineSeparator(), "");
+                final String text = this.getNoticeText().replace(Notice.lineSeparator(), "");
                 ActionBar.sendActionBar(player, this.placeholdersExists()
                                 ? StringColorUtil.fixColor(text, this.getPlaceholders())
                                 : StringColorUtil.fixColor(text));
                 break;
             }
             case TITLE: {
-                final String text = this.getRaw().replace(NoticeImpl.lineSeparator(), "");
+                final String text = this.getNoticeText().replace(Notice.lineSeparator(), "");
                 Titles.sendTitle(
                         player,
                         this.getTitleFadeIn(),
@@ -161,7 +163,7 @@ public class BukkitNotice extends NoticeImpl implements BukkitSender {
                 break;
             }
             case SUBTITLE: {
-                final String text = this.getRaw().replace(NoticeImpl.lineSeparator(), "");
+                final String text = this.getNoticeText().replace(Notice.lineSeparator(), "");
                 Titles.sendTitle(
                         player,
                         this.getTitleFadeIn(),
@@ -175,9 +177,9 @@ public class BukkitNotice extends NoticeImpl implements BukkitSender {
                 break;
             }
             case TITLE_SUBTITLE: {
-                String[] split = this.getRaw().split(NoticeImpl.lineSeparator());
+                String[] split = this.getNoticeText().split(Notice.lineSeparator());
                 if (split.length == 0) {
-                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + NoticeImpl.lineSeparator() + ") to separate two messages.");
+                    throw new RuntimeException("Notice with TITLE_SUBTITLE need line-separator (" + Notice.lineSeparator() + ") to separate two messages.");
                 }
 
                 final String title;

@@ -5,7 +5,6 @@ repositories {
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":minecraft"))
 
     // -- spigot api -- (base)
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")

@@ -6,7 +6,6 @@ repositories {
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":minecraft"))
 
     // -- bungee api -- (base)
     compileOnly("net.md-5:bungeecord-api:1.20-R0.1-SNAPSHOT")
