@@ -3,17 +3,10 @@
 
 Simple notice library with placeholders and mini-messages support.
 
-
 ## Platforms
 
-- Bukkit/Spigot/Paper (need relocation) - [bukkit](https://github.com/DreamPoland/dream-notice/tree/master/bukkit) or [bukkit-adventure](https://github.com/DreamPoland/dream-notice/tree/master/bukkit)
-- Paper (native-support 1.18.2+) - [paper-adventure](https://github.com/DreamPoland/dream-notice/tree/master/paper-adventure)
-- Bungee/Waterfall (need relocation) - [bungee](https://github.com/DreamPoland/dream-notice/tree/master/bukkit) or [bungee-adventure](https://github.com/DreamPoland/dream-notice/tree/master/bukkit)
-
-### Warning
-Bukkit-Adventure and Bungee-Adventure require these methods: (on-enable)
-
-`BukkitNoticeProvider.create(this)` or `BungeeNoticeProvider.create(this)`
+- Bukkit/Spigot - [bukkit](https://github.com/DreamPoland/dream-notice/tree/master/bukkit)
+- Bungee/Waterfall - [bungee](https://github.com/DreamPoland/dream-notice/tree/master/bungee)
 
 ## Maven/Gradle
 
@@ -42,7 +35,8 @@ maven { url "https://repo.dreamcode.cc/releases" }
 implementation "cc.dreamcode.notice:{platform}:1.5.8"
 ```
 
-## Example
+## Note
 
-See dream-template.
+If you need mini-message support, you need to implement dream-utilities versions with the adventure module. Both dream-utilities modules run on the same package.
 
+For example `cc.dreamcode:utilities-bukkit-adventure:newer-version`
