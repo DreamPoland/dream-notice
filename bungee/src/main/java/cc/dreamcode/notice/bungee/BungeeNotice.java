@@ -58,6 +58,13 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
     }
 
     @Override
+    public void send(@NonNull CommandSender target, @NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+        this.sendFormatted(target, colorizePlaceholders);
+        this.clearRender();
+    }
+
+    @Override
     public void send(@NonNull Collection<CommandSender> targets) {
         targets.forEach(this::sendFormatted);
         this.clearRender();
@@ -67,6 +74,13 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
     public void send(@NonNull Collection<CommandSender> targets, @NonNull Map<String, Object> mapReplacer) {
         this.with(mapReplacer);
         targets.forEach(this::sendFormatted);
+        this.clearRender();
+    }
+
+    @Override
+    public void send(@NonNull Collection<CommandSender> targets, @NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+        targets.forEach(target -> this.sendFormatted(target, colorizePlaceholders));
         this.clearRender();
     }
 
@@ -84,6 +98,14 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
     }
 
     @Override
+    public void sendAll(@NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+        ProxyServer.getInstance().getPlayers().forEach(target ->
+                this.sendFormatted(target, colorizePlaceholders));
+        this.clearRender();
+    }
+
+    @Override
     public void sendBroadcast() {
         ProxyServer.getInstance().getPlayers().forEach(this::sendFormatted);
         this.sendFormatted(ProxyServer.getInstance().getConsole());
@@ -95,6 +117,15 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
         this.with(mapReplacer);
         ProxyServer.getInstance().getPlayers().forEach(this::sendFormatted);
         this.sendFormatted(ProxyServer.getInstance().getConsole());
+        this.clearRender();
+    }
+
+    @Override
+    public void sendBroadcast(@NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+        ProxyServer.getInstance().getPlayers().forEach(target ->
+                this.sendFormatted(target, colorizePlaceholders));
+        this.sendFormatted(ProxyServer.getInstance().getConsole(), colorizePlaceholders);
         this.clearRender();
     }
 
@@ -120,11 +151,27 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
         this.clearRender();
     }
 
+    @Override
+    public void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+
+        ProxyServer.getInstance().getPlayers()
+                .stream()
+                .filter(target -> target.hasPermission(permission))
+                .forEach(target -> this.sendFormatted(target, colorizePlaceholders));
+
+        this.clearRender();
+    }
+
     private void sendFormatted(@NonNull CommandSender target) {
+        sendFormatted(target, true);
+    }
+
+    private void sendFormatted(@NonNull CommandSender target, boolean colorizePlaceholders) {
         if (!(target instanceof ProxiedPlayer)) {
             Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text ->
                     target.sendMessage(new TextComponent(this.placeholdersExists()
-                            ? StringColorUtil.fixColor(text, this.getPlaceholders())
+                            ? StringColorUtil.fixColor(text, this.getPlaceholders(), colorizePlaceholders)
                             : StringColorUtil.fixColor(text))));
             return;
         }
@@ -138,7 +185,7 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
             case CHAT: {
                 Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text ->
                         target.sendMessage(new TextComponent(this.placeholdersExists()
-                                ? StringColorUtil.fixColor(text, this.getPlaceholders())
+                                ? StringColorUtil.fixColor(text, this.getPlaceholders(), colorizePlaceholders)
                                 : StringColorUtil.fixColor(text))));
                 break;
             }
@@ -146,7 +193,7 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
                 final String text = this.getNoticeText().replace(Notice.lineSeparator(), "");
                 player.sendMessage(ChatMessageType.ACTION_BAR,
                         new TextComponent(this.placeholdersExists()
-                                ? StringColorUtil.fixColor(text, this.getPlaceholders())
+                                ? StringColorUtil.fixColor(text, this.getPlaceholders(), colorizePlaceholders)
                                 : StringColorUtil.fixColor(text)));
                 break;
             }
@@ -155,7 +202,7 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
 
                 Title titleBuilder = ProxyServer.getInstance().createTitle();
                 titleBuilder.title(new TextComponent(this.placeholdersExists()
-                        ? StringColorUtil.fixColor(text, this.getPlaceholders())
+                        ? StringColorUtil.fixColor(text, this.getPlaceholders(), colorizePlaceholders)
                         : StringColorUtil.fixColor(text)));
                 titleBuilder.fadeIn(this.getTitleFadeIn());
                 titleBuilder.stay(this.getTitleStay());
@@ -169,7 +216,7 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
 
                 Title titleBuilder = ProxyServer.getInstance().createTitle();
                 titleBuilder.subTitle(new TextComponent(this.placeholdersExists()
-                        ? StringColorUtil.fixColor(text, this.getPlaceholders())
+                        ? StringColorUtil.fixColor(text, this.getPlaceholders(), colorizePlaceholders)
                         : StringColorUtil.fixColor(text)));
                 titleBuilder.fadeIn(this.getTitleFadeIn());
                 titleBuilder.stay(this.getTitleStay());
@@ -188,8 +235,8 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
                 final String subTitle;
 
                 if (this.placeholdersExists()) {
-                    title = StringColorUtil.fixColor(split[0], this.getPlaceholders());
-                    subTitle = StringColorUtil.fixColor(split[1], this.getPlaceholders());
+                    title = StringColorUtil.fixColor(split[0], this.getPlaceholders(), colorizePlaceholders);
+                    subTitle = StringColorUtil.fixColor(split[1], this.getPlaceholders(), colorizePlaceholders);
                 }
                 else {
                     title = StringColorUtil.fixColor(split[0]);

@@ -2,7 +2,7 @@ package cc.dreamcode.notice.bukkit;
 
 import cc.dreamcode.notice.Notice;
 import cc.dreamcode.notice.NoticeType;
-import cc.dreamcode.notice.bukkit.adventure.AdventureUtil;
+import cc.dreamcode.utilities.bukkit.adventure.ColorProcessor;
 import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.audience.Audience;
@@ -73,6 +73,13 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
     }
 
     @Override
+    public void send(@NonNull CommandSender target, @NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+        this.wrapAndSend(target, colorizePlaceholders);
+        this.clearRender();
+    }
+
+    @Override
     public void send(@NonNull Collection<CommandSender> targets) {
         targets.forEach(this::wrapAndSend);
         this.clearRender();
@@ -82,6 +89,13 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
     public void send(@NonNull Collection<CommandSender> targets, @NonNull Map<String, Object> mapReplacer) {
         this.with(mapReplacer);
         targets.forEach(this::wrapAndSend);
+        this.clearRender();
+    }
+
+    @Override
+    public void send(@NonNull Collection<CommandSender> targets, @NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+        targets.forEach(target -> this.wrapAndSend(target, colorizePlaceholders));
         this.clearRender();
     }
 
@@ -99,6 +113,13 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
     }
 
     @Override
+    public void sendAll(@NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+        Bukkit.getOnlinePlayers().forEach(target -> this.wrapAndSend(target, colorizePlaceholders));
+        this.clearRender();
+    }
+
+    @Override
     public void sendBroadcast() {
         Bukkit.getOnlinePlayers().forEach(this::wrapAndSend);
         this.wrapAndSend(Bukkit.getConsoleSender());
@@ -110,6 +131,14 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
         this.with(mapReplacer);
         Bukkit.getOnlinePlayers().forEach(this::wrapAndSend);
         this.wrapAndSend(Bukkit.getConsoleSender());
+        this.clearRender();
+    }
+
+    @Override
+    public void sendBroadcast(@NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+        Bukkit.getOnlinePlayers().forEach(target -> this.wrapAndSend(target, colorizePlaceholders));
+        this.wrapAndSend(Bukkit.getConsoleSender(), colorizePlaceholders);
         this.clearRender();
     }
 
@@ -135,26 +164,40 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
         this.clearRender();
     }
 
-    private void wrapAndSend(@NonNull CommandSender target) {
-        final BukkitAudiences bukkitAudiences = BukkitNoticeProvider.getInstance().getBukkitAudiences();
-        this.sendFormatted(target, bukkitAudiences.sender(target));
+    @Override
+    public void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+
+        Bukkit.getOnlinePlayers()
+                .stream()
+                .filter(target -> target.hasPermission(permission))
+                .forEach(target -> this.wrapAndSend(target, colorizePlaceholders));
+
+        this.clearRender();
     }
 
-    private void sendFormatted(@NonNull CommandSender sender, @NonNull Audience target) {
+    private void wrapAndSend(@NonNull CommandSender target) {
+        wrapAndSend(target, true);
+    }
+
+    private void wrapAndSend(@NonNull CommandSender target, boolean colorizePlaceholders) {
+        final BukkitAudiences bukkitAudiences = BukkitNoticeProvider.getInstance().getBukkitAudiences();
+        this.sendFormatted(target, bukkitAudiences.sender(target), colorizePlaceholders);
+    }
+
+    private void sendFormatted(@NonNull CommandSender sender, @NonNull Audience target, boolean colorizePlaceholders) {
         if (!(sender instanceof Player)) {
             Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text -> {
 
                 Component component = this.placeholdersExists()
-                        ? AdventureUtil.component(text, this.getPlaceholders())
-                        : AdventureUtil.component(text);
+                        ? ColorProcessor.component(text, this.getPlaceholders(), colorizePlaceholders)
+                        : ColorProcessor.component(text);
 
                 for (Function<Component, Component> componentConsumer : this.componentBuilder) {
                     component = componentConsumer.apply(component);
                 }
 
-                target.sendMessage(this.placeholdersExists()
-                        ? AdventureUtil.component(text, this.getPlaceholders())
-                        : AdventureUtil.component(text));
+                target.sendMessage(component);
             });
             return;
         }
@@ -168,16 +211,14 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
                 Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text -> {
 
                     Component component = this.placeholdersExists()
-                            ? AdventureUtil.component(text, this.getPlaceholders())
-                            : AdventureUtil.component(text);
+                            ? ColorProcessor.component(text, this.getPlaceholders(), colorizePlaceholders)
+                            : ColorProcessor.component(text);
 
                     for (Function<Component, Component> componentConsumer : this.componentBuilder) {
                         component = componentConsumer.apply(component);
                     }
 
-                    target.sendMessage(this.placeholdersExists()
-                            ? AdventureUtil.component(text, this.getPlaceholders())
-                            : AdventureUtil.component(text));
+                    target.sendMessage(component);
                 });
                 break;
             }
@@ -185,8 +226,8 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
                 final String text = this.getNoticeText().replace(Notice.lineSeparator(), "");
 
                 Component component = this.placeholdersExists()
-                        ? AdventureUtil.component(text, this.getPlaceholders())
-                        : AdventureUtil.component(text);
+                        ? ColorProcessor.component(text, this.getPlaceholders(), colorizePlaceholders)
+                        : ColorProcessor.component(text);
 
                 for (Function<Component, Component> componentConsumer : this.componentBuilder) {
                     component = componentConsumer.apply(component);
@@ -199,8 +240,8 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
                 final String text = this.getNoticeText().replace(Notice.lineSeparator(), "");
 
                 Component component = this.placeholdersExists()
-                        ? AdventureUtil.component(text, this.getPlaceholders())
-                        : AdventureUtil.component(text);
+                        ? ColorProcessor.component(text, this.getPlaceholders(), colorizePlaceholders)
+                        : ColorProcessor.component(text);
 
                 for (Function<Component, Component> componentConsumer : this.componentBuilder) {
                     component = componentConsumer.apply(component);
@@ -208,7 +249,7 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
 
                 Title titleBuilder = Title.title(
                         component,
-                        AdventureUtil.component(""),
+                        ColorProcessor.component(""),
                         Title.Times.times(
                                 Duration.ofMillis(this.getTitleFadeIn() * 50L),
                                 Duration.ofMillis(this.getTitleStay() * 50L),
@@ -223,15 +264,15 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
                 final String text = this.getNoticeText().replace(Notice.lineSeparator(), "");
 
                 Component component = this.placeholdersExists()
-                        ? AdventureUtil.component(text, this.getPlaceholders())
-                        : AdventureUtil.component(text);
+                        ? ColorProcessor.component(text, this.getPlaceholders(), colorizePlaceholders)
+                        : ColorProcessor.component(text);
 
                 for (Function<Component, Component> componentConsumer : this.componentBuilder) {
                     component = componentConsumer.apply(component);
                 }
 
                 Title titleBuilder = Title.title(
-                        AdventureUtil.component(""),
+                        ColorProcessor.component(""),
                         component,
                         Title.Times.times(
                                 Duration.ofMillis(this.getTitleFadeIn() * 50L),
@@ -253,12 +294,12 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
                 Component subTitle;
 
                 if (this.placeholdersExists()) {
-                    title = AdventureUtil.component(split[0], this.getPlaceholders());
-                    subTitle = AdventureUtil.component(split[1], this.getPlaceholders());
+                    title = ColorProcessor.component(split[0], this.getPlaceholders(), colorizePlaceholders);
+                    subTitle = ColorProcessor.component(split[1], this.getPlaceholders(), colorizePlaceholders);
                 }
                 else {
-                    title = AdventureUtil.component(split[0]);
-                    subTitle = AdventureUtil.component(split[1]);
+                    title = ColorProcessor.component(split[0]);
+                    subTitle = ColorProcessor.component(split[1]);
                 }
 
                 for (Function<Component, Component> componentConsumer : this.componentBuilder) {

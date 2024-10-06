@@ -57,6 +57,13 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
     }
 
     @Override
+    public void send(@NonNull CommandSender target, @NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+        this.sendFormatted(target, colorizePlaceholders);
+        this.clearRender();
+    }
+
+    @Override
     public void send(@NonNull Collection<CommandSender> targets) {
         targets.forEach(this::sendFormatted);
         this.clearRender();
@@ -66,6 +73,13 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
     public void send(@NonNull Collection<CommandSender> targets, @NonNull Map<String, Object> mapReplacer) {
         this.with(mapReplacer);
         targets.forEach(this::sendFormatted);
+        this.clearRender();
+    }
+
+    @Override
+    public void send(@NonNull Collection<CommandSender> targets, @NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+        targets.forEach(target -> this.sendFormatted(target, colorizePlaceholders));
         this.clearRender();
     }
 
@@ -83,6 +97,13 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
     }
 
     @Override
+    public void sendAll(@NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+        Bukkit.getOnlinePlayers().forEach(target -> this.sendFormatted(target, colorizePlaceholders));
+        this.clearRender();
+    }
+
+    @Override
     public void sendBroadcast() {
         Bukkit.getOnlinePlayers().forEach(this::sendFormatted);
         this.sendFormatted(Bukkit.getConsoleSender());
@@ -94,6 +115,14 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
         this.with(mapReplacer);
         Bukkit.getOnlinePlayers().forEach(this::sendFormatted);
         this.sendFormatted(Bukkit.getConsoleSender());
+        this.clearRender();
+    }
+
+    @Override
+    public void sendBroadcast(@NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+        Bukkit.getOnlinePlayers().forEach(target -> this.sendFormatted(target, colorizePlaceholders));
+        this.sendFormatted(Bukkit.getConsoleSender(), colorizePlaceholders);
         this.clearRender();
     }
 
@@ -119,11 +148,27 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
         this.clearRender();
     }
 
+    @Override
+    public void sendPermitted(@NonNull String permission, @NonNull Map<String, Object> mapReplacer, boolean colorizePlaceholders) {
+        this.with(mapReplacer);
+
+        Bukkit.getOnlinePlayers()
+                .stream()
+                .filter(target -> target.hasPermission(permission))
+                .forEach(target -> this.sendFormatted(target, colorizePlaceholders));
+
+        this.clearRender();
+    }
+
     private void sendFormatted(@NonNull CommandSender target) {
+        sendFormatted(target, true);
+    }
+
+    private void sendFormatted(@NonNull CommandSender target, boolean colorizePlaceholders) {
         if (!(target instanceof Player)) {
             Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text ->
                     target.sendMessage(this.placeholdersExists()
-                            ? StringColorUtil.fixColor(text, this.getPlaceholders())
+                            ? StringColorUtil.fixColor(text, this.getPlaceholders(), colorizePlaceholders)
                             : StringColorUtil.fixColor(text)));
             return;
         }
@@ -137,14 +182,14 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
             case CHAT: {
                 Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text ->
                         target.sendMessage(this.placeholdersExists()
-                                ? StringColorUtil.fixColor(text, this.getPlaceholders())
+                                ? StringColorUtil.fixColor(text, this.getPlaceholders(), colorizePlaceholders)
                                 : StringColorUtil.fixColor(text)));
                 break;
             }
             case ACTION_BAR: {
                 final String text = this.getNoticeText().replace(Notice.lineSeparator(), "");
                 ActionBar.sendActionBar(player, this.placeholdersExists()
-                                ? StringColorUtil.fixColor(text, this.getPlaceholders())
+                                ? StringColorUtil.fixColor(text, this.getPlaceholders(), colorizePlaceholders)
                                 : StringColorUtil.fixColor(text));
                 break;
             }
@@ -156,7 +201,7 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
                         this.getTitleStay(),
                         this.getTitleFadeOut(),
                         this.placeholdersExists()
-                                ? StringColorUtil.fixColor(text, this.getPlaceholders())
+                                ? StringColorUtil.fixColor(text, this.getPlaceholders(), colorizePlaceholders)
                                 : StringColorUtil.fixColor(text),
                         ""
                 );
@@ -171,7 +216,7 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
                         this.getTitleFadeOut(),
                         "",
                         this.placeholdersExists()
-                                ? StringColorUtil.fixColor(text, this.getPlaceholders())
+                                ? StringColorUtil.fixColor(text, this.getPlaceholders(), colorizePlaceholders)
                                 : StringColorUtil.fixColor(text)
                 );
                 break;
@@ -186,8 +231,8 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
                 final String subTitle;
 
                 if (this.placeholdersExists()) {
-                    title = StringColorUtil.fixColor(split[0], this.getPlaceholders());
-                    subTitle = StringColorUtil.fixColor(split[1], this.getPlaceholders());
+                    title = StringColorUtil.fixColor(split[0], this.getPlaceholders(), colorizePlaceholders);
+                    subTitle = StringColorUtil.fixColor(split[1], this.getPlaceholders(), colorizePlaceholders);
                 }
                 else {
                     title = StringColorUtil.fixColor(split[0]);
