@@ -1,7 +1,7 @@
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":bukkit"))
+    api(project(":core"))
+    api(project(":bukkit"))
 
     // -- okaeri-configs --
-    compileOnly("eu.okaeri:okaeri-configs-core:5.0.2")
+    api(libs.okaeri.configs)
 }

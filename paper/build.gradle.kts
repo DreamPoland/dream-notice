@@ -7,11 +7,12 @@ dependencies {
     api(project(":core"))
 
     // -- spigot api -- (base)
-    compileOnly(libs.spigot.api)
+    compileOnly(libs.paper.api)
 
     // -- dream-utilities --
-    api(libs.dream.utilties.bukkit)
+    api(libs.dream.utilties.bukkit.adventure)
 
-    // -- x-series --
-    api(libs.xseries)
+    // -- kyori-adventure --
+    compileOnly(libs.adventure.minimessage)
+    compileOnly(libs.adventure.serializer)
 }

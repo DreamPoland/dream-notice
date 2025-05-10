@@ -5,20 +5,19 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":core"))
+    api(project(":core"))
 
     // -- bungee api -- (base)
-    compileOnly("net.md-5:bungeecord-api:1.20-R0.1-SNAPSHOT")
+    compileOnly(libs.bungeecord.api)
 
     // -- dream-utilities --
-    implementation("cc.dreamcode:utilities:1.5.1")
-    implementation("cc.dreamcode:utilities-bungee-adventure:1.5.1")
+    api(libs.dream.utilties.bungee.adventure)
 
     // -- placeholders --
-    implementation("eu.okaeri:okaeri-placeholders-core:5.0.1")
+    api(libs.okaeri.placeholders)
 
     // -- kyori-adventure --
-    implementation("net.kyori:adventure-text-minimessage:4.17.0")
-    implementation("net.kyori:adventure-platform-bungeecord:4.3.4")
-    implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")
+    api(libs.adventure.minimessage)
+    api(libs.adventure.serializer)
+    api(libs.adventure.platform.bungee)
 }

@@ -1,11 +1,11 @@
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":bungee-adventure"))
+    api(project(":core"))
+    api(project(":bungee-adventure"))
 
     // -- okaeri-configs --
-    compileOnly("eu.okaeri:okaeri-configs-core:5.0.2")
+    api(libs.okaeri.configs)
 
     // -- kyori-adventure --
-    implementation("net.kyori:adventure-text-minimessage:4.17.0")
-    implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")
+    api(libs.adventure.minimessage)
+    api(libs.adventure.serializer)
 }

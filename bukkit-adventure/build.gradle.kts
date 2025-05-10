@@ -4,20 +4,19 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":core"))
+    api(project(":core"))
 
     // -- spigot api -- (base)
-    compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
+    compileOnly(libs.spigot.api)
 
     // -- dream-utilities --
-    implementation("cc.dreamcode:utilities:1.5.1")
-    implementation("cc.dreamcode:utilities-bukkit-adventure:1.5.1")
+    api(libs.dream.utilties.bukkit.adventure)
 
     // -- placeholders --
-    implementation("eu.okaeri:okaeri-placeholders-core:5.0.1")
+    api(libs.okaeri.placeholders)
 
     // -- kyori-adventure --
-    implementation("net.kyori:adventure-text-minimessage:4.17.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.4")
-    implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")
+    api(libs.adventure.minimessage)
+    api(libs.adventure.serializer)
+    api(libs.adventure.platform.bukkit)
 }
