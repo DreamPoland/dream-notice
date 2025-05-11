@@ -3,5 +3,5 @@ dependencies {
     api(project(":paper"))
 
     // -- okaeri-configs --
-    api(libs.okaeri.configs)
+    implementation(libs.okaeri.configs)
 }

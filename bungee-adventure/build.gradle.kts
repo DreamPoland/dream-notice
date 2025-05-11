@@ -11,13 +11,13 @@ dependencies {
     compileOnly(libs.bungeecord.api)
 
     // -- dream-utilities --
-    api(libs.dream.utilties.bungee.adventure)
+    implementation(libs.dream.utilties.bungee.adventure)
 
     // -- placeholders --
-    api(libs.okaeri.placeholders)
+    implementation(libs.okaeri.placeholders)
 
     // -- kyori-adventure --
-    api(libs.adventure.minimessage)
-    api(libs.adventure.serializer)
-    api(libs.adventure.platform.bungee)
+    implementation(libs.adventure.minimessage)
+    implementation(libs.adventure.serializer)
+    implementation(libs.adventure.platform.bungee)
 }

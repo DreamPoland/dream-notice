@@ -10,8 +10,8 @@ dependencies {
     compileOnly(libs.spigot.api)
 
     // -- dream-utilities --
-    api(libs.dream.utilties.bukkit)
+    implementation(libs.dream.utilties.bukkit)
 
     // -- x-series --
-    api(libs.xseries)
+    implementation(libs.xseries)
 }

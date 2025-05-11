@@ -3,5 +3,5 @@ dependencies {
     api(project(":bukkit"))
 
     // -- okaeri-configs --
-    api(libs.okaeri.configs)
+    implementation(libs.okaeri.configs)
 }

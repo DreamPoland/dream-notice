@@ -3,5 +3,5 @@ dependencies {
     api(project(":bungee"))
 
     // -- okaeri-configs --
-    api(libs.okaeri.configs)
+    implementation(libs.okaeri.configs)
 }

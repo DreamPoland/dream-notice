@@ -10,7 +10,7 @@ dependencies {
     compileOnly(libs.paper.api)
 
     // -- dream-utilities --
-    api(libs.dream.utilties.bukkit.adventure)
+    implementation(libs.dream.utilties.bukkit.adventure)
 
     // -- kyori-adventure --
     compileOnly(libs.adventure.minimessage)

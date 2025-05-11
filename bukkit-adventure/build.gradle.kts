@@ -10,13 +10,13 @@ dependencies {
     compileOnly(libs.spigot.api)
 
     // -- dream-utilities --
-    api(libs.dream.utilties.bukkit.adventure)
+    implementation(libs.dream.utilties.bukkit.adventure)
 
     // -- placeholders --
-    api(libs.okaeri.placeholders)
+    implementation(libs.okaeri.placeholders)
 
     // -- kyori-adventure --
-    api(libs.adventure.minimessage)
-    api(libs.adventure.serializer)
-    api(libs.adventure.platform.bukkit)
+    implementation(libs.adventure.minimessage)
+    implementation(libs.adventure.serializer)
+    implementation(libs.adventure.platform.bukkit)
 }

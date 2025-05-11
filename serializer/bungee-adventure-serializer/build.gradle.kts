@@ -3,9 +3,9 @@ dependencies {
     api(project(":bungee-adventure"))
 
     // -- okaeri-configs --
-    api(libs.okaeri.configs)
+    implementation(libs.okaeri.configs)
 
     // -- kyori-adventure --
-    api(libs.adventure.minimessage)
-    api(libs.adventure.serializer)
+    implementation(libs.adventure.minimessage)
+    implementation(libs.adventure.serializer)
 }
