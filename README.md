@@ -23,7 +23,7 @@ Simple notice library with placeholders and mini-messages support.
 <dependency>
   <groupId>cc.dreamcode.notice</groupId>
   <artifactId>{platform}</artifactId>
-  <version>1.6.8</version>
+  <version>1.6.9</version>
 </dependency>
 ```
 
@@ -33,7 +33,7 @@ maven { url "https://repo.dreamcode.cc/releases" }
 ```
 
 ```groovy
-implementation "cc.dreamcode.notice:{platform}:1.6.8"
+implementation "cc.dreamcode.notice:{platform}:1.6.9"
 ```
 
 ## Note
@@ -42,6 +42,6 @@ If you need mini-message support, you need to implement dream-utilities versions
 
 For example `cc.dreamcode:utilities-bukkit-adventure:newer-version`
 
-Or use module with -adventure suffix, `cc.dreamcode.notice:platform-adventure:1.6.8` for better support. (use only core and adventure module)
+Or use module with -adventure suffix, `cc.dreamcode.notice:platform-adventure:1.6.9` for better support. (use only core and adventure module)
 
 Paper module works on bukkit-adventure files without kyori-adventure implementation
