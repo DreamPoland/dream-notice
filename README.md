@@ -35,13 +35,3 @@ maven { url "https://repo.dreamcode.cc/releases" }
 ```groovy
 implementation "cc.dreamcode.notice:{platform}:1.7.0"
 ```
-
-## Note
-
-If you need mini-message support, you need to implement dream-utilities versions with the adventure module. Both dream-utilities modules run on the same package.
-
-For example `cc.dreamcode:utilities-bukkit-adventure:newer-version`
-
-Or use module with -adventure suffix, `cc.dreamcode.notice:platform-adventure:1.7.0` for better support. (use only core and adventure module)
-
-Paper module works on bukkit-adventure files without kyori-adventure implementation
