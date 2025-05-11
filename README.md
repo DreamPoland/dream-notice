@@ -6,7 +6,6 @@ Simple notice library with placeholders and mini-messages support.
 ## Platforms
 
 - Bukkit/Spigot - [bukkit](https://github.com/DreamPoland/dream-notice/tree/master/bukkit)
-- Paper - [paper](https://github.com/DreamPoland/dream-notice/tree/master/paper)
 - Bungee/Waterfall - [bungee](https://github.com/DreamPoland/dream-notice/tree/master/bungee)
 
 ## Maven/Gradle
