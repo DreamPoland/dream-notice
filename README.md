@@ -22,7 +22,7 @@ Simple notice library with placeholders and mini-messages support.
 <dependency>
   <groupId>cc.dreamcode.notice</groupId>
   <artifactId>{platform}</artifactId>
-  <version>1.7.1</version>
+  <version>1.7.2</version>
 </dependency>
 ```
 
@@ -32,5 +32,5 @@ maven { url "https://repo.dreamcode.cc/releases" }
 ```
 
 ```groovy
-implementation "cc.dreamcode.notice:{platform}:1.7.1"
+implementation "cc.dreamcode.notice:{platform}:1.7.2"
 ```

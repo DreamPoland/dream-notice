@@ -5,7 +5,7 @@ plugins {
 
 allprojects {
     group = "cc.dreamcode.notice"
-    version = "1.7.1"
+    version = "1.7.2"
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
