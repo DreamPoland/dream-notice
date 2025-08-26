@@ -3,7 +3,7 @@ lombok = "1.18.38"
 spigot-api = "1.16.5-R0.1-SNAPSHOT"
 bungeecord-api = "1.20-R0.1-SNAPSHOT"
 dream-utilties = "1.5.8"
-okaeri-configs = "5.0.10"
+okaeri-configs = "5.0.9"
 xseries = "13.3.3"
 
 [libraries]
