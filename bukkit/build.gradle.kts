@@ -11,6 +11,7 @@ dependencies {
 
     // -- dream-utilities --
     api(libs.dream.utilties.bukkit)
+    compileOnly(libs.dream.utilties.adventure)
 
     // -- x-series --
     api(libs.xseries)

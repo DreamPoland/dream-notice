@@ -13,6 +13,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven("https://repo.dreamcode.cc/releases")
+        maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://storehouse.okaeri.eu/repository/maven-public")
     }
 }

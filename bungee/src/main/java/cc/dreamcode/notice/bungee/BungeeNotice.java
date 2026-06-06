@@ -16,6 +16,13 @@ import java.util.Collection;
 import java.util.Map;
 
 public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
+
+    static {
+        if (cc.dreamcode.utilities.ClassUtil.hasClass("cc.dreamcode.utilities.adventure.AdventureProcessor")) {
+            cc.dreamcode.utilities.bungee.StringColorUtil.setColorProcessor(new cc.dreamcode.utilities.adventure.AdventureProcessor());
+        }
+    }
+
     public BungeeNotice(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
     }
@@ -168,20 +175,34 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
     }
 
     private void sendFormatted(@NonNull CommandSender target, boolean colorizePlaceholders) {
+        final NoticeType noticeType = this.getNoticeType();
+        if (noticeType == NoticeType.DO_NOT_SEND) {
+            return;
+        }
+
+        if (isAudience(target)) {
+            try {
+                Class.forName("cc.dreamcode.notice.adventure.BungeeAdventureHelper")
+                        .getMethod("send", BungeeNotice.class, net.md_5.bungee.api.CommandSender.class, boolean.class)
+                        .invoke(null, this, target, colorizePlaceholders);
+                return;
+            } catch (Exception e) {
+                // Fallback to legacy
+            }
+        }
+
         if (!(target instanceof ProxiedPlayer)) {
             Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text ->
                     target.sendMessage(new TextComponent(this.placeholdersExists()
                             ? StringColorUtil.fixColor(text, this.getPlaceholders(), colorizePlaceholders)
                             : StringColorUtil.fixColor(text))));
+            this.getCustomComponents().forEach(component ->
+                    target.sendMessage(new TextComponent(Notice.toLegacy(component))));
             return;
         }
 
         final ProxiedPlayer player = (ProxiedPlayer) target;
-        final NoticeType noticeType = this.getNoticeType();
         switch (noticeType) {
-            case DO_NOT_SEND: {
-                break;
-            }
             case CHAT: {
                 Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text ->
                         target.sendMessage(new TextComponent(this.placeholdersExists()
@@ -259,5 +280,7 @@ public class BungeeNotice extends Notice<BungeeNotice> implements BungeeSender {
                 throw new RuntimeException("Cannot resolve notice-type. (" + this.getNoticeType() + ")");
             }
         }
+        this.getCustomComponents().forEach(component ->
+                target.sendMessage(new TextComponent(Notice.toLegacy(component))));
     }
 }

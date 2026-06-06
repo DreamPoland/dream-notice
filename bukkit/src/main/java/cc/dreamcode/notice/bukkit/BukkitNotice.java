@@ -15,6 +15,13 @@ import java.util.Collection;
 import java.util.Map;
 
 public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
+
+    static {
+        if (cc.dreamcode.utilities.ClassUtil.hasClass("cc.dreamcode.utilities.adventure.AdventureProcessor")) {
+            cc.dreamcode.utilities.bukkit.StringColorUtil.setColorProcessor(new cc.dreamcode.utilities.adventure.AdventureProcessor());
+        }
+    }
+
     public BukkitNotice(@NonNull NoticeType noticeType, @NonNull String... noticeText) {
         super(noticeType, noticeText);
     }
@@ -165,20 +172,34 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
     }
 
     private void sendFormatted(@NonNull CommandSender target, boolean colorizePlaceholders) {
+        final NoticeType noticeType = this.getNoticeType();
+        if (noticeType == NoticeType.DO_NOT_SEND) {
+            return;
+        }
+
+        if (isAudience(target)) {
+            try {
+                Class.forName("cc.dreamcode.notice.adventure.BukkitAdventureHelper")
+                        .getMethod("send", BukkitNotice.class, org.bukkit.command.CommandSender.class, boolean.class)
+                        .invoke(null, this, target, colorizePlaceholders);
+                return;
+            } catch (Exception e) {
+                // Fallback to legacy
+            }
+        }
+
         if (!(target instanceof Player)) {
             Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text ->
                     target.sendMessage(this.placeholdersExists()
                             ? StringColorUtil.fixColor(text, this.getPlaceholders(), colorizePlaceholders)
                             : StringColorUtil.fixColor(text)));
+            this.getCustomComponents().forEach(component ->
+                    target.sendMessage(Notice.toLegacy(component)));
             return;
         }
 
         final Player player = (Player) target;
-        final NoticeType noticeType = this.getNoticeType();
         switch (noticeType) {
-            case DO_NOT_SEND: {
-                break;
-            }
             case CHAT: {
                 Arrays.stream(this.getNoticeText().split(Notice.lineSeparator())).forEach(text ->
                         target.sendMessage(this.placeholdersExists()
@@ -248,5 +269,7 @@ public class BukkitNotice extends Notice<BukkitNotice> implements BukkitSender {
                 throw new RuntimeException("Cannot resolve notice-type. (" + this.getNoticeType() + ")");
             }
         }
+        this.getCustomComponents().forEach(component ->
+                target.sendMessage(Notice.toLegacy(component)));
     }
 }

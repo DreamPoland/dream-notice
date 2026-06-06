@@ -12,4 +12,5 @@ dependencies {
 
     // -- dream-utilities --
     api(libs.dream.utilties.bungee)
+    compileOnly(libs.dream.utilties.adventure)
 }

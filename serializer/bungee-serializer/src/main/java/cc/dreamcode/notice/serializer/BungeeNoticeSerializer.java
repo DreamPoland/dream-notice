@@ -12,29 +12,29 @@ import java.util.Locale;
 
 public class BungeeNoticeSerializer implements ObjectSerializer<BungeeNotice> {
     @Override
-    public boolean supports(@NonNull Class<? super BungeeNotice> type) {
+    public boolean supports(@NonNull Class<?> type) {
         return BungeeNotice.class.isAssignableFrom(type);
     }
 
     @Override
     public void serialize(@NonNull BungeeNotice object, @NonNull SerializationData data, @NonNull GenericsDeclaration generics) {
-        data.add("type", object.getNoticeType(), NoticeType.class);
-        data.add("text", object.getNoticeText(), String.class);
+        data.set("type", object.getNoticeType(), NoticeType.class);
+        data.set("text", object.getNoticeText(), String.class);
 
         if (!object.getLocale().equals(Locale.forLanguageTag("pl"))) {
-            data.add("locale", object.getLocale().toLanguageTag());
+            data.set("locale", object.getLocale().toLanguageTag());
         }
 
         if (object.getTitleFadeIn() != 10) {
-            data.add("title-fade-in", object.getTitleFadeIn());
+            data.set("title-fade-in", object.getTitleFadeIn());
         }
 
         if (object.getTitleStay() != 20) {
-            data.add("title-stay", object.getTitleStay());
+            data.set("title-stay", object.getTitleStay());
         }
 
         if (object.getTitleFadeOut() != 10) {
-            data.add("title-fade-out", object.getTitleFadeOut());
+            data.set("title-fade-out", object.getTitleFadeOut());
         }
     }
 

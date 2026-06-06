@@ -1,17 +1,18 @@
 [versions]
-lombok = "1.18.38"
-spigot-api = "1.16.5-R0.1-SNAPSHOT"
-bungeecord-api = "1.20-R0.1-SNAPSHOT"
-dream-utilties = "1.5.8"
-okaeri-configs = "5.0.13"
-xseries = "13.3.3"
+lombok = "1.18.46"
+spigot-api = "1.21.11-R0.1-SNAPSHOT"
+bungeecord-api = "1.21-R0.4"
+dream-utilities = "1.6.0"
+okaeri-configs = "6.1.0-beta.4"
+xseries = "13.7.0"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot-api" }
 bungeecord-api = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord-api" }
-dream-utilties = { module = "cc.dreamcode:utilities", version.ref = "dream-utilties" }
-dream-utilties-bukkit = { module = "cc.dreamcode:utilities-bukkit", version.ref = "dream-utilties" }
-dream-utilties-bungee = { module = "cc.dreamcode:utilities-bungee", version.ref = "dream-utilties" }
+dream-utilties = { module = "cc.dreamcode:utilities", version.ref = "dream-utilities" }
+dream-utilties-bukkit = { module = "cc.dreamcode:utilities-bukkit", version.ref = "dream-utilities" }
+dream-utilties-bungee = { module = "cc.dreamcode:utilities-bungee", version.ref = "dream-utilities" }
+dream-utilties-adventure = { module = "cc.dreamcode:utilities-adventure", version.ref = "dream-utilities" }
 okaeri-configs = { module = "eu.okaeri:okaeri-configs-core", version.ref = "okaeri-configs" }
 xseries = { module = "com.github.cryptomorin:XSeries", version.ref = "xseries" }
