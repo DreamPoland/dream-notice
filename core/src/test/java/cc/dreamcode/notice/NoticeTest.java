@@ -221,7 +221,7 @@ public class NoticeTest {
     void testWithMethodWithNewlinePlaceholder() {
         Notice<?> notice = Notice.chat("User: {player}");
         Notice<?> replaced = notice.with("player", "Alice%NEWLINE%Bob");
-        assertEquals(Arrays.asList("User: Alice", "Bob"), replaced.getText());
+        assertEquals(Collections.singletonList("User: Alice%NEWLINE%Bob"), replaced.getText());
 
         Notice<?> multiLine = Notice.chat("First%NEWLINE%Second").with("foo", "bar");
         assertEquals(Arrays.asList("First", "Second"), multiLine.getText());

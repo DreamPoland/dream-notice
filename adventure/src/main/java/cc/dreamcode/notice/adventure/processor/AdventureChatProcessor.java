@@ -37,13 +37,12 @@ public class AdventureChatProcessor implements NoticeProcessor<Audience> {
             return;
         }
 
-        List<String> preparedLines = Notice.prepareText(textLines);
-        List<Component> components = ComponentUtil.ofList(preparedLines, locale, replacements);
+        List<Component> components = ComponentUtil.ofList(textLines);
         for (Component component : components) {
-            Component rendered = TranslationUtil.render(component, locale, replacements);
-            rendered = rendered.replaceText(builder -> builder
+            Component template = component.replaceText(builder -> builder
                     .match(NEWLINE_PATTERN)
                     .replacement(Component.newline()));
+            Component rendered = TranslationUtil.render(template, locale, replacements);
             handler.sendMessage(rendered);
         }
     }

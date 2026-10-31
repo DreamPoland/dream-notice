@@ -96,6 +96,43 @@ public class AdventureNoticeTest {
     }
 
     @Test
+    void testChatProcessorTreatsReplacementsAsPureLiteral() {
+        AdventureNotice notice = AdventureNotice.chat("User: {player}");
+        this.provider.builder()
+                .player(this.audience)
+                .notice(notice)
+                .with("player", "Alice%NEWLINE%Bob")
+                .send();
+
+        org.mockito.ArgumentCaptor<net.kyori.adventure.text.Component> captor = org.mockito.ArgumentCaptor.forClass(net.kyori.adventure.text.Component.class);
+        Mockito.verify(this.audience, Mockito.times(1)).sendMessage(captor.capture());
+        net.kyori.adventure.text.Component sent = captor.getValue();
+        assertNotNull(sent);
+
+        String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(sent);
+        assertEquals("User: Alice%NEWLINE%Bob", plain);
+    }
+
+    @Test
+    void testChatProcessorReplacesNewlineInTemplate() {
+        AdventureNotice notice = AdventureNotice.builder()
+                .noticeType(NoticeType.CHAT)
+                .text(java.util.Collections.singletonList("First%NEWLINE%Second"))
+                .build();
+        this.provider.builder()
+                .player(this.audience)
+                .notice(notice)
+                .with("extra", "value")
+                .send();
+
+        org.mockito.ArgumentCaptor<net.kyori.adventure.text.Component> captor = org.mockito.ArgumentCaptor.forClass(net.kyori.adventure.text.Component.class);
+        Mockito.verify(this.audience).sendMessage(captor.capture());
+        net.kyori.adventure.text.Component sent = captor.getValue();
+        String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(sent);
+        assertEquals("First\nSecond", plain);
+    }
+
+    @Test
     void testTitleProcessorSplitsNewline() {
         AdventureNotice notice = AdventureNotice.title("Header%NEWLINE%Footer");
         this.provider.builder().player(this.audience).notice(notice).send();

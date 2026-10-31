@@ -107,9 +107,6 @@ public class Notice<T> {
     }
 
     public List<String> getText() {
-        if (this.text != null && this.text.stream().anyMatch(Notice::containsLineSeparator)) {
-            this.text = prepareText(this.text);
-        }
         return this.text;
     }
 
@@ -338,7 +335,6 @@ public class Notice<T> {
         if (this.text != null && !this.text.isEmpty()) {
             this.text = this.text.stream()
                     .map(line -> replaceInText(line, placeholder, replace))
-                    .flatMap(line -> prepareText(Collections.singletonList(line)).stream())
                     .collect(Collectors.toList());
         }
         if (this.title != null) {
