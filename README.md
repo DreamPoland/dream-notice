@@ -49,7 +49,7 @@ Add the dependency for your platform:
 <dependency>
   <groupId>cc.dreamcode.notice</groupId>
   <artifactId>bukkit</artifactId>
-  <version>2.0.2</version>
+  <version>2.0.3</version>
 </dependency>
 ```
 
@@ -58,25 +58,16 @@ Add the dependency for your platform:
 <dependency>
   <groupId>cc.dreamcode.notice</groupId>
   <artifactId>bungee</artifactId>
-  <version>2.0.2</version>
+  <version>2.0.3</version>
 </dependency>
 ```
 
-**Bukkit Serializer (Okaeri Configs):**
+**Okaeri Configs Serdes:**
 ```xml
 <dependency>
   <groupId>cc.dreamcode.notice</groupId>
   <artifactId>bukkit-serializer</artifactId>
-  <version>2.0.2</version>
-</dependency>
-```
-
-**BungeeCord Serializer (Okaeri Configs):**
-```xml
-<dependency>
-  <groupId>cc.dreamcode.notice</groupId>
-  <artifactId>bungee-serializer</artifactId>
-  <version>2.0.2</version>
+  <version>2.0.3</version>
 </dependency>
 ```
 
@@ -91,12 +82,13 @@ repositories {
 
 dependencies {
     // Bukkit / Spigot / Paper
-    implementation("cc.dreamcode.notice:bukkit:2.0.2")
-    implementation("cc.dreamcode.notice:bukkit-serializer:2.0.2")
+    implementation("cc.dreamcode.notice:bukkit:2.0.3")
 
     // BungeeCord
-    implementation("cc.dreamcode.notice:bungee:2.0.2")
-    implementation("cc.dreamcode.notice:bungee-serializer:2.0.2")
+    implementation("cc.dreamcode.notice:bungee:2.0.3")
+
+    // Okaeri Configs Serialization
+    implementation("cc.dreamcode.notice:bukkit-serializer:2.0.3")
 }
 ```
 
@@ -106,46 +98,59 @@ dependencies {
 
 ### 1. Defining Notices
 
-You can create platform-specific notices directly using static factory methods:
+You can create notices using factory methods:
 
-**Bukkit / Paper / Spigot:**
 ```java
-public BukkitNotice notPlayer = BukkitNotice.chat("&cTa komende mozna tylko wykonac z poziomu gracza.");
-public BukkitNotice welcome = BukkitNotice.chat("Welcome <gradient:#ff0000:#00ff00>{player}</gradient> to the server!");
-public BukkitNotice actionbar = BukkitNotice.actionbar("<gold>+10 coins!</gold>");
-public BukkitNotice title = BukkitNotice.title("<green>LEVEL UP!</green>", "<gray>You reached level {level}</gray>", 10, 70, 20);
-public BukkitNotice bossBar = BukkitNotice.bossBar("<red>Boss incoming!</red>", "RED", "PROGRESS", 0.75f);
-public BukkitNotice sound = BukkitNotice.sound("entity.player.levelup", "MASTER", 1.0f, 1.0f);
-```
+// Chat notice
+Notice<?> chat = Notice.chat("Welcome <gradient:#ff0000:#00ff00>{player}</gradient> to the server!");
 
-**BungeeCord:**
-```java
-public BungeeNotice notPlayer = BungeeNotice.chat("&cTa komende mozna tylko wykonac z poziomu gracza.");
-public BungeeNotice welcome = BungeeNotice.chat("Welcome {player} to proxy!");
+// Multi-line chat
+Notice<?> multiline = Notice.chat(
+    "<gray>----------------------------------------</gray>",
+    "<yellow>Announcement:</yellow> <white>{message}</white>",
+    "<gray>----------------------------------------</gray>"
+);
+
+// ActionBar notice
+Notice<?> actionbar = Notice.actionbar("<gold>+10 coins!</gold>");
+
+// Title and Subtitle notice (with fadeIn, stay, fadeOut ticks)
+Notice<?> title = Notice.title("<green>LEVEL UP!</green>", "<gray>You reached level {level}</gray>", 10, 70, 20);
+
+// BossBar notice
+Notice<?> bossBar = Notice.bossBar("<red>Boss incoming!</red>", "RED", "PROGRESS", 0.75f);
+
+// Sound notice
+Notice<?> sound = Notice.sound("entity.player.levelup", "MASTER", 1.0f, 1.0f);
+
+// Book notice
+Notice<?> book = Notice.book("Server Rules", "Staff", "Page 1: Be respectful.", "Page 2: Have fun!");
+
+// PlayerList (Header & Footer)
+Notice<?> playerList = Notice.playerList("<gold>DreamCode Server</gold>", "<gray>Players online: {online}</gray>");
 ```
 
 ---
 
 ### 2. Integration with Okaeri Configs
 
-Each module has its dedicated Okaeri Configs serializer (`BukkitNoticeSerdes`, `BungeeNoticeSerdes`, `AdventureNoticeSerdes`, `NoticeSerdes`).
+Use `NoticeSerdes` with your Okaeri configuration:
 
 ```java
 public class PluginConfig extends OkaeriConfig {
 
-    public BukkitNotice notPlayer = BukkitNotice.chat("&cTa komende mozna tylko wykonac z poziomu gracza.");
-    public BukkitNotice welcomeMessage = BukkitNotice.chat("Welcome <green>{player}</green>!");
-    public BukkitNotice levelUpTitle = BukkitNotice.title("<gold>Level Up!</gold>", "<yellow>Level {level}</yellow>");
-    public BukkitNotice actionbarNotice = BukkitNotice.actionbar("<yellow>Saved progress.</yellow>");
+    public Notice<?> welcomeMessage = Notice.chat("Welcome <green>{player}</green>!");
+    public Notice<?> levelUpTitle = Notice.title("<gold>Level Up!</gold>", "<yellow>Level {level}</yellow>");
+    public Notice<?> actionbarNotice = Notice.actionbar("<yellow>Saved progress.</yellow>");
 
 }
 ```
 
-Register `BukkitNoticeSerdes` when creating the config:
+Register `NoticeSerdes` when creating the config:
 
 ```java
 PluginConfig config = ConfigManager.create(PluginConfig.class, it -> {
-    it.withConfigurer(new YamlBukkitConfigurer(), new BukkitNoticeSerdes());
+    it.withConfigurer(new YamlBukkitConfigurer(), new NoticeSerdes());
     it.withBindFile(new File(getDataFolder(), "config.yml"));
     it.saveDefaults();
     it.load(true);
