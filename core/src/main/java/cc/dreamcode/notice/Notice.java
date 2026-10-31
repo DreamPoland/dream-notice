@@ -166,6 +166,174 @@ public class Notice<T> {
         return notice;
     }
 
+    public Notice<T> url(@NonNull String url) {
+        Notice<T> notice = new Notice<>(this);
+        notice.applyUrl(url);
+        return notice;
+    }
+
+    public Notice<T> url(@NonNull String text, @NonNull String url) {
+        Notice<T> notice = new Notice<>(this);
+        notice.applyUrl(text, url);
+        return notice;
+    }
+
+    public Notice<T> url(@NonNull String placeholder, @NonNull String text, @NonNull String url) {
+        Notice<T> notice = new Notice<>(this);
+        notice.applyUrl(placeholder, text, url);
+        return notice;
+    }
+
+    public static String formatUrlTag(@NonNull String text, @NonNull String url) {
+        String cleanUrl = url.replace("'", "\\'");
+        return "<click:open_url:'" + cleanUrl + "'>" + text + "</click>";
+    }
+
+    private void applyUrl(@NonNull String url) {
+        if (this.text != null && !this.text.isEmpty()) {
+            this.text = this.text.stream()
+                    .map(line -> wrapOrReplaceUrl(line, url))
+                    .collect(Collectors.toList());
+        }
+        if (this.title != null) {
+            this.title = wrapOrReplaceUrl(this.title, url);
+        }
+        if (this.subtitle != null) {
+            this.subtitle = wrapOrReplaceUrl(this.subtitle, url);
+        }
+        if (this.header != null) {
+            this.header = wrapOrReplaceUrl(this.header, url);
+        }
+        if (this.footer != null) {
+            this.footer = wrapOrReplaceUrl(this.footer, url);
+        }
+        if (this.bookAuthor != null) {
+            this.bookAuthor = wrapOrReplaceUrl(this.bookAuthor, url);
+        }
+        if (this.pages != null && !this.pages.isEmpty()) {
+            this.pages = this.pages.stream()
+                    .map(page -> wrapOrReplaceUrl(page, url))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    private static String wrapOrReplaceUrl(String source, @NonNull String url) {
+        if (source == null || source.isEmpty()) {
+            return source;
+        }
+        if (source.contains(url)) {
+            return source.replace(url, formatUrlTag(url, url));
+        }
+        return formatUrlTag(source, url);
+    }
+
+    private void applyUrl(@NonNull String text, @NonNull String url) {
+        if (this.text != null && !this.text.isEmpty()) {
+            this.text = this.text.stream()
+                    .map(line -> replaceWithUrlTag(line, text, url))
+                    .collect(Collectors.toList());
+        }
+        if (this.title != null) {
+            this.title = replaceWithUrlTag(this.title, text, url);
+        }
+        if (this.subtitle != null) {
+            this.subtitle = replaceWithUrlTag(this.subtitle, text, url);
+        }
+        if (this.header != null) {
+            this.header = replaceWithUrlTag(this.header, text, url);
+        }
+        if (this.footer != null) {
+            this.footer = replaceWithUrlTag(this.footer, text, url);
+        }
+        if (this.bookAuthor != null) {
+            this.bookAuthor = replaceWithUrlTag(this.bookAuthor, text, url);
+        }
+        if (this.pages != null && !this.pages.isEmpty()) {
+            this.pages = this.pages.stream()
+                    .map(page -> replaceWithUrlTag(page, text, url))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    private static String replaceWithUrlTag(String source, @NonNull String text, @NonNull String url) {
+        if (source == null || source.isEmpty() || text.isEmpty()) {
+            return source;
+        }
+
+        String cleanPlaceholder = text;
+        if ((cleanPlaceholder.startsWith("{") && cleanPlaceholder.endsWith("}")) ||
+            (cleanPlaceholder.startsWith("%") && cleanPlaceholder.endsWith("%"))) {
+            cleanPlaceholder = cleanPlaceholder.substring(1, cleanPlaceholder.length() - 1);
+        }
+
+        String formattedWithUrl = formatUrlTag(url, url);
+        String formattedWithText = formatUrlTag(text, url);
+
+        String result = source;
+        if (result.contains("{" + cleanPlaceholder + "}")) {
+            result = result.replace("{" + cleanPlaceholder + "}", formattedWithUrl);
+        }
+        if (result.contains("%" + cleanPlaceholder + "%")) {
+            result = result.replace("%" + cleanPlaceholder + "%", formattedWithUrl);
+        }
+        if (result.contains(text)) {
+            result = result.replace(text, formattedWithText);
+        }
+
+        return result;
+    }
+
+    private void applyUrl(@NonNull String placeholder, @NonNull String text, @NonNull String url) {
+        if (this.text != null && !this.text.isEmpty()) {
+            this.text = this.text.stream()
+                    .map(line -> replacePlaceholderWithUrlTag(line, placeholder, text, url))
+                    .collect(Collectors.toList());
+        }
+        if (this.title != null) {
+            this.title = replacePlaceholderWithUrlTag(this.title, placeholder, text, url);
+        }
+        if (this.subtitle != null) {
+            this.subtitle = replacePlaceholderWithUrlTag(this.subtitle, placeholder, text, url);
+        }
+        if (this.header != null) {
+            this.header = replacePlaceholderWithUrlTag(this.header, placeholder, text, url);
+        }
+        if (this.footer != null) {
+            this.footer = replacePlaceholderWithUrlTag(this.footer, placeholder, text, url);
+        }
+        if (this.bookAuthor != null) {
+            this.bookAuthor = replacePlaceholderWithUrlTag(this.bookAuthor, placeholder, text, url);
+        }
+        if (this.pages != null && !this.pages.isEmpty()) {
+            this.pages = this.pages.stream()
+                    .map(page -> replacePlaceholderWithUrlTag(page, placeholder, text, url))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    private static String replacePlaceholderWithUrlTag(String source, @NonNull String placeholder, @NonNull String text, @NonNull String url) {
+        if (source == null || source.isEmpty() || placeholder.isEmpty()) {
+            return source;
+        }
+
+        String cleanPlaceholder = placeholder;
+        if ((cleanPlaceholder.startsWith("{") && cleanPlaceholder.endsWith("}")) ||
+            (cleanPlaceholder.startsWith("%") && cleanPlaceholder.endsWith("%"))) {
+            cleanPlaceholder = cleanPlaceholder.substring(1, cleanPlaceholder.length() - 1);
+        }
+
+        String formatted = formatUrlTag(text, url);
+        String result = source
+                .replace("{" + cleanPlaceholder + "}", formatted)
+                .replace("%" + cleanPlaceholder + "%", formatted);
+
+        if (result.contains(placeholder)) {
+            result = result.replace(placeholder, formatted);
+        }
+
+        return result;
+    }
+
     private void applyReplacement(@NonNull String placeholder, Object replace) {
         if (this.text != null && !this.text.isEmpty()) {
             this.text = this.text.stream()

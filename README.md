@@ -217,6 +217,16 @@ Notice.chat("Hello {player}!")
     .with("player", player.getName())
     .send(player);
 
+// With clickable URL event:
+Notice.chat("Visit our website: [CLICK]!")
+    .url("[CLICK]", "https://dreamcode.cc")
+    .send(player);
+
+// Or wrap entire text or placeholder:
+Notice.chat("Join our Discord: {discord}")
+    .url("discord", "discord.gg/dreamcode", "https://discord.gg/dreamcode")
+    .send(player);
+
 // With line separator placeholder (%NEWLINE% / Notice.lineSeparator()):
 Notice.chat("First line" + Notice.lineSeparator() + "Second line")
     .send(player);

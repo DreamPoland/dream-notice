@@ -105,4 +105,35 @@ public class AdventureNoticeTest {
         net.kyori.adventure.title.Title sentTitle = captor.getValue();
         assertNotNull(sentTitle);
     }
+
+    @Test
+    void testUrlOnAdventureNotice() {
+        AdventureNotice notice = AdventureNotice.chat("Click here!").url("https://dreamcode.cc");
+        assertNotNull(notice);
+        assertEquals(java.util.Collections.singletonList("<click:open_url:'https://dreamcode.cc'>Click here!</click>"), notice.getText());
+    }
+
+    @Test
+    void testUrlRenderingComponentWithClickEvent() {
+        AdventureNotice notice = AdventureNotice.chat("Click here!").url("https://dreamcode.cc");
+        this.provider.builder().player(this.audience).notice(notice).send();
+
+        org.mockito.ArgumentCaptor<net.kyori.adventure.text.Component> captor = org.mockito.ArgumentCaptor.forClass(net.kyori.adventure.text.Component.class);
+        Mockito.verify(this.audience).sendMessage(captor.capture());
+        net.kyori.adventure.text.Component sent = captor.getValue();
+        assertNotNull(sent);
+
+        net.kyori.adventure.text.event.ClickEvent clickEvent = sent.clickEvent();
+        if (clickEvent == null) {
+            for (net.kyori.adventure.text.Component child : sent.children()) {
+                if (child.clickEvent() != null) {
+                    clickEvent = child.clickEvent();
+                    break;
+                }
+            }
+        }
+
+        assertNotNull(clickEvent);
+        assertEquals(net.kyori.adventure.text.event.ClickEvent.openUrl("https://dreamcode.cc"), clickEvent);
+    }
 }

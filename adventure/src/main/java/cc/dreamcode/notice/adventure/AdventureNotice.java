@@ -56,6 +56,21 @@ public class AdventureNotice extends Notice<MessageFormat> {
         return new AdventureNotice(super.with(replacements));
     }
 
+    @Override
+    public AdventureNotice url(@NonNull String url) {
+        return new AdventureNotice(super.url(url));
+    }
+
+    @Override
+    public AdventureNotice url(@NonNull String text, @NonNull String url) {
+        return new AdventureNotice(super.url(text, url));
+    }
+
+    @Override
+    public AdventureNotice url(@NonNull String placeholder, @NonNull String text, @NonNull String url) {
+        return new AdventureNotice(super.url(placeholder, text, url));
+    }
+
     public static AdventureNotice chat(String... text) {
         return AdventureNotice.builder()
                 .noticeType(NoticeType.CHAT)

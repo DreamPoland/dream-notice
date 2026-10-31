@@ -57,6 +57,21 @@ public class BungeeNotice extends AdventureNotice {
         return new BungeeNotice(super.with(replacements));
     }
 
+    @Override
+    public BungeeNotice url(@NonNull String url) {
+        return new BungeeNotice(super.url(url));
+    }
+
+    @Override
+    public BungeeNotice url(@NonNull String text, @NonNull String url) {
+        return new BungeeNotice(super.url(text, url));
+    }
+
+    @Override
+    public BungeeNotice url(@NonNull String placeholder, @NonNull String text, @NonNull String url) {
+        return new BungeeNotice(super.url(placeholder, text, url));
+    }
+
     public static BungeeNotice chat(String... text) {
         return BungeeNotice.builder()
                 .noticeType(NoticeType.CHAT)

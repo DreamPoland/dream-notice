@@ -226,4 +226,28 @@ public class NoticeTest {
         Notice<?> multiLine = Notice.chat("First%NEWLINE%Second").with("foo", "bar");
         assertEquals(Arrays.asList("First", "Second"), multiLine.getText());
     }
+
+    @Test
+    void testUrlMethod() {
+        Notice<?> whole = Notice.chat("Click here!").url("https://dreamcode.cc");
+        assertEquals(Collections.singletonList("<click:open_url:'https://dreamcode.cc'>Click here!</click>"), whole.getText());
+
+        Notice<?> literalSubtext = Notice.chat("Visit: [CLICK]").url("[CLICK]", "https://dreamcode.cc");
+        assertEquals(Collections.singletonList("Visit: <click:open_url:'https://dreamcode.cc'>[CLICK]</click>"), literalSubtext.getText());
+
+        Notice<?> placeholder = Notice.chat("Visit: {website}").url("website", "https://dreamcode.cc");
+        assertEquals(Collections.singletonList("Visit: <click:open_url:'https://dreamcode.cc'>https://dreamcode.cc</click>"), placeholder.getText());
+
+        Notice<?> customText = Notice.chat("Visit: {website}").url("website", "DreamCode", "https://dreamcode.cc");
+        assertEquals(Collections.singletonList("Visit: <click:open_url:'https://dreamcode.cc'>DreamCode</click>"), customText.getText());
+    }
+
+    @Test
+    void testUrlImmutability() {
+        Notice<?> original = Notice.chat("Click here!");
+        Notice<?> modified = original.url("https://dreamcode.cc");
+
+        assertEquals(Collections.singletonList("Click here!"), original.getText());
+        assertEquals(Collections.singletonList("<click:open_url:'https://dreamcode.cc'>Click here!</click>"), modified.getText());
+    }
 }

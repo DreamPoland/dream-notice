@@ -121,4 +121,11 @@ public class BungeeNoticeTest {
         assertEquals("Title", title.getTitle());
         assertEquals("Subtitle", title.getSubtitle());
     }
+
+    @Test
+    void testUrlOnBungeeNotice() {
+        BungeeNotice notice = BungeeNotice.chat("Click here!").url("https://dreamcode.cc");
+        assertNotNull(notice);
+        assertEquals(java.util.Collections.singletonList("<click:open_url:'https://dreamcode.cc'>Click here!</click>"), notice.getText());
+    }
 }

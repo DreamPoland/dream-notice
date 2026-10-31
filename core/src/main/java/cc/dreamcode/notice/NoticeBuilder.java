@@ -78,6 +78,31 @@ public class NoticeBuilder<I, T> {
         return this;
     }
 
+    public NoticeBuilder<I, T> url(@NonNull String url) {
+        if (this.notice != null) {
+            this.notice = this.notice.url(url);
+        }
+        return this;
+    }
+
+    public NoticeBuilder<I, T> url(@NonNull String text, @NonNull String url) {
+        if (this.notice != null) {
+            this.notice = this.notice.url(text, url);
+        } else {
+            this.replacements.put(text, Notice.formatUrlTag(url, url));
+        }
+        return this;
+    }
+
+    public NoticeBuilder<I, T> url(@NonNull String placeholder, @NonNull String text, @NonNull String url) {
+        if (this.notice != null) {
+            this.notice = this.notice.url(placeholder, text, url);
+        } else {
+            this.replacements.put(placeholder, Notice.formatUrlTag(text, url));
+        }
+        return this;
+    }
+
     public NoticeBuilder<I, T> locale(Locale locale) {
         this.locale = locale;
         return this;

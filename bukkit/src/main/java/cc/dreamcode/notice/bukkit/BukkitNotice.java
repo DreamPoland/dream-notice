@@ -57,6 +57,21 @@ public class BukkitNotice extends AdventureNotice {
         return new BukkitNotice(super.with(replacements));
     }
 
+    @Override
+    public BukkitNotice url(@NonNull String url) {
+        return new BukkitNotice(super.url(url));
+    }
+
+    @Override
+    public BukkitNotice url(@NonNull String text, @NonNull String url) {
+        return new BukkitNotice(super.url(text, url));
+    }
+
+    @Override
+    public BukkitNotice url(@NonNull String placeholder, @NonNull String text, @NonNull String url) {
+        return new BukkitNotice(super.url(placeholder, text, url));
+    }
+
     public static BukkitNotice chat(String... text) {
         return BukkitNotice.builder()
                 .noticeType(NoticeType.CHAT)
