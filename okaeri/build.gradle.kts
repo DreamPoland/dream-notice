@@ -1,4 +1,4 @@
 dependencies {
-    api(project(":notice"))
+    api(project(":core"))
     api(libs.okaeri.configs)
 }

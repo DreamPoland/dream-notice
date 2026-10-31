@@ -1,5 +1,5 @@
 dependencies {
-    api(project(":notice-adventure"))
+    api(project(":adventure"))
 
     api(libs.dream.utilities.bungee)
     compileOnly(libs.bungeecord.api)

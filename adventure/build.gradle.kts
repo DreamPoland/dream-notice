@@ -1,5 +1,5 @@
 dependencies {
-    api(project(":notice"))
+    api(project(":core"))
 
     api(libs.dream.utilities.adventure)
     api(libs.adventure.api)
