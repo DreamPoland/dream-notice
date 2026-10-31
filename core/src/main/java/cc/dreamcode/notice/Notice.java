@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@Builder
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class Notice<T> {
@@ -72,6 +73,31 @@ public class Notice<T> {
         this.text = text != null ? Arrays.asList(text) : Collections.emptyList();
     }
 
+    public Notice(@NonNull Notice<?> notice) {
+        this.noticeType = notice.getNoticeType();
+        this.text = notice.getText() != null ? new ArrayList<>(notice.getText()) : new ArrayList<>();
+        this.title = notice.getTitle();
+        this.subtitle = notice.getSubtitle();
+        this.header = notice.getHeader();
+        this.footer = notice.getFooter();
+        this.fadeIn = notice.getFadeIn();
+        this.stay = notice.getStay();
+        this.fadeOut = notice.getFadeOut();
+        this.bossBarColor = notice.getBossBarColor();
+        this.bossBarOverlay = notice.getBossBarOverlay();
+        this.bossBarProgress = notice.getBossBarProgress();
+        this.bookAuthor = notice.getBookAuthor();
+        this.pages = notice.getPages() != null ? new ArrayList<>(notice.getPages()) : new ArrayList<>();
+        this.soundKey = notice.getSoundKey();
+        this.soundCategory = notice.getSoundCategory();
+        this.volume = notice.getVolume();
+        this.pitch = notice.getPitch();
+    }
+
+    public static Notice<?> of(@NonNull Notice<?> notice) {
+        return new Notice<>(notice);
+    }
+
     public static NoticeProvider<?> getGlobalProvider() {
         return globalProvider;
     }
@@ -80,51 +106,51 @@ public class Notice<T> {
         globalProvider = provider;
     }
 
-    public static <T> Notice<T> chat(String... text) {
-        return Notice.<T>builder()
+    public static Notice<?> chat(String... text) {
+        return Notice.builder()
                 .noticeType(NoticeType.CHAT)
                 .text(text != null ? Arrays.asList(text) : Collections.emptyList())
                 .build();
     }
 
-    public static <T> Notice<T> chat(List<String> text) {
-        return Notice.<T>builder()
+    public static Notice<?> chat(List<String> text) {
+        return Notice.builder()
                 .noticeType(NoticeType.CHAT)
                 .text(text != null ? text : Collections.emptyList())
                 .build();
     }
 
-    public static <T> Notice<T> actionbar(String text) {
-        return Notice.<T>builder()
+    public static Notice<?> actionbar(String text) {
+        return Notice.builder()
                 .noticeType(NoticeType.ACTION_BAR)
                 .text(text != null ? Collections.singletonList(text) : Collections.emptyList())
                 .build();
     }
 
-    public static <T> Notice<T> title(String title) {
-        return Notice.<T>builder()
+    public static Notice<?> title(String title) {
+        return Notice.builder()
                 .noticeType(NoticeType.TITLE)
                 .title(title)
                 .build();
     }
 
-    public static <T> Notice<T> subtitle(String subtitle) {
-        return Notice.<T>builder()
+    public static Notice<?> subtitle(String subtitle) {
+        return Notice.builder()
                 .noticeType(NoticeType.SUBTITLE)
                 .subtitle(subtitle)
                 .build();
     }
 
-    public static <T> Notice<T> title(String title, String subtitle) {
-        return Notice.<T>builder()
+    public static Notice<?> title(String title, String subtitle) {
+        return Notice.builder()
                 .noticeType(NoticeType.TITLE_SUBTITLE)
                 .title(title)
                 .subtitle(subtitle)
                 .build();
     }
 
-    public static <T> Notice<T> title(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        return Notice.<T>builder()
+    public static Notice<?> title(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        return Notice.builder()
                 .noticeType(NoticeType.TITLE_SUBTITLE)
                 .title(title)
                 .subtitle(subtitle)
@@ -134,16 +160,16 @@ public class Notice<T> {
                 .build();
     }
 
-    public static <T> Notice<T> bossBar(String title, float progress) {
-        return Notice.<T>builder()
+    public static Notice<?> bossBar(String title, float progress) {
+        return Notice.builder()
                 .noticeType(NoticeType.BOSS_BAR)
                 .title(title)
                 .bossBarProgress(progress)
                 .build();
     }
 
-    public static <T> Notice<T> bossBar(String title, String color, String overlay, float progress) {
-        return Notice.<T>builder()
+    public static Notice<?> bossBar(String title, String color, String overlay, float progress) {
+        return Notice.builder()
                 .noticeType(NoticeType.BOSS_BAR)
                 .title(title)
                 .bossBarColor(color)
@@ -152,8 +178,8 @@ public class Notice<T> {
                 .build();
     }
 
-    public static <T> Notice<T> book(String title, String author, List<String> pages) {
-        return Notice.<T>builder()
+    public static Notice<?> book(String title, String author, List<String> pages) {
+        return Notice.builder()
                 .noticeType(NoticeType.BOOK)
                 .title(title)
                 .bookAuthor(author)
@@ -161,8 +187,8 @@ public class Notice<T> {
                 .build();
     }
 
-    public static <T> Notice<T> book(String title, String author, String... pages) {
-        return Notice.<T>builder()
+    public static Notice<?> book(String title, String author, String... pages) {
+        return Notice.builder()
                 .noticeType(NoticeType.BOOK)
                 .title(title)
                 .bookAuthor(author)
@@ -170,16 +196,16 @@ public class Notice<T> {
                 .build();
     }
 
-    public static <T> Notice<T> playerList(String header, String footer) {
-        return Notice.<T>builder()
+    public static Notice<?> playerList(String header, String footer) {
+        return Notice.builder()
                 .noticeType(NoticeType.PLAYER_LIST)
                 .header(header)
                 .footer(footer)
                 .build();
     }
 
-    public static <T> Notice<T> sound(String soundKey, float volume, float pitch) {
-        return Notice.<T>builder()
+    public static Notice<?> sound(String soundKey, float volume, float pitch) {
+        return Notice.builder()
                 .noticeType(NoticeType.SOUND)
                 .soundKey(soundKey)
                 .volume(volume)
@@ -187,8 +213,8 @@ public class Notice<T> {
                 .build();
     }
 
-    public static <T> Notice<T> sound(String soundKey, String category, float volume, float pitch) {
-        return Notice.<T>builder()
+    public static Notice<?> sound(String soundKey, String category, float volume, float pitch) {
+        return Notice.builder()
                 .noticeType(NoticeType.SOUND)
                 .soundKey(soundKey)
                 .soundCategory(category)
@@ -197,8 +223,8 @@ public class Notice<T> {
                 .build();
     }
 
-    public static <T> Notice<T> empty() {
-        return Notice.<T>builder()
+    public static Notice<?> empty() {
+        return Notice.builder()
                 .noticeType(NoticeType.NONE)
                 .build();
     }

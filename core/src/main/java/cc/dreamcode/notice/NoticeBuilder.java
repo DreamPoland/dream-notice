@@ -15,7 +15,7 @@ public class NoticeBuilder<I, T> {
     private final NoticeProvider<I> noticeProvider;
     private final List<Object> targets = new ArrayList<>();
     private Notice<?> notice;
-    private Function<I, Notice<?>> noticeFunction;
+    private Function<I, ? extends Notice<?>> noticeFunction;
     private final Map<String, Object> replacements = new HashMap<>();
     private Locale locale;
     private Boolean async;
@@ -63,7 +63,7 @@ public class NoticeBuilder<I, T> {
         return this;
     }
 
-    public NoticeBuilder<I, T> notice(Function<I, Notice<?>> noticeFunction) {
+    public NoticeBuilder<I, T> notice(Function<I, ? extends Notice<?>> noticeFunction) {
         this.noticeFunction = noticeFunction;
         return this;
     }
