@@ -11,9 +11,10 @@ junit = "5.11.4"
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
 bungeecord-api = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord-api" }
-dream-utilties = { module = "cc.dreamcode:utilities", version.ref = "dream-utilities" }
-dream-utilties-bukkit = { module = "cc.dreamcode:utilities-bukkit", version.ref = "dream-utilities" }
-dream-utilties-bungee = { module = "cc.dreamcode:utilities-bungee", version.ref = "dream-utilities" }
+dream-utilities = { module = "cc.dreamcode:utilities", version.ref = "dream-utilities" }
+dream-utilities-adventure = { module = "cc.dreamcode:utilities-adventure", version.ref = "dream-utilities" }
+dream-utilities-bukkit = { module = "cc.dreamcode:utilities-bukkit", version.ref = "dream-utilities" }
+dream-utilities-bungee = { module = "cc.dreamcode:utilities-bungee", version.ref = "dream-utilities" }
 okaeri-configs = { module = "eu.okaeri:okaeri-configs-core", version.ref = "okaeri-configs" }
 adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 adventure-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }

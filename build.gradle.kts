@@ -40,6 +40,8 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        systemProperty("net.bytebuddy.experimental", "true")
+        jvmArgs("-XX:+EnableDynamicAgentLoading")
     }
 
     dependencies {

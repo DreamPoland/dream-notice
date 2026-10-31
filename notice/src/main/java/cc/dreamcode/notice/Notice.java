@@ -1,0 +1,316 @@
+package cc.dreamcode.notice;
+
+import cc.dreamcode.notice.translation.TranslationRegistry;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Notice<T> {
+
+    private static NoticeProvider<?> globalProvider;
+
+    @Builder.Default
+    private NoticeType noticeType = NoticeType.CHAT;
+
+    @Builder.Default
+    private List<String> text = new ArrayList<>();
+
+    private String title;
+    private String subtitle;
+
+    private String header;
+    private String footer;
+
+    @Builder.Default
+    private int fadeIn = 10;
+    @Builder.Default
+    private int stay = 70;
+    @Builder.Default
+    private int fadeOut = 20;
+
+    @Builder.Default
+    private String bossBarColor = "WHITE";
+    @Builder.Default
+    private String bossBarOverlay = "PROGRESS";
+    @Builder.Default
+    private float bossBarProgress = 1.0f;
+
+    private String bookAuthor;
+    @Builder.Default
+    private List<String> pages = new ArrayList<>();
+
+    private String soundKey;
+    @Builder.Default
+    private String soundCategory = "MASTER";
+    @Builder.Default
+    private float volume = 1.0f;
+    @Builder.Default
+    private float pitch = 1.0f;
+
+    private TranslationRegistry<T> translationRegistry;
+
+    public Notice(@NonNull NoticeType noticeType, TranslationRegistry<T> translationRegistry) {
+        this.noticeType = noticeType;
+        this.translationRegistry = translationRegistry;
+    }
+
+    public Notice(@NonNull NoticeType noticeType, String... text) {
+        this.noticeType = noticeType;
+        this.text = text != null ? Arrays.asList(text) : Collections.emptyList();
+    }
+
+    public static NoticeProvider<?> getGlobalProvider() {
+        return globalProvider;
+    }
+
+    public static void setGlobalProvider(NoticeProvider<?> provider) {
+        globalProvider = provider;
+    }
+
+    public static <T> Notice<T> chat(String... text) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.CHAT)
+                .text(text != null ? Arrays.asList(text) : Collections.emptyList())
+                .build();
+    }
+
+    public static <T> Notice<T> chat(List<String> text) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.CHAT)
+                .text(text != null ? text : Collections.emptyList())
+                .build();
+    }
+
+    public static <T> Notice<T> actionbar(String text) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.ACTION_BAR)
+                .text(text != null ? Collections.singletonList(text) : Collections.emptyList())
+                .build();
+    }
+
+    public static <T> Notice<T> title(String title) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.TITLE)
+                .title(title)
+                .build();
+    }
+
+    public static <T> Notice<T> subtitle(String subtitle) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.SUBTITLE)
+                .subtitle(subtitle)
+                .build();
+    }
+
+    public static <T> Notice<T> title(String title, String subtitle) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.TITLE_SUBTITLE)
+                .title(title)
+                .subtitle(subtitle)
+                .build();
+    }
+
+    public static <T> Notice<T> title(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.TITLE_SUBTITLE)
+                .title(title)
+                .subtitle(subtitle)
+                .fadeIn(fadeIn)
+                .stay(stay)
+                .fadeOut(fadeOut)
+                .build();
+    }
+
+    public static <T> Notice<T> bossBar(String title, float progress) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.BOSS_BAR)
+                .title(title)
+                .bossBarProgress(progress)
+                .build();
+    }
+
+    public static <T> Notice<T> bossBar(String title, String color, String overlay, float progress) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.BOSS_BAR)
+                .title(title)
+                .bossBarColor(color)
+                .bossBarOverlay(overlay)
+                .bossBarProgress(progress)
+                .build();
+    }
+
+    public static <T> Notice<T> book(String title, String author, List<String> pages) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.BOOK)
+                .title(title)
+                .bookAuthor(author)
+                .pages(pages != null ? pages : Collections.emptyList())
+                .build();
+    }
+
+    public static <T> Notice<T> book(String title, String author, String... pages) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.BOOK)
+                .title(title)
+                .bookAuthor(author)
+                .pages(pages != null ? Arrays.asList(pages) : Collections.emptyList())
+                .build();
+    }
+
+    public static <T> Notice<T> playerList(String header, String footer) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.PLAYER_LIST)
+                .header(header)
+                .footer(footer)
+                .build();
+    }
+
+    public static <T> Notice<T> sound(String soundKey, float volume, float pitch) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.SOUND)
+                .soundKey(soundKey)
+                .volume(volume)
+                .pitch(pitch)
+                .build();
+    }
+
+    public static <T> Notice<T> sound(String soundKey, String category, float volume, float pitch) {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.SOUND)
+                .soundKey(soundKey)
+                .soundCategory(category)
+                .volume(volume)
+                .pitch(pitch)
+                .build();
+    }
+
+    public static <T> Notice<T> empty() {
+        return Notice.<T>builder()
+                .noticeType(NoticeType.NONE)
+                .build();
+    }
+
+    public void send(@NonNull Object target) {
+        send(target, Collections.emptyMap());
+    }
+
+    public void send(@NonNull Object target, @NonNull String key, @NonNull Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        send(target, map);
+    }
+
+    public void send(@NonNull Object target, @NonNull Map<String, Object> replacements) {
+        if (globalProvider == null) {
+            throw new IllegalStateException("Global NoticeProvider is not set! Call Notice.setGlobalProvider(...) first.");
+        }
+        globalProvider.builder()
+                .target(target)
+                .notice(this)
+                .with(replacements)
+                .send();
+    }
+
+    public void send(@NonNull java.util.Collection<?> targets) {
+        send(targets, Collections.emptyMap());
+    }
+
+    public void send(@NonNull java.util.Collection<?> targets, @NonNull String key, @NonNull Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        send(targets, map);
+    }
+
+    public void send(@NonNull java.util.Collection<?> targets, @NonNull Map<String, Object> replacements) {
+        if (globalProvider == null) {
+            throw new IllegalStateException("Global NoticeProvider is not set! Call Notice.setGlobalProvider(...) first.");
+        }
+        globalProvider.builder()
+                .targets(targets)
+                .notice(this)
+                .with(replacements)
+                .send();
+    }
+
+    public void sendAll() {
+        sendAll(Collections.emptyMap());
+    }
+
+    public void sendAll(@NonNull String key, @NonNull Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        sendAll(map);
+    }
+
+    public void sendAll(@NonNull Map<String, Object> replacements) {
+        if (globalProvider == null) {
+            throw new IllegalStateException("Global NoticeProvider is not set! Call Notice.setGlobalProvider(...) first.");
+        }
+        globalProvider.builder()
+                .all()
+                .notice(this)
+                .with(replacements)
+                .send();
+    }
+
+    public static void sendNotice(@NonNull Object target, @NonNull Notice<?> notice) {
+        notice.send(target);
+    }
+
+    public static void sendNotice(@NonNull Object target, @NonNull Notice<?> notice, @NonNull String key, @NonNull Object value) {
+        notice.send(target, key, value);
+    }
+
+    public static void sendNotice(@NonNull Object target, @NonNull Notice<?> notice, @NonNull Map<String, Object> replacements) {
+        notice.send(target, replacements);
+    }
+
+    public static void send(@NonNull Object target, @NonNull Notice<?> notice) {
+        notice.send(target);
+    }
+
+    public static void send(@NonNull Object target, @NonNull Notice<?> notice, @NonNull String key, @NonNull Object value) {
+        notice.send(target, key, value);
+    }
+
+    public static void send(@NonNull Object target, @NonNull Notice<?> notice, @NonNull Map<String, Object> replacements) {
+        notice.send(target, replacements);
+    }
+
+    public static void send(@NonNull java.util.Collection<?> targets, @NonNull Notice<?> notice) {
+        notice.send(targets);
+    }
+
+    public static void send(@NonNull java.util.Collection<?> targets, @NonNull Notice<?> notice, @NonNull String key, @NonNull Object value) {
+        notice.send(targets, key, value);
+    }
+
+    public static void send(@NonNull java.util.Collection<?> targets, @NonNull Notice<?> notice, @NonNull Map<String, Object> replacements) {
+        notice.send(targets, replacements);
+    }
+
+    public static void sendAll(@NonNull Notice<?> notice) {
+        notice.sendAll();
+    }
+
+    public static void sendAll(@NonNull Notice<?> notice, @NonNull String key, @NonNull Object value) {
+        notice.sendAll(key, value);
+    }
+
+    public static void sendAll(@NonNull Notice<?> notice, @NonNull Map<String, Object> replacements) {
+        notice.sendAll(replacements);
+    }
+}
