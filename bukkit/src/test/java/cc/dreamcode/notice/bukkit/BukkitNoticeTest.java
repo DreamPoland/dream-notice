@@ -113,4 +113,12 @@ public class BukkitNoticeTest {
         assertNotNull(createdWithConfig);
         assertSame(this.config, createdWithConfig.getMessageConfig());
     }
+
+    @Test
+    void testWithOnBukkitNotice() {
+        BukkitNotice notice = BukkitNotice.chat("Hello {player}!");
+        BukkitNotice replaced = notice.with("player", "Alice");
+        assertNotNull(replaced);
+        assertEquals(java.util.Collections.singletonList("Hello Alice!"), replaced.getText());
+    }
 }

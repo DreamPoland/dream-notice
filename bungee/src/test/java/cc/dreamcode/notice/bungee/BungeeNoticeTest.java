@@ -94,4 +94,12 @@ public class BungeeNoticeTest {
         assertNotNull(created.getNoticeExecutor());
         assertSame(this.config, created.getMessageConfig());
     }
+
+    @Test
+    void testWithOnBungeeNotice() {
+        BungeeNotice notice = BungeeNotice.chat("Hello {player}!");
+        BungeeNotice replaced = notice.with("player", "Alice");
+        assertNotNull(replaced);
+        assertEquals(java.util.Collections.singletonList("Hello Alice!"), replaced.getText());
+    }
 }

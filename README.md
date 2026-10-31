@@ -211,6 +211,12 @@ provider.builder()
 #### Direct Model Send:
 
 ```java
+// With inline placeholder replacement:
+Notice.chat("Hello {player}!")
+    .with("player", player.getName())
+    .send(player);
+
+// Or via send parameters:
 Notice.chat("Hello {player}!")
     .send(player, "player", player.getName());
 ```

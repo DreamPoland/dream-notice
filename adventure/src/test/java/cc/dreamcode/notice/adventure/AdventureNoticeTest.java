@@ -55,4 +55,12 @@ public class AdventureNoticeTest {
         assertNotNull(createdWithConfig);
         assertSame(this.config, createdWithConfig.getMessageConfig());
     }
+
+    @Test
+    void testWithOnAdventureNotice() {
+        AdventureNotice notice = AdventureNotice.chat("Hello {player}!");
+        AdventureNotice replaced = notice.with("player", "John");
+        assertNotNull(replaced);
+        assertEquals(java.util.Collections.singletonList("Hello John!"), replaced.getText());
+    }
 }

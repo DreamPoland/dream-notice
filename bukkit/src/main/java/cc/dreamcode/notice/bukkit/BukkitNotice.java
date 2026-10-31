@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @SuperBuilder(toBuilder = true)
@@ -40,6 +41,16 @@ public class BukkitNotice extends AdventureNotice {
             return bukkitNotice;
         }
         return new BukkitNotice(notice);
+    }
+
+    @Override
+    public BukkitNotice with(@NonNull String placeholder, Object replace) {
+        return new BukkitNotice(super.with(placeholder, replace));
+    }
+
+    @Override
+    public BukkitNotice with(@NonNull Map<String, Object> replacements) {
+        return new BukkitNotice(super.with(replacements));
     }
 
     public static BukkitNotice chat(String... text) {

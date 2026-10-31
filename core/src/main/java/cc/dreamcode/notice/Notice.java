@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @SuperBuilder(toBuilder = true)
@@ -73,6 +74,7 @@ public class Notice<T> {
         this.text = text != null ? Arrays.asList(text) : Collections.emptyList();
     }
 
+    @SuppressWarnings("unchecked")
     public Notice(@NonNull Notice<?> notice) {
         this.noticeType = notice.getNoticeType();
         this.text = notice.getText() != null ? new ArrayList<>(notice.getText()) : new ArrayList<>();
@@ -92,10 +94,74 @@ public class Notice<T> {
         this.soundCategory = notice.getSoundCategory();
         this.volume = notice.getVolume();
         this.pitch = notice.getPitch();
+        this.translationRegistry = (TranslationRegistry<T>) notice.getTranslationRegistry();
     }
 
     public static Notice<?> of(@NonNull Notice<?> notice) {
         return new Notice<>(notice);
+    }
+
+    public Notice<T> with(@NonNull String placeholder, Object replace) {
+        Notice<T> notice = new Notice<>(this);
+        notice.applyReplacement(placeholder, replace);
+        return notice;
+    }
+
+    public Notice<T> with(@NonNull Map<String, Object> replacements) {
+        Notice<T> notice = new Notice<>(this);
+        replacements.forEach(notice::applyReplacement);
+        return notice;
+    }
+
+    private void applyReplacement(@NonNull String placeholder, Object replace) {
+        if (this.text != null && !this.text.isEmpty()) {
+            this.text = this.text.stream()
+                    .map(line -> replaceInText(line, placeholder, replace))
+                    .collect(Collectors.toList());
+        }
+        if (this.title != null) {
+            this.title = replaceInText(this.title, placeholder, replace);
+        }
+        if (this.subtitle != null) {
+            this.subtitle = replaceInText(this.subtitle, placeholder, replace);
+        }
+        if (this.header != null) {
+            this.header = replaceInText(this.header, placeholder, replace);
+        }
+        if (this.footer != null) {
+            this.footer = replaceInText(this.footer, placeholder, replace);
+        }
+        if (this.bookAuthor != null) {
+            this.bookAuthor = replaceInText(this.bookAuthor, placeholder, replace);
+        }
+        if (this.pages != null && !this.pages.isEmpty()) {
+            this.pages = this.pages.stream()
+                    .map(page -> replaceInText(page, placeholder, replace))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    private static String replaceInText(String source, @NonNull String placeholder, Object replace) {
+        if (source == null || source.isEmpty() || placeholder.isEmpty()) {
+            return source;
+        }
+
+        String cleanPlaceholder = placeholder;
+        if ((cleanPlaceholder.startsWith("{") && cleanPlaceholder.endsWith("}")) ||
+            (cleanPlaceholder.startsWith("%") && cleanPlaceholder.endsWith("%"))) {
+            cleanPlaceholder = cleanPlaceholder.substring(1, cleanPlaceholder.length() - 1);
+        }
+
+        String replacement = (replace != null) ? String.valueOf(replace) : "";
+        String result = source
+                .replace("{" + cleanPlaceholder + "}", replacement)
+                .replace("%" + cleanPlaceholder + "%", replacement);
+
+        if (result.contains(placeholder)) {
+            result = result.replace(placeholder, replacement);
+        }
+
+        return result;
     }
 
     public static NoticeProvider<?> getGlobalProvider() {

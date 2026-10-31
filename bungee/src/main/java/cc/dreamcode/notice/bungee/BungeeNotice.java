@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @SuperBuilder(toBuilder = true)
@@ -40,6 +41,16 @@ public class BungeeNotice extends AdventureNotice {
             return bungeeNotice;
         }
         return new BungeeNotice(notice);
+    }
+
+    @Override
+    public BungeeNotice with(@NonNull String placeholder, Object replace) {
+        return new BungeeNotice(super.with(placeholder, replace));
+    }
+
+    @Override
+    public BungeeNotice with(@NonNull Map<String, Object> replacements) {
+        return new BungeeNotice(super.with(replacements));
     }
 
     public static BungeeNotice chat(String... text) {

@@ -14,6 +14,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @SuperBuilder(toBuilder = true)
@@ -39,6 +40,16 @@ public class AdventureNotice extends Notice<MessageFormat> {
             return adventureNotice;
         }
         return new AdventureNotice(notice);
+    }
+
+    @Override
+    public AdventureNotice with(@NonNull String placeholder, Object replace) {
+        return new AdventureNotice(super.with(placeholder, replace));
+    }
+
+    @Override
+    public AdventureNotice with(@NonNull Map<String, Object> replacements) {
+        return new AdventureNotice(super.with(replacements));
     }
 
     public static AdventureNotice chat(String... text) {

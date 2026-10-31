@@ -100,4 +100,72 @@ public class NoticeTest {
 
         verify(this.executor).send(eq(notice), eq(aud1), eq(Locale.ENGLISH), eq(Map.of("group", "admins")));
     }
+
+    @Test
+    void testWithMethodOnChatNotice() {
+        Notice<?> notice = Notice.chat("Hello {player}!");
+        Notice<?> replaced1 = notice.with("player", "Alice");
+        assertEquals(Collections.singletonList("Hello Alice!"), replaced1.getText());
+
+        Notice<?> noticeBraces = Notice.chat("Hello {player}!");
+        Notice<?> replaced2 = noticeBraces.with("{player}", "Bob");
+        assertEquals(Collections.singletonList("Hello Bob!"), replaced2.getText());
+
+        Notice<?> noticePercent = Notice.chat("Hello %player%!");
+        Notice<?> replaced3 = noticePercent.with("player", "Charlie");
+        assertEquals(Collections.singletonList("Hello Charlie!"), replaced3.getText());
+
+        Notice<?> multi = Notice.chat("User: {player}, Coins: {coins}");
+        Notice<?> replacedMulti = multi.with("player", "Alice").with("coins", 100);
+        assertEquals(Collections.singletonList("User: Alice, Coins: 100"), replacedMulti.getText());
+
+        Notice<?> mapReplace = multi.with(Map.of("player", "Alice", "coins", 500));
+        assertEquals(Collections.singletonList("User: Alice, Coins: 500"), mapReplace.getText());
+    }
+
+    @Test
+    void testWithImmutability() {
+        Notice<?> original = Notice.chat("Welcome {player}!");
+        Notice<?> modified1 = original.with("player", "Alice");
+        Notice<?> modified2 = original.with("player", "Bob");
+
+        assertEquals(Collections.singletonList("Welcome {player}!"), original.getText());
+        assertEquals(Collections.singletonList("Welcome Alice!"), modified1.getText());
+        assertEquals(Collections.singletonList("Welcome Bob!"), modified2.getText());
+    }
+
+    @Test
+    void testWithOnDifferentNoticeTypes() {
+        Notice<?> title = Notice.title("Hello {player}", "Level: {level}")
+                .with("player", "Alice")
+                .with("level", 5);
+        assertEquals("Hello Alice", title.getTitle());
+        assertEquals("Level: 5", title.getSubtitle());
+
+        Notice<?> book = Notice.book("Rules for {player}", "{author}", "Page 1: Welcome {player}", "Page 2")
+                .with("player", "Alice")
+                .with("author", "ServerAdmin");
+        assertEquals("Rules for Alice", book.getTitle());
+        assertEquals("ServerAdmin", book.getBookAuthor());
+        assertEquals(Arrays.asList("Page 1: Welcome Alice", "Page 2"), book.getPages());
+
+        Notice<?> playerList = Notice.playerList("Header {server}", "Footer {online}")
+                .with("server", "DreamCode")
+                .with("online", 42);
+        assertEquals("Header DreamCode", playerList.getHeader());
+        assertEquals("Footer 42", playerList.getFooter());
+    }
+
+    @Test
+    void testWithAndSend() {
+        NoticeAudience<Object> audience = Mockito.mock(NoticeAudience.class);
+        Mockito.when(audience.getLocale()).thenReturn(Locale.ENGLISH);
+
+        Notice<?> notice = Notice.chat("Welcome {player}!");
+        Notice<?> prepared = notice.with("player", "Alice");
+        prepared.send(audience);
+
+        verify(this.executor).send(eq(prepared), eq(audience), eq(Locale.ENGLISH), eq(Collections.emptyMap()));
+        assertEquals(Collections.singletonList("Welcome Alice!"), prepared.getText());
+    }
 }
