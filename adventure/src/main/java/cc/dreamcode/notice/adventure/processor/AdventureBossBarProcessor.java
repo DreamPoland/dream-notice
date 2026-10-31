@@ -35,6 +35,8 @@ public class AdventureBossBarProcessor implements NoticeProcessor<Audience> {
             return;
         }
 
+        title = title.replaceAll("(?i)" + java.util.regex.Pattern.quote(Notice.LINE_SEPARATOR) + "|\\{newline\\}|\\r?\\n", "");
+
         BossBar.Color color;
         try {
             color = BossBar.Color.valueOf(notice.getBossBarColor().toUpperCase());

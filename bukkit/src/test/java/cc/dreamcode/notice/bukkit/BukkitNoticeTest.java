@@ -121,4 +121,23 @@ public class BukkitNoticeTest {
         assertNotNull(replaced);
         assertEquals(java.util.Collections.singletonList("Hello Alice!"), replaced.getText());
     }
+
+    @Test
+    void testLineSeparatorOnBukkitNotice() {
+        assertEquals("%NEWLINE%", BukkitNotice.lineSeparator());
+    }
+
+    @Test
+    void testChatWithNewlinePlaceholder() {
+        BukkitNotice notice = BukkitNotice.chat("Line 1%NEWLINE%Line 2");
+        assertEquals(java.util.Arrays.asList("Line 1", "Line 2"), notice.getText());
+    }
+
+    @Test
+    void testTitleWithNewlinePlaceholder() {
+        BukkitNotice title = BukkitNotice.title("Title%NEWLINE%Subtitle");
+        assertEquals(cc.dreamcode.notice.NoticeType.TITLE_SUBTITLE, title.getNoticeType());
+        assertEquals("Title", title.getTitle());
+        assertEquals("Subtitle", title.getSubtitle());
+    }
 }

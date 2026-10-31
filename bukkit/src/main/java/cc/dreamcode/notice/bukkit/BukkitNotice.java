@@ -43,6 +43,10 @@ public class BukkitNotice extends AdventureNotice {
         return new BukkitNotice(notice);
     }
 
+    public static String lineSeparator() {
+        return Notice.lineSeparator();
+    }
+
     @Override
     public BukkitNotice with(@NonNull String placeholder, Object replace) {
         return new BukkitNotice(super.with(placeholder, replace));
@@ -56,14 +60,14 @@ public class BukkitNotice extends AdventureNotice {
     public static BukkitNotice chat(String... text) {
         return BukkitNotice.builder()
                 .noticeType(NoticeType.CHAT)
-                .text(text != null ? Arrays.asList(text) : Collections.emptyList())
+                .text(prepareText(text))
                 .build();
     }
 
     public static BukkitNotice chat(List<String> text) {
         return BukkitNotice.builder()
                 .noticeType(NoticeType.CHAT)
-                .text(text != null ? text : Collections.emptyList())
+                .text(prepareText(text))
                 .build();
     }
 
@@ -75,6 +79,14 @@ public class BukkitNotice extends AdventureNotice {
     }
 
     public static BukkitNotice title(String title) {
+        if (title != null && containsLineSeparator(title)) {
+            String[] split = splitLineSeparator(title, 2);
+            return BukkitNotice.builder()
+                    .noticeType(NoticeType.TITLE_SUBTITLE)
+                    .title(split[0])
+                    .subtitle(split.length > 1 ? split[1] : "")
+                    .build();
+        }
         return BukkitNotice.builder()
                 .noticeType(NoticeType.TITLE)
                 .title(title)
@@ -89,6 +101,14 @@ public class BukkitNotice extends AdventureNotice {
     }
 
     public static BukkitNotice title(String title, String subtitle) {
+        if (title != null && containsLineSeparator(title) && (subtitle == null || subtitle.isEmpty())) {
+            String[] split = splitLineSeparator(title, 2);
+            return BukkitNotice.builder()
+                    .noticeType(NoticeType.TITLE_SUBTITLE)
+                    .title(split[0])
+                    .subtitle(split.length > 1 ? split[1] : "")
+                    .build();
+        }
         return BukkitNotice.builder()
                 .noticeType(NoticeType.TITLE_SUBTITLE)
                 .title(title)
@@ -97,6 +117,17 @@ public class BukkitNotice extends AdventureNotice {
     }
 
     public static BukkitNotice title(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        if (title != null && containsLineSeparator(title) && (subtitle == null || subtitle.isEmpty())) {
+            String[] split = splitLineSeparator(title, 2);
+            return BukkitNotice.builder()
+                    .noticeType(NoticeType.TITLE_SUBTITLE)
+                    .title(split[0])
+                    .subtitle(split.length > 1 ? split[1] : "")
+                    .fadeIn(fadeIn)
+                    .stay(stay)
+                    .fadeOut(fadeOut)
+                    .build();
+        }
         return BukkitNotice.builder()
                 .noticeType(NoticeType.TITLE_SUBTITLE)
                 .title(title)

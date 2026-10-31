@@ -33,6 +33,7 @@ public class AdventureActionBarProcessor implements NoticeProcessor<Audience> {
             return;
         }
 
+        message = message.replaceAll("(?i)" + java.util.regex.Pattern.quote(Notice.LINE_SEPARATOR) + "|\\{newline\\}|\\r?\\n", "");
         AudienceUtil.sendActionBar(handler, message, replacements);
     }
 }

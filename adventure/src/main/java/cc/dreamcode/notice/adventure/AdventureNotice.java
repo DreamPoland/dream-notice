@@ -42,6 +42,10 @@ public class AdventureNotice extends Notice<MessageFormat> {
         return new AdventureNotice(notice);
     }
 
+    public static String lineSeparator() {
+        return Notice.lineSeparator();
+    }
+
     @Override
     public AdventureNotice with(@NonNull String placeholder, Object replace) {
         return new AdventureNotice(super.with(placeholder, replace));
@@ -55,14 +59,14 @@ public class AdventureNotice extends Notice<MessageFormat> {
     public static AdventureNotice chat(String... text) {
         return AdventureNotice.builder()
                 .noticeType(NoticeType.CHAT)
-                .text(text != null ? Arrays.asList(text) : Collections.emptyList())
+                .text(prepareText(text))
                 .build();
     }
 
     public static AdventureNotice chat(List<String> text) {
         return AdventureNotice.builder()
                 .noticeType(NoticeType.CHAT)
-                .text(text != null ? text : Collections.emptyList())
+                .text(prepareText(text))
                 .build();
     }
 
@@ -74,6 +78,14 @@ public class AdventureNotice extends Notice<MessageFormat> {
     }
 
     public static AdventureNotice title(String title) {
+        if (title != null && containsLineSeparator(title)) {
+            String[] split = splitLineSeparator(title, 2);
+            return AdventureNotice.builder()
+                    .noticeType(NoticeType.TITLE_SUBTITLE)
+                    .title(split[0])
+                    .subtitle(split.length > 1 ? split[1] : "")
+                    .build();
+        }
         return AdventureNotice.builder()
                 .noticeType(NoticeType.TITLE)
                 .title(title)
@@ -88,6 +100,14 @@ public class AdventureNotice extends Notice<MessageFormat> {
     }
 
     public static AdventureNotice title(String title, String subtitle) {
+        if (title != null && containsLineSeparator(title) && (subtitle == null || subtitle.isEmpty())) {
+            String[] split = splitLineSeparator(title, 2);
+            return AdventureNotice.builder()
+                    .noticeType(NoticeType.TITLE_SUBTITLE)
+                    .title(split[0])
+                    .subtitle(split.length > 1 ? split[1] : "")
+                    .build();
+        }
         return AdventureNotice.builder()
                 .noticeType(NoticeType.TITLE_SUBTITLE)
                 .title(title)
@@ -96,6 +116,17 @@ public class AdventureNotice extends Notice<MessageFormat> {
     }
 
     public static AdventureNotice title(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        if (title != null && containsLineSeparator(title) && (subtitle == null || subtitle.isEmpty())) {
+            String[] split = splitLineSeparator(title, 2);
+            return AdventureNotice.builder()
+                    .noticeType(NoticeType.TITLE_SUBTITLE)
+                    .title(split[0])
+                    .subtitle(split.length > 1 ? split[1] : "")
+                    .fadeIn(fadeIn)
+                    .stay(stay)
+                    .fadeOut(fadeOut)
+                    .build();
+        }
         return AdventureNotice.builder()
                 .noticeType(NoticeType.TITLE_SUBTITLE)
                 .title(title)

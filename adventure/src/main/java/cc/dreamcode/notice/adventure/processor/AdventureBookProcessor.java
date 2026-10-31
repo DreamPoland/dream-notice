@@ -11,6 +11,7 @@ import net.kyori.adventure.audience.Audience;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AdventureBookProcessor implements NoticeProcessor<Audience> {
 
@@ -35,6 +36,12 @@ public class AdventureBookProcessor implements NoticeProcessor<Audience> {
             return;
         }
 
-        BookUtil.openBook(handler, title, author, pages, replacements);
+        List<String> processedPages = pages.stream()
+                .map(page -> page != null
+                        ? page.replaceAll("(?i)" + java.util.regex.Pattern.quote(Notice.LINE_SEPARATOR) + "|\\{newline\\}", "\n")
+                        : "")
+                .collect(Collectors.toList());
+
+        BookUtil.openBook(handler, title, author, processedPages, replacements);
     }
 }

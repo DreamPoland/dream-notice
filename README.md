@@ -104,12 +104,13 @@ You can create notices using factory methods:
 // Chat notice
 Notice<?> chat = Notice.chat("Welcome <gradient:#ff0000:#00ff00>{player}</gradient> to the server!");
 
-// Multi-line chat
+// Multi-line chat (using varargs, lists, or %NEWLINE% line separator placeholder)
 Notice<?> multiline = Notice.chat(
     "<gray>----------------------------------------</gray>",
     "<yellow>Announcement:</yellow> <white>{message}</white>",
     "<gray>----------------------------------------</gray>"
 );
+Notice<?> newlineChat = Notice.chat("First line%NEWLINE%Second line");
 
 // ActionBar notice
 Notice<?> actionbar = Notice.actionbar("<gold>+10 coins!</gold>");
@@ -214,6 +215,10 @@ provider.builder()
 // With inline placeholder replacement:
 Notice.chat("Hello {player}!")
     .with("player", player.getName())
+    .send(player);
+
+// With line separator placeholder (%NEWLINE% / Notice.lineSeparator()):
+Notice.chat("First line" + Notice.lineSeparator() + "Second line")
     .send(player);
 
 // Or via send parameters:

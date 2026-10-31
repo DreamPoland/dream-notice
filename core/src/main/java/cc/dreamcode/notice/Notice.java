@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Data
@@ -21,6 +22,9 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Notice<T> {
+
+    public static final String LINE_SEPARATOR = "%NEWLINE%";
+    private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("(?i)" + Pattern.quote(LINE_SEPARATOR) + "|\\{newline\\}|\\r?\\n");
 
     private static NoticeProvider<?> globalProvider;
 
@@ -64,6 +68,55 @@ public class Notice<T> {
 
     private TranslationRegistry<T> translationRegistry;
 
+    public static String lineSeparator() {
+        return LINE_SEPARATOR;
+    }
+
+    public static boolean containsLineSeparator(String text) {
+        return text != null && LINE_SEPARATOR_PATTERN.matcher(text).find();
+    }
+
+    public static String[] splitLineSeparator(String text, int limit) {
+        if (text == null) {
+            return new String[0];
+        }
+        return LINE_SEPARATOR_PATTERN.split(text, limit);
+    }
+
+    public static List<String> prepareText(String... text) {
+        return text != null ? prepareText(Arrays.asList(text)) : Collections.emptyList();
+    }
+
+    public static List<String> prepareText(List<String> text) {
+        if (text == null || text.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<String> result = new ArrayList<>();
+        for (String line : text) {
+            if (line == null) {
+                continue;
+            }
+            if (containsLineSeparator(line)) {
+                String[] split = LINE_SEPARATOR_PATTERN.split(line, -1);
+                result.addAll(Arrays.asList(split));
+            } else {
+                result.add(line);
+            }
+        }
+        return result;
+    }
+
+    public List<String> getText() {
+        if (this.text != null && this.text.stream().anyMatch(Notice::containsLineSeparator)) {
+            this.text = prepareText(this.text);
+        }
+        return this.text;
+    }
+
+    public void setText(List<String> text) {
+        this.text = text != null ? prepareText(text) : new ArrayList<>();
+    }
+
     public Notice(@NonNull NoticeType noticeType, TranslationRegistry<T> translationRegistry) {
         this.noticeType = noticeType;
         this.translationRegistry = translationRegistry;
@@ -71,7 +124,7 @@ public class Notice<T> {
 
     public Notice(@NonNull NoticeType noticeType, String... text) {
         this.noticeType = noticeType;
-        this.text = text != null ? Arrays.asList(text) : Collections.emptyList();
+        this.text = text != null ? prepareText(text) : new ArrayList<>();
     }
 
     @SuppressWarnings("unchecked")
@@ -117,6 +170,7 @@ public class Notice<T> {
         if (this.text != null && !this.text.isEmpty()) {
             this.text = this.text.stream()
                     .map(line -> replaceInText(line, placeholder, replace))
+                    .flatMap(line -> prepareText(Collections.singletonList(line)).stream())
                     .collect(Collectors.toList());
         }
         if (this.title != null) {
@@ -175,14 +229,14 @@ public class Notice<T> {
     public static Notice<?> chat(String... text) {
         return Notice.builder()
                 .noticeType(NoticeType.CHAT)
-                .text(text != null ? Arrays.asList(text) : Collections.emptyList())
+                .text(prepareText(text))
                 .build();
     }
 
     public static Notice<?> chat(List<String> text) {
         return Notice.builder()
                 .noticeType(NoticeType.CHAT)
-                .text(text != null ? text : Collections.emptyList())
+                .text(prepareText(text))
                 .build();
     }
 
@@ -194,6 +248,14 @@ public class Notice<T> {
     }
 
     public static Notice<?> title(String title) {
+        if (title != null && containsLineSeparator(title)) {
+            String[] split = splitLineSeparator(title, 2);
+            return Notice.builder()
+                    .noticeType(NoticeType.TITLE_SUBTITLE)
+                    .title(split[0])
+                    .subtitle(split.length > 1 ? split[1] : "")
+                    .build();
+        }
         return Notice.builder()
                 .noticeType(NoticeType.TITLE)
                 .title(title)
@@ -208,6 +270,14 @@ public class Notice<T> {
     }
 
     public static Notice<?> title(String title, String subtitle) {
+        if (title != null && containsLineSeparator(title) && (subtitle == null || subtitle.isEmpty())) {
+            String[] split = splitLineSeparator(title, 2);
+            return Notice.builder()
+                    .noticeType(NoticeType.TITLE_SUBTITLE)
+                    .title(split[0])
+                    .subtitle(split.length > 1 ? split[1] : "")
+                    .build();
+        }
         return Notice.builder()
                 .noticeType(NoticeType.TITLE_SUBTITLE)
                 .title(title)
@@ -216,6 +286,17 @@ public class Notice<T> {
     }
 
     public static Notice<?> title(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        if (title != null && containsLineSeparator(title) && (subtitle == null || subtitle.isEmpty())) {
+            String[] split = splitLineSeparator(title, 2);
+            return Notice.builder()
+                    .noticeType(NoticeType.TITLE_SUBTITLE)
+                    .title(split[0])
+                    .subtitle(split.length > 1 ? split[1] : "")
+                    .fadeIn(fadeIn)
+                    .stay(stay)
+                    .fadeOut(fadeOut)
+                    .build();
+        }
         return Notice.builder()
                 .noticeType(NoticeType.TITLE_SUBTITLE)
                 .title(title)

@@ -102,4 +102,23 @@ public class BungeeNoticeTest {
         assertNotNull(replaced);
         assertEquals(java.util.Collections.singletonList("Hello Alice!"), replaced.getText());
     }
+
+    @Test
+    void testLineSeparatorOnBungeeNotice() {
+        assertEquals("%NEWLINE%", BungeeNotice.lineSeparator());
+    }
+
+    @Test
+    void testChatWithNewlinePlaceholder() {
+        BungeeNotice notice = BungeeNotice.chat("Line 1%NEWLINE%Line 2");
+        assertEquals(java.util.Arrays.asList("Line 1", "Line 2"), notice.getText());
+    }
+
+    @Test
+    void testTitleWithNewlinePlaceholder() {
+        BungeeNotice title = BungeeNotice.title("Title%NEWLINE%Subtitle");
+        assertEquals(cc.dreamcode.notice.NoticeType.TITLE_SUBTITLE, title.getNoticeType());
+        assertEquals("Title", title.getTitle());
+        assertEquals("Subtitle", title.getSubtitle());
+    }
 }

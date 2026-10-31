@@ -13,8 +13,11 @@ import net.kyori.adventure.text.Component;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class AdventureChatProcessor implements NoticeProcessor<Audience> {
+
+    private static final Pattern NEWLINE_PATTERN = Pattern.compile("(?i)" + Pattern.quote(Notice.LINE_SEPARATOR) + "|\\{newline\\}");
 
     @Override
     public boolean supports(@NonNull NoticeType noticeType) {
@@ -34,9 +37,13 @@ public class AdventureChatProcessor implements NoticeProcessor<Audience> {
             return;
         }
 
-        List<Component> components = ComponentUtil.ofList(textLines, locale, replacements);
+        List<String> preparedLines = Notice.prepareText(textLines);
+        List<Component> components = ComponentUtil.ofList(preparedLines, locale, replacements);
         for (Component component : components) {
             Component rendered = TranslationUtil.render(component, locale, replacements);
+            rendered = rendered.replaceText(builder -> builder
+                    .match(NEWLINE_PATTERN)
+                    .replacement(Component.newline()));
             handler.sendMessage(rendered);
         }
     }

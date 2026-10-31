@@ -100,13 +100,13 @@ public abstract class AbstractNoticeSerializer<N extends Notice<?>> implements O
         if (data.isValue()) {
             Object value = data.getValueRaw();
             if (value instanceof String str) {
-                return createChat(Collections.singletonList(str));
+                return createChat(Notice.prepareText(Collections.singletonList(str)));
             } else if (value instanceof List<?> list) {
                 List<String> stringList = new ArrayList<>();
                 for (Object item : list) {
                     stringList.add(item != null ? item.toString() : "");
                 }
-                return createChat(stringList);
+                return createChat(Notice.prepareText(stringList));
             }
         }
 
@@ -124,14 +124,23 @@ public abstract class AbstractNoticeSerializer<N extends Notice<?>> implements O
                 for (Object item : list) {
                     stringList.add(item != null ? item.toString() : "");
                 }
-                builder.text(stringList);
+                builder.text(Notice.prepareText(stringList));
             } else if (textObj != null) {
-                builder.text(Collections.singletonList(textObj.toString()));
+                builder.text(Notice.prepareText(Collections.singletonList(textObj.toString())));
             }
         }
 
         if (data.containsKey("title")) {
-            builder.title(data.get("title", String.class));
+            String title = data.get("title", String.class);
+            if (Notice.containsLineSeparator(title) && !data.containsKey("subtitle")) {
+                String[] split = Notice.splitLineSeparator(title, 2);
+                builder.title(split[0]);
+                if (split.length > 1) {
+                    builder.subtitle(split[1]);
+                }
+            } else {
+                builder.title(title);
+            }
         }
         if (data.containsKey("subtitle")) {
             builder.subtitle(data.get("subtitle", String.class));

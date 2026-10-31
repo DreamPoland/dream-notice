@@ -18,8 +18,10 @@ public class NoticeSerdesTest {
     public static class ExampleConfig extends OkaeriConfig {
         public Notice<?> simpleChat = Notice.chat("Simple message");
         public Notice<?> multilineChat = Notice.chat("Line 1", "Line 2");
+        public Notice<?> newlineChat = Notice.chat("Line 1%NEWLINE%Line 2");
         public Notice<?> actionbar = Notice.actionbar("Action message");
         public Notice<?> title = Notice.title("Main Title", "Subtitle", 15, 60, 15);
+        public Notice<?> newlineTitle = Notice.title("Top Title%NEWLINE%Sub Title");
         public Notice<?> bossbar = Notice.bossBar("Boss title", "RED", "PROGRESS", 0.75f);
         public Notice<?> book = Notice.book("Guide", "Author", "Page 1", "Page 2");
         public Notice<?> sound = Notice.sound("entity.player.levelup", "MASTER", 1.0f, 1.5f);
@@ -50,6 +52,9 @@ public class NoticeSerdesTest {
         assertNotNull(config.multilineChat);
         assertEquals(Arrays.asList("Line 1", "Line 2"), config.multilineChat.getText());
 
+        assertNotNull(config.newlineChat);
+        assertEquals(Arrays.asList("Line 1", "Line 2"), config.newlineChat.getText());
+
         assertNotNull(config.actionbar);
         assertEquals(NoticeType.ACTION_BAR, config.actionbar.getNoticeType());
         assertEquals(Arrays.asList("Action message"), config.actionbar.getText());
@@ -61,6 +66,11 @@ public class NoticeSerdesTest {
         assertEquals(15, config.title.getFadeIn());
         assertEquals(60, config.title.getStay());
         assertEquals(15, config.title.getFadeOut());
+
+        assertNotNull(config.newlineTitle);
+        assertEquals(NoticeType.TITLE_SUBTITLE, config.newlineTitle.getNoticeType());
+        assertEquals("Top Title", config.newlineTitle.getTitle());
+        assertEquals("Sub Title", config.newlineTitle.getSubtitle());
 
         assertNotNull(config.bossbar);
         assertEquals(NoticeType.BOSS_BAR, config.bossbar.getNoticeType());

@@ -168,4 +168,62 @@ public class NoticeTest {
         verify(this.executor).send(eq(prepared), eq(audience), eq(Locale.ENGLISH), eq(Collections.emptyMap()));
         assertEquals(Collections.singletonList("Welcome Alice!"), prepared.getText());
     }
+
+    @Test
+    void testLineSeparatorMethod() {
+        assertEquals("%NEWLINE%", Notice.lineSeparator());
+        assertEquals("%NEWLINE%", Notice.LINE_SEPARATOR);
+    }
+
+    @Test
+    void testChatWithNewlinePlaceholder() {
+        Notice<?> notice1 = Notice.chat("Line 1%NEWLINE%Line 2");
+        assertEquals(Arrays.asList("Line 1", "Line 2"), notice1.getText());
+
+        Notice<?> notice2 = Notice.chat("Line 1" + Notice.lineSeparator() + "Line 2");
+        assertEquals(Arrays.asList("Line 1", "Line 2"), notice2.getText());
+
+        Notice<?> noticeBraces = Notice.chat("Line 1{NEWLINE}Line 2");
+        assertEquals(Arrays.asList("Line 1", "Line 2"), noticeBraces.getText());
+
+        Notice<?> noticeActual = Notice.chat("Line 1\nLine 2");
+        assertEquals(Arrays.asList("Line 1", "Line 2"), noticeActual.getText());
+
+        Notice<?> noticeVarargs = Notice.chat("Line 1", "Line 2%NEWLINE%Line 3");
+        assertEquals(Arrays.asList("Line 1", "Line 2", "Line 3"), noticeVarargs.getText());
+
+        Notice<?> noticeList = Notice.chat(Arrays.asList("Line 1%NEWLINE%Line 2", "Line 3"));
+        assertEquals(Arrays.asList("Line 1", "Line 2", "Line 3"), noticeList.getText());
+
+        Notice<?> noticeConstructor = new Notice<>(NoticeType.CHAT, "A%NEWLINE%B");
+        assertEquals(Arrays.asList("A", "B"), noticeConstructor.getText());
+    }
+
+    @Test
+    void testTitleWithNewlinePlaceholder() {
+        Notice<?> title1 = Notice.title("Title%NEWLINE%Subtitle");
+        assertEquals(NoticeType.TITLE_SUBTITLE, title1.getNoticeType());
+        assertEquals("Title", title1.getTitle());
+        assertEquals("Subtitle", title1.getSubtitle());
+
+        Notice<?> title2 = Notice.title("Title{NEWLINE}Subtitle");
+        assertEquals(NoticeType.TITLE_SUBTITLE, title2.getNoticeType());
+        assertEquals("Title", title2.getTitle());
+        assertEquals("Subtitle", title2.getSubtitle());
+
+        Notice<?> title3 = Notice.title("Title\nSubtitle");
+        assertEquals(NoticeType.TITLE_SUBTITLE, title3.getNoticeType());
+        assertEquals("Title", title3.getTitle());
+        assertEquals("Subtitle", title3.getSubtitle());
+    }
+
+    @Test
+    void testWithMethodWithNewlinePlaceholder() {
+        Notice<?> notice = Notice.chat("User: {player}");
+        Notice<?> replaced = notice.with("player", "Alice%NEWLINE%Bob");
+        assertEquals(Arrays.asList("User: Alice", "Bob"), replaced.getText());
+
+        Notice<?> multiLine = Notice.chat("First%NEWLINE%Second").with("foo", "bar");
+        assertEquals(Arrays.asList("First", "Second"), multiLine.getText());
+    }
 }

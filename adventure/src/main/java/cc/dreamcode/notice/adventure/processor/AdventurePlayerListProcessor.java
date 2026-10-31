@@ -33,6 +33,13 @@ public class AdventurePlayerListProcessor implements NoticeProcessor<Audience> {
             return;
         }
 
+        if (header != null) {
+            header = header.replaceAll("(?i)" + java.util.regex.Pattern.quote(Notice.LINE_SEPARATOR) + "|\\{newline\\}", "\n");
+        }
+        if (footer != null) {
+            footer = footer.replaceAll("(?i)" + java.util.regex.Pattern.quote(Notice.LINE_SEPARATOR) + "|\\{newline\\}", "\n");
+        }
+
         PlayerListUtil.sendHeaderAndFooter(handler, header, footer, locale, replacements);
     }
 }
