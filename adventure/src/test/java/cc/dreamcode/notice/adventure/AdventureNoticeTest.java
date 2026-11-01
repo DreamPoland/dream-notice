@@ -173,4 +173,41 @@ public class AdventureNoticeTest {
         assertNotNull(clickEvent);
         assertEquals(net.kyori.adventure.text.event.ClickEvent.openUrl("https://dreamcode.cc"), clickEvent);
     }
+
+    @Test
+    void testChatProcessorWithOkaeriPluralPlaceholders() {
+        AdventureNotice notice = AdventureNotice.chat("Masz {count} {oferta,oferty,ofert#count}!");
+        this.provider.builder()
+                .player(this.audience)
+                .notice(notice)
+                .with("count", 1)
+                .send();
+
+        org.mockito.ArgumentCaptor<net.kyori.adventure.text.Component> captor = org.mockito.ArgumentCaptor.forClass(net.kyori.adventure.text.Component.class);
+        Mockito.verify(this.audience).sendMessage(captor.capture());
+        net.kyori.adventure.text.Component sent = captor.getValue();
+        assertNotNull(sent);
+
+        String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(sent);
+        assertEquals("Masz 1 oferta!", plain);
+    }
+
+    @Test
+    void testChatProcessorIgnoresUserInputTagsAndNewlines() {
+        AdventureNotice notice = AdventureNotice.chat("<gold>[Chat]</gold> {player}: {message}");
+        this.provider.builder()
+                .player(this.audience)
+                .notice(notice)
+                .with("player", "Steve")
+                .with("message", "siema {newline} <red>kolor</red> {oferta,oferty,ofert#0}")
+                .send();
+
+        org.mockito.ArgumentCaptor<net.kyori.adventure.text.Component> captor = org.mockito.ArgumentCaptor.forClass(net.kyori.adventure.text.Component.class);
+        Mockito.verify(this.audience).sendMessage(captor.capture());
+        net.kyori.adventure.text.Component sent = captor.getValue();
+        assertNotNull(sent);
+
+        String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(sent);
+        assertEquals("[Chat] Steve: siema {newline} <red>kolor</red> {oferta,oferty,ofert#0}", plain);
+    }
 }

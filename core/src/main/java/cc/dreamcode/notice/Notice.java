@@ -1,6 +1,10 @@
 package cc.dreamcode.notice;
 
 import cc.dreamcode.notice.translation.TranslationRegistry;
+import cc.dreamcode.utilities.StringUtil;
+import eu.okaeri.placeholders.ast.EvaluationResult;
+import eu.okaeri.placeholders.context.PlaceholderContext;
+import eu.okaeri.placeholders.message.CompiledMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +17,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -152,14 +158,12 @@ public class Notice<T> {
     }
 
     public Notice<T> with(@NonNull String placeholder, Object replace) {
-        Notice<T> notice = new Notice<>(this);
-        notice.applyReplacement(placeholder, replace);
-        return notice;
+        return with(Collections.singletonMap(placeholder, replace));
     }
 
     public Notice<T> with(@NonNull Map<String, Object> replacements) {
         Notice<T> notice = new Notice<>(this);
-        replacements.forEach(notice::applyReplacement);
+        notice.applyReplacements(replacements);
         return notice;
     }
 
@@ -331,55 +335,91 @@ public class Notice<T> {
         return result;
     }
 
-    private void applyReplacement(@NonNull String placeholder, Object replace) {
+    private void applyReplacements(@NonNull Map<String, Object> replacements) {
+        if (replacements.isEmpty()) {
+            return;
+        }
         if (this.text != null && !this.text.isEmpty()) {
             this.text = this.text.stream()
-                    .map(line -> replaceInText(line, placeholder, replace))
+                    .map(line -> replaceInText(line, replacements))
                     .collect(Collectors.toList());
         }
         if (this.title != null) {
-            this.title = replaceInText(this.title, placeholder, replace);
+            this.title = replaceInText(this.title, replacements);
         }
         if (this.subtitle != null) {
-            this.subtitle = replaceInText(this.subtitle, placeholder, replace);
+            this.subtitle = replaceInText(this.subtitle, replacements);
         }
         if (this.header != null) {
-            this.header = replaceInText(this.header, placeholder, replace);
+            this.header = replaceInText(this.header, replacements);
         }
         if (this.footer != null) {
-            this.footer = replaceInText(this.footer, placeholder, replace);
+            this.footer = replaceInText(this.footer, replacements);
         }
         if (this.bookAuthor != null) {
-            this.bookAuthor = replaceInText(this.bookAuthor, placeholder, replace);
+            this.bookAuthor = replaceInText(this.bookAuthor, replacements);
         }
         if (this.pages != null && !this.pages.isEmpty()) {
             this.pages = this.pages.stream()
-                    .map(page -> replaceInText(page, placeholder, replace))
+                    .map(page -> replaceInText(page, replacements))
                     .collect(Collectors.toList());
         }
     }
 
-    private static String replaceInText(String source, @NonNull String placeholder, Object replace) {
-        if (source == null || source.isEmpty() || placeholder.isEmpty()) {
+    private static final Pattern FIELD_PATTERN = Pattern.compile("\\{(?<content>[^}]+)}");
+    private static final Pattern PERCENT_PATTERN = Pattern.compile("%(?<content>[a-zA-Z0-9_.-]+)%");
+
+    private static String replaceInText(String source, @NonNull Map<String, Object> replacements) {
+        if (source == null || source.isEmpty() || replacements.isEmpty()) {
             return source;
         }
 
-        String cleanPlaceholder = placeholder;
-        if ((cleanPlaceholder.startsWith("{") && cleanPlaceholder.endsWith("}")) ||
-            (cleanPlaceholder.startsWith("%") && cleanPlaceholder.endsWith("%"))) {
-            cleanPlaceholder = cleanPlaceholder.substring(1, cleanPlaceholder.length() - 1);
+        Map<String, Object> normalized = new HashMap<>();
+        for (Map.Entry<String, Object> entry : replacements.entrySet()) {
+            String key = entry.getKey();
+            if ((key.startsWith("{") && key.endsWith("}")) ||
+                (key.startsWith("%") && key.endsWith("%"))) {
+                key = key.substring(1, key.length() - 1);
+            }
+            normalized.put(key, entry.getValue());
         }
 
-        String replacement = (replace != null) ? String.valueOf(replace) : "";
-        String result = source
-                .replace("{" + cleanPlaceholder + "}", replacement)
-                .replace("%" + cleanPlaceholder + "%", replacement);
+        Locale locale = Locale.forLanguageTag("pl");
+        CompiledMessage compiledMessage = CompiledMessage.of(locale, source);
+        PlaceholderContext context = StringUtil.getPlaceholders().context(compiledMessage);
+        context.with(normalized);
+        Map<String, EvaluationResult> fieldResults = context.renderFieldResults();
 
-        if (result.contains(placeholder)) {
-            result = result.replace(placeholder, replacement);
+        Matcher fieldMatcher = FIELD_PATTERN.matcher(source);
+        StringBuilder sb = new StringBuilder();
+        while (fieldMatcher.find()) {
+            String expr = fieldMatcher.group("content");
+            EvaluationResult eval = fieldResults.get(expr);
+            if (eval instanceof EvaluationResult.Value) {
+                fieldMatcher.appendReplacement(sb, Matcher.quoteReplacement(eval.format()));
+            } else if (eval instanceof EvaluationResult.NullValue) {
+                fieldMatcher.appendReplacement(sb, "");
+            } else {
+                fieldMatcher.appendReplacement(sb, Matcher.quoteReplacement(fieldMatcher.group()));
+            }
         }
+        fieldMatcher.appendTail(sb);
+        String intermediate = sb.toString();
 
-        return result;
+        Matcher percentMatcher = PERCENT_PATTERN.matcher(intermediate);
+        StringBuilder sb2 = new StringBuilder();
+        while (percentMatcher.find()) {
+            String key = percentMatcher.group("content");
+            Object val = normalized.get(key);
+            if (val != null) {
+                percentMatcher.appendReplacement(sb2, Matcher.quoteReplacement(String.valueOf(val)));
+            } else {
+                percentMatcher.appendReplacement(sb2, Matcher.quoteReplacement(percentMatcher.group()));
+            }
+        }
+        percentMatcher.appendTail(sb2);
+
+        return sb2.toString();
     }
 
     public static NoticeProvider<?> getGlobalProvider() {

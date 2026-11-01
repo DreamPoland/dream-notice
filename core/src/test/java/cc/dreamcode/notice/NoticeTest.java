@@ -250,4 +250,32 @@ public class NoticeTest {
         assertEquals(Collections.singletonList("Click here!"), original.getText());
         assertEquals(Collections.singletonList("<click:open_url:'https://dreamcode.cc'>Click here!</click>"), modified.getText());
     }
+
+    @Test
+    void testOkaeriPluralPlaceholders() {
+        Notice<?> notice1 = Notice.chat("Masz {count} {oferta,oferty,ofert#count}!");
+        Notice<?> replaced1 = notice1.with("count", 1);
+        assertEquals(Collections.singletonList("Masz 1 oferta!"), replaced1.getText());
+
+        Notice<?> replaced2 = notice1.with("count", 2);
+        assertEquals(Collections.singletonList("Masz 2 oferty!"), replaced2.getText());
+
+        Notice<?> replaced5 = notice1.with("count", 5);
+        assertEquals(Collections.singletonList("Masz 5 ofert!"), replaced5.getText());
+
+        Notice<?> notice2 = Notice.chat("Masz {count} {oferta,oferty,ofert#0}!");
+        Notice<?> replacedIndexed = notice2.with("0", 1);
+        assertEquals(Collections.singletonList("Masz {count} oferta!"), replacedIndexed.getText());
+    }
+
+    @Test
+    void testNoRecursivePlaceholderReplacement() {
+        Notice<?> notice = Notice.chat("Msg: {message}");
+        Notice<?> replaced = notice.with("message", "tekst {newline} <red>kolor</red> {other}");
+        assertEquals(Collections.singletonList("Msg: tekst {newline} <red>kolor</red> {other}"), replaced.getText());
+
+        Notice<?> multi = Notice.chat("A: {a}, B: {b}");
+        Notice<?> replacedMulti = multi.with(Map.of("a", "{b}", "b", "wartość"));
+        assertEquals(Collections.singletonList("A: {b}, B: wartość"), replacedMulti.getText());
+    }
 }
