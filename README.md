@@ -49,7 +49,7 @@ Add the dependency for your platform:
 <dependency>
   <groupId>cc.dreamcode.notice</groupId>
   <artifactId>bukkit</artifactId>
-  <version>2.0.7</version>
+  <version>2.0.8</version>
 </dependency>
 ```
 
@@ -58,7 +58,7 @@ Add the dependency for your platform:
 <dependency>
   <groupId>cc.dreamcode.notice</groupId>
   <artifactId>bungee</artifactId>
-  <version>2.0.7</version>
+  <version>2.0.8</version>
 </dependency>
 ```
 
@@ -67,7 +67,7 @@ Add the dependency for your platform:
 <dependency>
   <groupId>cc.dreamcode.notice</groupId>
   <artifactId>bukkit-serializer</artifactId>
-  <version>2.0.7</version>
+  <version>2.0.8</version>
 </dependency>
 ```
 
@@ -82,13 +82,13 @@ repositories {
 
 dependencies {
     // Bukkit / Spigot / Paper
-    implementation("cc.dreamcode.notice:bukkit:2.0.7")
+    implementation("cc.dreamcode.notice:bukkit:2.0.8")
 
     // BungeeCord
-    implementation("cc.dreamcode.notice:bungee:2.0.7")
+    implementation("cc.dreamcode.notice:bungee:2.0.8")
 
     // Okaeri Configs Serialization
-    implementation("cc.dreamcode.notice:bukkit-serializer:2.0.7")
+    implementation("cc.dreamcode.notice:bukkit-serializer:2.0.8")
 }
 ```
 
