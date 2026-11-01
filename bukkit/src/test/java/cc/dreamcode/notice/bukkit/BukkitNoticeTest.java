@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.util.Locale;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -147,5 +148,60 @@ public class BukkitNoticeTest {
         BukkitNotice notice = BukkitNotice.chat("Click here!").url("https://dreamcode.cc");
         assertNotNull(notice);
         assertEquals(java.util.Collections.singletonList("<click:open_url:'https://dreamcode.cc'>Click here!</click>"), notice.getText());
+    }
+
+    @Test
+    void testBukkitNoticeSendWithReplacements() {
+        Player player = mock(Player.class);
+        when(player.getName()).thenReturn("Ravis96");
+
+        BukkitNotice notice = BukkitNotice.chat("[+] Gracz {nick} dolaczyl na serwer ({sector-name})");
+        notice.with("nick", "Ravis96")
+                .with("sector-name", "s1")
+                .send(player);
+
+        org.mockito.ArgumentCaptor<Component> captor = org.mockito.ArgumentCaptor.forClass(Component.class);
+        verify(player).sendMessage(captor.capture());
+        Component sent = captor.getValue();
+        assertNotNull(sent);
+
+        String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(sent);
+        assertTrue(plain.contains("Ravis96"), "Expected 'Ravis96' in: " + plain);
+        assertTrue(plain.contains("s1"), "Expected 's1' in: " + plain);
+    }
+
+    @Test
+    void testBukkitNoticeMarketBroadcast() {
+        Player player = mock(Player.class);
+        when(player.getName()).thenReturn("Ravis96");
+
+        BukkitNotice notice = BukkitNotice.chat("&8[&2&l!&8] &aNa bazarku znajduje sie aktualnie {offers} {oferta,oferty,ofert#offers}. Sprawdz je pod /bazar.");
+        notice.with("offers", 1).send(player);
+
+        org.mockito.ArgumentCaptor<Component> captor = org.mockito.ArgumentCaptor.forClass(Component.class);
+        verify(player).sendMessage(captor.capture());
+        Component sent = captor.getValue();
+        assertNotNull(sent);
+
+        String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(sent);
+        assertTrue(plain.contains("1 oferta"), "Expected '1 oferta' in: " + plain);
+    }
+
+    @Test
+    void testBukkitNoticeCollectionSendWithMap() {
+        Player player = mock(Player.class);
+        when(player.getName()).thenReturn("Ravis96");
+
+        BukkitNotice notice = BukkitNotice.chat("[+] Gracz {nick} dolaczyl na serwer ({sector-name})");
+        notice.send(java.util.Collections.singletonList(player), Map.of("nick", "Ravis96", "sector-name", "s1"));
+
+        org.mockito.ArgumentCaptor<Component> captor = org.mockito.ArgumentCaptor.forClass(Component.class);
+        verify(player).sendMessage(captor.capture());
+        Component sent = captor.getValue();
+        assertNotNull(sent);
+
+        String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(sent);
+        assertTrue(plain.contains("Ravis96"), "Expected 'Ravis96' in: " + plain);
+        assertTrue(plain.contains("s1"), "Expected 's1' in: " + plain);
     }
 }
