@@ -20,6 +20,7 @@ import net.kyori.adventure.identity.Identity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -56,22 +57,30 @@ public class AdventureNoticeExecutor implements NoticeExecutor<Audience, Adventu
             return;
         }
 
+        Map<String, Object> allReplacements = new HashMap<>();
+        if (notice.getReplacements() != null && !notice.getReplacements().isEmpty()) {
+            allReplacements.putAll(notice.getReplacements());
+        }
+        if (replacements != null && !replacements.isEmpty()) {
+            allReplacements.putAll(replacements);
+        }
+
         Locale targetLocale = resolveLocale(noticeAudience, handler, fallbackLocale);
 
         boolean processed = false;
         for (NoticeProcessor<Audience> processor : this.processors) {
             if (processor.supports(type)) {
-                processor.process(notice, noticeAudience, targetLocale, replacements);
+                processor.process(notice, noticeAudience, targetLocale, allReplacements);
                 processed = true;
             }
         }
 
         if (!processed) {
-            new AdventureChatProcessor().process(notice, noticeAudience, targetLocale, replacements);
+            new AdventureChatProcessor().process(notice, noticeAudience, targetLocale, allReplacements);
         }
 
         if (!"SOUND".equalsIgnoreCase(type.getName()) && notice.getSoundKey() != null && !notice.getSoundKey().isEmpty()) {
-            this.soundProcessor.process(notice, noticeAudience, targetLocale, replacements);
+            this.soundProcessor.process(notice, noticeAudience, targetLocale, allReplacements);
         }
     }
 

@@ -100,7 +100,8 @@ public class BungeeNoticeTest {
         BungeeNotice notice = BungeeNotice.chat("Hello {player}!");
         BungeeNotice replaced = notice.with("player", "Alice");
         assertNotNull(replaced);
-        assertEquals(java.util.Collections.singletonList("Hello Alice!"), replaced.getText());
+        assertEquals(java.util.Collections.singletonList("Hello {player}!"), replaced.getText());
+        assertEquals("Alice", replaced.getReplacements().get("player"));
     }
 
     @Test

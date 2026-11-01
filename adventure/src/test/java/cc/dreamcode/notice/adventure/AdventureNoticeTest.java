@@ -62,7 +62,8 @@ public class AdventureNoticeTest {
         AdventureNotice notice = AdventureNotice.chat("Hello {player}!");
         AdventureNotice replaced = notice.with("player", "John");
         assertNotNull(replaced);
-        assertEquals(java.util.Collections.singletonList("Hello John!"), replaced.getText());
+        assertEquals(java.util.Collections.singletonList("Hello {player}!"), replaced.getText());
+        assertEquals("John", replaced.getReplacements().get("player"));
     }
 
     @Test
@@ -209,5 +210,42 @@ public class AdventureNoticeTest {
 
         String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(sent);
         assertEquals("[Chat] Steve: siema {newline} <red>kolor</red> {oferta,oferty,ofert#0}", plain);
+    }
+
+    @Test
+    void testAdminChatFormatWithNewlineInMessage() {
+        AdventureNotice adminChatFormat = AdventureNotice.chat("&8[&4&lAC&8] &4{nick}: &c{message}");
+        Notice<?> ready = adminChatFormat
+                .with("nick", "Admin")
+                .with("message", "%newline%");
+
+        assertEquals(java.util.Collections.singletonList("&8[&4&lAC&8] &4{nick}: &c{message}"), ready.getText());
+        assertEquals("Admin", ready.getReplacements().get("nick"));
+        assertEquals("%newline%", ready.getReplacements().get("message"));
+
+        ready.send(this.audience);
+
+        org.mockito.ArgumentCaptor<net.kyori.adventure.text.Component> captor = org.mockito.ArgumentCaptor.forClass(net.kyori.adventure.text.Component.class);
+        Mockito.verify(this.audience).sendMessage(captor.capture());
+        net.kyori.adventure.text.Component sent = captor.getValue();
+        assertNotNull(sent);
+
+        String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(sent);
+        assertEquals("[AC] Admin: %newline%", plain);
+    }
+
+    @Test
+    void testNoticeWithPluralPlaceholderSent() {
+        AdventureNotice notice = AdventureNotice.chat("Masz {count} {oferta,oferty,ofert#count}!");
+        Notice<?> ready = notice.with("count", 5);
+        ready.send(this.audience);
+
+        org.mockito.ArgumentCaptor<net.kyori.adventure.text.Component> captor = org.mockito.ArgumentCaptor.forClass(net.kyori.adventure.text.Component.class);
+        Mockito.verify(this.audience).sendMessage(captor.capture());
+        net.kyori.adventure.text.Component sent = captor.getValue();
+        assertNotNull(sent);
+
+        String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(sent);
+        assertEquals("Masz 5 ofert!", plain);
     }
 }

@@ -60,6 +60,9 @@ public class NoticeBuilder<I, T> {
 
     public NoticeBuilder<I, T> notice(Notice<?> notice) {
         this.notice = notice;
+        if (notice != null && notice.getReplacements() != null && !notice.getReplacements().isEmpty()) {
+            this.replacements.putAll(notice.getReplacements());
+        }
         return this;
     }
 
@@ -69,12 +72,23 @@ public class NoticeBuilder<I, T> {
     }
 
     public NoticeBuilder<I, T> with(@NonNull String key, Object value) {
+        if ((key.startsWith("{") && key.endsWith("}")) || (key.startsWith("%") && key.endsWith("%"))) {
+            key = key.substring(1, key.length() - 1);
+        }
         this.replacements.put(key, value);
         return this;
     }
 
     public NoticeBuilder<I, T> with(@NonNull Map<String, Object> replacements) {
-        this.replacements.putAll(replacements);
+        for (Map.Entry<String, Object> entry : replacements.entrySet()) {
+            String key = entry.getKey();
+            if (key != null) {
+                if ((key.startsWith("{") && key.endsWith("}")) || (key.startsWith("%") && key.endsWith("%"))) {
+                    key = key.substring(1, key.length() - 1);
+                }
+                this.replacements.put(key, entry.getValue());
+            }
+        }
         return this;
     }
 
@@ -138,13 +152,19 @@ public class NoticeBuilder<I, T> {
 
         NoticeScheduler scheduler = this.noticeProvider.getNoticeScheduler();
 
+        Map<String, Object> allReplacements = new HashMap<>();
+        if (this.notice != null && this.notice.getReplacements() != null && !this.notice.getReplacements().isEmpty()) {
+            allReplacements.putAll(this.notice.getReplacements());
+        }
+        allReplacements.putAll(this.replacements);
+
         Runnable sendTask = () -> {
             if (this.sendToAll) {
                 if (executor instanceof NoticeAudienceResolver resolver) {
                     Collection<NoticeAudience<?>> audiences = resolver.getAllAudiences();
                     for (NoticeAudience aud : audiences) {
                         Locale targetLocale = this.locale != null ? this.locale : aud.getLocale();
-                        executor.send(this.notice, aud, targetLocale, this.replacements);
+                        executor.send(this.notice, aud, targetLocale, allReplacements);
                     }
                 }
                 return;
@@ -153,12 +173,12 @@ public class NoticeBuilder<I, T> {
             for (Object target : this.targets) {
                 if (target instanceof NoticeAudience aud) {
                     Locale targetLocale = this.locale != null ? this.locale : aud.getLocale();
-                    executor.send(this.notice, aud, targetLocale, this.replacements);
+                    executor.send(this.notice, aud, targetLocale, allReplacements);
                 } else if (executor instanceof NoticeAudienceResolver resolver) {
                     NoticeAudience aud = resolver.resolveAudience(target);
                     if (aud != null) {
                         Locale targetLocale = this.locale != null ? this.locale : aud.getLocale();
-                        executor.send(this.notice, aud, targetLocale, this.replacements);
+                        executor.send(this.notice, aud, targetLocale, allReplacements);
                     }
                 }
             }

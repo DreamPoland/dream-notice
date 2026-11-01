@@ -8,6 +8,7 @@ import cc.dreamcode.utilities.adventure.AudienceUtil;
 import lombok.NonNull;
 import net.kyori.adventure.audience.Audience;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -72,7 +73,15 @@ public class AdventureTitleProcessor implements NoticeProcessor<Audience> {
         title = cleanLineSeparators(title);
         subtitle = cleanLineSeparators(subtitle);
 
-        AudienceUtil.sendTitle(handler, title, subtitle, replacements, notice.getFadeIn(), notice.getStay(), notice.getFadeOut());
+        Map<String, Object> effectiveReplacements = new HashMap<>();
+        if (notice.getReplacements() != null && !notice.getReplacements().isEmpty()) {
+            effectiveReplacements.putAll(notice.getReplacements());
+        }
+        if (replacements != null && !replacements.isEmpty()) {
+            effectiveReplacements.putAll(replacements);
+        }
+
+        AudienceUtil.sendTitle(handler, title, subtitle, effectiveReplacements, notice.getFadeIn(), notice.getStay(), notice.getFadeOut());
     }
 
     private boolean supportsTitleSubtitle(NoticeType noticeType) {

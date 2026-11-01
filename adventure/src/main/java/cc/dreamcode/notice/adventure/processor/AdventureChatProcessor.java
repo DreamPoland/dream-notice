@@ -45,6 +45,14 @@ public class AdventureChatProcessor implements NoticeProcessor<Audience> {
             return;
         }
 
+        Map<String, Object> effectiveReplacements = new HashMap<>();
+        if (notice.getReplacements() != null && !notice.getReplacements().isEmpty()) {
+            effectiveReplacements.putAll(notice.getReplacements());
+        }
+        if (replacements != null && !replacements.isEmpty()) {
+            effectiveReplacements.putAll(replacements);
+        }
+
         for (String rawLine : textLines) {
             Component component = AdventureUtil.component(rawLine);
             Component template = component.replaceText(builder -> builder
@@ -52,13 +60,13 @@ public class AdventureChatProcessor implements NoticeProcessor<Audience> {
                     .replacement(Component.newline()));
             Component translated = TranslationUtil.render(template, locale);
 
-            if (replacements.isEmpty()) {
+            if (effectiveReplacements.isEmpty()) {
                 handler.sendMessage(translated);
                 continue;
             }
 
             Map<String, Object> normalized = new HashMap<>();
-            for (Map.Entry<String, Object> entry : replacements.entrySet()) {
+            for (Map.Entry<String, Object> entry : effectiveReplacements.entrySet()) {
                 String key = entry.getKey();
                 if ((key.startsWith("{") && key.endsWith("}")) || (key.startsWith("%") && key.endsWith("%"))) {
                     key = key.substring(1, key.length() - 1);

@@ -9,6 +9,7 @@ import lombok.NonNull;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -35,6 +36,14 @@ public class AdventureBossBarProcessor implements NoticeProcessor<Audience> {
             return;
         }
 
+        Map<String, Object> effectiveReplacements = new HashMap<>();
+        if (notice.getReplacements() != null && !notice.getReplacements().isEmpty()) {
+            effectiveReplacements.putAll(notice.getReplacements());
+        }
+        if (replacements != null && !replacements.isEmpty()) {
+            effectiveReplacements.putAll(replacements);
+        }
+
         title = title.replaceAll("(?i)" + java.util.regex.Pattern.quote(Notice.LINE_SEPARATOR) + "|\\{newline\\}|\\r?\\n", "");
 
         BossBar.Color color;
@@ -51,6 +60,6 @@ public class AdventureBossBarProcessor implements NoticeProcessor<Audience> {
             overlay = BossBar.Overlay.PROGRESS;
         }
 
-        BossBarUtil.showBossBar(handler, title, notice.getBossBarProgress(), color, overlay, replacements);
+        BossBarUtil.showBossBar(handler, title, notice.getBossBarProgress(), color, overlay, effectiveReplacements);
     }
 }

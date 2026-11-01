@@ -8,6 +8,7 @@ import cc.dreamcode.utilities.adventure.PlayerListUtil;
 import lombok.NonNull;
 import net.kyori.adventure.audience.Audience;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -33,6 +34,14 @@ public class AdventurePlayerListProcessor implements NoticeProcessor<Audience> {
             return;
         }
 
+        Map<String, Object> effectiveReplacements = new HashMap<>();
+        if (notice.getReplacements() != null && !notice.getReplacements().isEmpty()) {
+            effectiveReplacements.putAll(notice.getReplacements());
+        }
+        if (replacements != null && !replacements.isEmpty()) {
+            effectiveReplacements.putAll(replacements);
+        }
+
         if (header != null) {
             header = header.replaceAll("(?i)" + java.util.regex.Pattern.quote(Notice.LINE_SEPARATOR) + "|\\{newline\\}", "\n");
         }
@@ -40,6 +49,6 @@ public class AdventurePlayerListProcessor implements NoticeProcessor<Audience> {
             footer = footer.replaceAll("(?i)" + java.util.regex.Pattern.quote(Notice.LINE_SEPARATOR) + "|\\{newline\\}", "\n");
         }
 
-        PlayerListUtil.sendHeaderAndFooter(handler, header, footer, locale, replacements);
+        PlayerListUtil.sendHeaderAndFooter(handler, header, footer, locale, effectiveReplacements);
     }
 }

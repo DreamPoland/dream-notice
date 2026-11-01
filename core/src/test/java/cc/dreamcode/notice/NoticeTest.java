@@ -105,22 +105,29 @@ public class NoticeTest {
     void testWithMethodOnChatNotice() {
         Notice<?> notice = Notice.chat("Hello {player}!");
         Notice<?> replaced1 = notice.with("player", "Alice");
-        assertEquals(Collections.singletonList("Hello Alice!"), replaced1.getText());
+        assertEquals(Collections.singletonList("Hello {player}!"), replaced1.getText());
+        assertEquals("Alice", replaced1.getReplacements().get("player"));
 
         Notice<?> noticeBraces = Notice.chat("Hello {player}!");
         Notice<?> replaced2 = noticeBraces.with("{player}", "Bob");
-        assertEquals(Collections.singletonList("Hello Bob!"), replaced2.getText());
+        assertEquals(Collections.singletonList("Hello {player}!"), replaced2.getText());
+        assertEquals("Bob", replaced2.getReplacements().get("player"));
 
         Notice<?> noticePercent = Notice.chat("Hello %player%!");
         Notice<?> replaced3 = noticePercent.with("player", "Charlie");
-        assertEquals(Collections.singletonList("Hello Charlie!"), replaced3.getText());
+        assertEquals(Collections.singletonList("Hello %player%!"), replaced3.getText());
+        assertEquals("Charlie", replaced3.getReplacements().get("player"));
 
         Notice<?> multi = Notice.chat("User: {player}, Coins: {coins}");
         Notice<?> replacedMulti = multi.with("player", "Alice").with("coins", 100);
-        assertEquals(Collections.singletonList("User: Alice, Coins: 100"), replacedMulti.getText());
+        assertEquals(Collections.singletonList("User: {player}, Coins: {coins}"), replacedMulti.getText());
+        assertEquals("Alice", replacedMulti.getReplacements().get("player"));
+        assertEquals(100, replacedMulti.getReplacements().get("coins"));
 
         Notice<?> mapReplace = multi.with(Map.of("player", "Alice", "coins", 500));
-        assertEquals(Collections.singletonList("User: Alice, Coins: 500"), mapReplace.getText());
+        assertEquals(Collections.singletonList("User: {player}, Coins: {coins}"), mapReplace.getText());
+        assertEquals("Alice", mapReplace.getReplacements().get("player"));
+        assertEquals(500, mapReplace.getReplacements().get("coins"));
     }
 
     @Test
@@ -130,8 +137,12 @@ public class NoticeTest {
         Notice<?> modified2 = original.with("player", "Bob");
 
         assertEquals(Collections.singletonList("Welcome {player}!"), original.getText());
-        assertEquals(Collections.singletonList("Welcome Alice!"), modified1.getText());
-        assertEquals(Collections.singletonList("Welcome Bob!"), modified2.getText());
+        assertEquals(Collections.singletonList("Welcome {player}!"), modified1.getText());
+        assertEquals(Collections.singletonList("Welcome {player}!"), modified2.getText());
+
+        assertTrue(original.getReplacements().isEmpty());
+        assertEquals(Map.of("player", "Alice"), modified1.getReplacements());
+        assertEquals(Map.of("player", "Bob"), modified2.getReplacements());
     }
 
     @Test
@@ -139,21 +150,27 @@ public class NoticeTest {
         Notice<?> title = Notice.title("Hello {player}", "Level: {level}")
                 .with("player", "Alice")
                 .with("level", 5);
-        assertEquals("Hello Alice", title.getTitle());
-        assertEquals("Level: 5", title.getSubtitle());
+        assertEquals("Hello {player}", title.getTitle());
+        assertEquals("Level: {level}", title.getSubtitle());
+        assertEquals("Alice", title.getReplacements().get("player"));
+        assertEquals(5, title.getReplacements().get("level"));
 
         Notice<?> book = Notice.book("Rules for {player}", "{author}", "Page 1: Welcome {player}", "Page 2")
                 .with("player", "Alice")
                 .with("author", "ServerAdmin");
-        assertEquals("Rules for Alice", book.getTitle());
-        assertEquals("ServerAdmin", book.getBookAuthor());
-        assertEquals(Arrays.asList("Page 1: Welcome Alice", "Page 2"), book.getPages());
+        assertEquals("Rules for {player}", book.getTitle());
+        assertEquals("{author}", book.getBookAuthor());
+        assertEquals(Arrays.asList("Page 1: Welcome {player}", "Page 2"), book.getPages());
+        assertEquals("Alice", book.getReplacements().get("player"));
+        assertEquals("ServerAdmin", book.getReplacements().get("author"));
 
         Notice<?> playerList = Notice.playerList("Header {server}", "Footer {online}")
                 .with("server", "DreamCode")
                 .with("online", 42);
-        assertEquals("Header DreamCode", playerList.getHeader());
-        assertEquals("Footer 42", playerList.getFooter());
+        assertEquals("Header {server}", playerList.getHeader());
+        assertEquals("Footer {online}", playerList.getFooter());
+        assertEquals("DreamCode", playerList.getReplacements().get("server"));
+        assertEquals(42, playerList.getReplacements().get("online"));
     }
 
     @Test
@@ -165,8 +182,9 @@ public class NoticeTest {
         Notice<?> prepared = notice.with("player", "Alice");
         prepared.send(audience);
 
-        verify(this.executor).send(eq(prepared), eq(audience), eq(Locale.ENGLISH), eq(Collections.emptyMap()));
-        assertEquals(Collections.singletonList("Welcome Alice!"), prepared.getText());
+        verify(this.executor).send(eq(prepared), eq(audience), eq(Locale.ENGLISH), eq(Map.of("player", "Alice")));
+        assertEquals(Collections.singletonList("Welcome {player}!"), prepared.getText());
+        assertEquals(Map.of("player", "Alice"), prepared.getReplacements());
     }
 
     @Test
@@ -221,10 +239,12 @@ public class NoticeTest {
     void testWithMethodWithNewlinePlaceholder() {
         Notice<?> notice = Notice.chat("User: {player}");
         Notice<?> replaced = notice.with("player", "Alice%NEWLINE%Bob");
-        assertEquals(Collections.singletonList("User: Alice%NEWLINE%Bob"), replaced.getText());
+        assertEquals(Collections.singletonList("User: {player}"), replaced.getText());
+        assertEquals("Alice%NEWLINE%Bob", replaced.getReplacements().get("player"));
 
         Notice<?> multiLine = Notice.chat("First%NEWLINE%Second").with("foo", "bar");
         assertEquals(Arrays.asList("First", "Second"), multiLine.getText());
+        assertEquals("bar", multiLine.getReplacements().get("foo"));
     }
 
     @Test
@@ -252,30 +272,24 @@ public class NoticeTest {
     }
 
     @Test
-    void testOkaeriPluralPlaceholders() {
+    void testOkaeriPluralPlaceholdersInModel() {
         Notice<?> notice1 = Notice.chat("Masz {count} {oferta,oferty,ofert#count}!");
         Notice<?> replaced1 = notice1.with("count", 1);
-        assertEquals(Collections.singletonList("Masz 1 oferta!"), replaced1.getText());
-
-        Notice<?> replaced2 = notice1.with("count", 2);
-        assertEquals(Collections.singletonList("Masz 2 oferty!"), replaced2.getText());
-
-        Notice<?> replaced5 = notice1.with("count", 5);
-        assertEquals(Collections.singletonList("Masz 5 ofert!"), replaced5.getText());
-
-        Notice<?> notice2 = Notice.chat("Masz {count} {oferta,oferty,ofert#0}!");
-        Notice<?> replacedIndexed = notice2.with("0", 1);
-        assertEquals(Collections.singletonList("Masz {count} oferta!"), replacedIndexed.getText());
+        assertEquals(Collections.singletonList("Masz {count} {oferta,oferty,ofert#count}!"), replaced1.getText());
+        assertEquals(1, replaced1.getReplacements().get("count"));
     }
 
     @Test
-    void testNoRecursivePlaceholderReplacement() {
+    void testNoRecursivePlaceholderReplacementInModel() {
         Notice<?> notice = Notice.chat("Msg: {message}");
         Notice<?> replaced = notice.with("message", "tekst {newline} <red>kolor</red> {other}");
-        assertEquals(Collections.singletonList("Msg: tekst {newline} <red>kolor</red> {other}"), replaced.getText());
+        assertEquals(Collections.singletonList("Msg: {message}"), replaced.getText());
+        assertEquals("tekst {newline} <red>kolor</red> {other}", replaced.getReplacements().get("message"));
 
         Notice<?> multi = Notice.chat("A: {a}, B: {b}");
         Notice<?> replacedMulti = multi.with(Map.of("a", "{b}", "b", "wartość"));
-        assertEquals(Collections.singletonList("A: {b}, B: wartość"), replacedMulti.getText());
+        assertEquals(Collections.singletonList("A: {a}, B: {b}"), replacedMulti.getText());
+        assertEquals("{b}", replacedMulti.getReplacements().get("a"));
+        assertEquals("wartość", replacedMulti.getReplacements().get("b"));
     }
 }
