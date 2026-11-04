@@ -81,7 +81,8 @@ public class AdventureTitleProcessor implements NoticeProcessor<Audience> {
             effectiveReplacements.putAll(replacements);
         }
 
-        AudienceUtil.sendTitle(handler, title, subtitle, effectiveReplacements, notice.getFadeIn(), notice.getStay(), notice.getFadeOut());
+        AudienceUtil.sendTitle(handler, title, subtitle, effectiveReplacements,
+                notice.getFadeIn() * 50L, notice.getStay() * 50L, notice.getFadeOut() * 50L);
     }
 
     private boolean supportsTitleSubtitle(NoticeType noticeType) {
